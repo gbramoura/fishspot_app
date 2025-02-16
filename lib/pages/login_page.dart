@@ -1,6 +1,5 @@
 import 'package:fishspot_app/components/custom_input_text.dart';
 import 'package:fishspot_app/utils/hex_color_utils.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../components/custom_button.dart';
@@ -74,11 +73,17 @@ class LoginPage extends StatelessWidget {
                 children: [
                   Padding(
                     padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-                    child: RichText(
-                      text: TextSpan(
-                        text: 'Esqueceu sua senha?',
-                        style: Theme.of(context).textTheme.displayMedium,
-                        recognizer: TapGestureRecognizer()..onTap = () => {},
+                    child: Semantics(
+                      label: 'Esqueceu sua senha?',
+                      button: true,
+                      child: GestureDetector(
+                        onTap: () {},
+                        child: RichText(
+                          text: TextSpan(
+                            text: 'Esqueceu sua senha?',
+                            style: Theme.of(context).textTheme.displayMedium,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -96,19 +101,36 @@ class LoginPage extends StatelessWidget {
                 children: [
                   RichText(
                     text: TextSpan(
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: 'Não possui uma conta? ',
-                          style: Theme.of(context).textTheme.displayMedium,
-                        ),
-                        TextSpan(
-                          text: 'Registre-se',
-                          style: Theme.of(context).textTheme.labelSmall,
-                          recognizer: TapGestureRecognizer()..onTap = () => {},
-                        ),
-                      ],
+                      text: 'Não possui uma conta?',
+                      style: Theme.of(context).textTheme.displayMedium,
                     ),
-                  )
+                  ),
+                  SizedBox(width: 5),
+                  Semantics(
+                    label: 'Esqueceu sua senha?',
+                    button: true,
+                    child: GestureDetector(
+                      onTap: () {},
+                      child: RichText(
+                        text: TextSpan(
+                          text: 'Registre-se',
+                          style: TextStyle(
+                            color:
+                                Theme.of(context).textTheme.labelSmall?.color,
+                            fontWeight: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.fontWeight,
+                            fontSize: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.fontSize,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               )
             ],
