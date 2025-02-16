@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 
 import '../components/custom_button.dart';
 
-class LoginPage extends StatelessWidget {
-  LoginPage({super.key});
+class RegisterPage extends StatelessWidget {
+  RegisterPage({super.key});
 
   final usernameController = TextEditingController();
+  final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -32,25 +34,27 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
               Text(
-                'Bem-Vindo',
+                'Registre-se',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(10, 10, 10, 45),
-                child: Text(
-                  "Seja bem vindo ao aplicativo para registro de locais de pesca",
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-              ),
+              SizedBox(height: 35),
               Column(
                 children: [
-                  SizedBox(height: 10),
                   CustomInputText(
                     controller: usernameController,
-                    hintText: 'Email',
-                    obscureText: false,
+                    hintText: 'Name',
+                    obscureText: true,
+                    icon: Icon(
+                      Icons.person,
+                      color: HexColor('#666B70'),
+                    ),
+                  ),
+                  SizedBox(height: 25),
+                  CustomInputText(
+                    controller: emailController,
+                    hintText: 'E-mail',
+                    obscureText: true,
                     icon: Icon(
                       Icons.email,
                       color: HexColor('#666B70'),
@@ -66,30 +70,19 @@ class LoginPage extends StatelessWidget {
                       color: HexColor('#666B70'),
                     ),
                   ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-                    child: Semantics(
-                      label: 'Esqueceu sua senha?',
-                      button: true,
-                      child: GestureDetector(
-                        onTap: () {},
-                        child: RichText(
-                          text: TextSpan(
-                            text: 'Esqueceu sua senha?',
-                            style: Theme.of(context).textTheme.displayMedium,
-                          ),
-                        ),
-                      ),
+                  SizedBox(height: 25),
+                  CustomInputText(
+                    controller: confirmPasswordController,
+                    hintText: 'Confirmar Senha',
+                    obscureText: true,
+                    icon: Icon(
+                      Icons.lock,
+                      color: HexColor('#666B70'),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 55),
+              SizedBox(height: 45),
               CustomButton(
                 onPressed: () {},
                 fixedSize: Size(286, 48),
@@ -101,19 +94,19 @@ class LoginPage extends StatelessWidget {
                 children: [
                   RichText(
                     text: TextSpan(
-                      text: 'Não possui uma conta?',
+                      text: 'Já possui uma conta?',
                       style: Theme.of(context).textTheme.displayMedium,
                     ),
                   ),
                   SizedBox(width: 5),
                   Semantics(
-                    label: 'Registre-se',
+                    label: 'Entre',
                     button: true,
                     child: GestureDetector(
                       onTap: () {},
                       child: RichText(
                         text: TextSpan(
-                          text: 'Registre-se',
+                          text: 'Entre',
                           style: TextStyle(
                             color:
                                 Theme.of(context).textTheme.labelSmall?.color,
