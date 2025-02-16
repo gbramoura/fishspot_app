@@ -1,4 +1,3 @@
-import 'package:fishspot_app/src/pages/home_page.dart';
 import 'package:fishspot_app/src/pages/login_page.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +12,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
       ),
-      home: const LoginPage(),
+      home: LoginPage(),
     );
   }
 }

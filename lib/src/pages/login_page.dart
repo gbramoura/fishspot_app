@@ -1,17 +1,26 @@
+import 'package:fishspot_app/src/components/custom_input_text.dart';
+import 'package:fishspot_app/src/components/custom_text_button.dart';
 import 'package:fishspot_app/src/utils/hex_color_utils.dart';
 import 'package:flutter/material.dart';
 
+import '../components/custom_button.dart';
+
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  LoginPage({super.key});
+
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: HexColor('#292A2C'),
+      extendBody: true,
+      backgroundColor: HexColor('#292A2C'),
+      body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(32),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Center(
                 child: Padding(
@@ -43,85 +52,70 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(0, 10, 0, 25),
-                child: TextField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'E-mail',
+              Column(
+                children: [
+                  SizedBox(height: 10),
+                  CustomInputText(
+                    controller: usernameController,
+                    hintText: 'Email',
+                    obscureText: false,
+                    icon: Icon(
+                      Icons.email,
+                      color: HexColor('#666B70'),
+                    ),
                   ),
-                ),
+                  SizedBox(height: 25),
+                  CustomInputText(
+                    controller: passwordController,
+                    hintText: 'Senha',
+                    obscureText: true,
+                    icon: Icon(
+                      Icons.lock,
+                      color: HexColor('#666B70'),
+                    ),
+                  ),
+                ],
               ),
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Senha',
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
+                    child: Text(
+                      'Esqueceu sua senha?',
+                      style: TextStyle(
+                        color: HexColor('#F8FAFC'),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              Container(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-                  child: Text(
-                    'Esqueceu sua senha?',
+              SizedBox(height: 50),
+              CustomButton(
+                onPressed: () {},
+                fixedSize: Size(286, 48),
+                label: 'Entrar',
+              ),
+              SizedBox(height: 5),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Não possui uma conta?',
                     style: TextStyle(
                       color: HexColor('#F8FAFC'),
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14,
                     ),
                   ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(0, 35, 0, 0),
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    fixedSize: Size(286, 48),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    backgroundColor: HexColor('#00D389'),
+                  CustomTextButton(
+                    label: 'Registre-se',
+                    onPressed: () {},
                   ),
-                  child: Text(
-                    'Entrar',
-                    style: TextStyle(
-                      color: HexColor('#35383A'),
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  alignment: Alignment.bottomLeft,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Não possui uma conta?',
-                        style: TextStyle(
-                          color: HexColor('#F8FAFC'),
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          'Registre-se',
-                          style: TextStyle(
-                            color: HexColor('#00D389'),
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+                ],
+              )
             ],
           ),
         ),
