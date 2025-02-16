@@ -22,6 +22,7 @@ class CustomButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(5),
         ),
         backgroundColor: Theme.of(context).buttonTheme.colorScheme?.primary,
+        overlayColor: Theme.of(context).buttonTheme.colorScheme?.onPrimary,
       ),
       child: Text(
         label,

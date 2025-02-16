@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="fishspot_app"
+        android:label="FishSpot"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

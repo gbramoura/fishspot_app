@@ -20,12 +20,14 @@ class CustomInputText extends StatelessWidget {
     return TextField(
       controller: controller,
       obscureText: obscureText,
+      style: TextStyle(fontSize: 14),
       decoration: InputDecoration(
         border: OutlineInputBorder(),
         suffixIcon: icon,
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(
-            color: HexColor('#00D389'),
+            color: Theme.of(context).buttonTheme.colorScheme?.primary ??
+                HexColor('#00D389'),
           ),
         ),
         enabledBorder: OutlineInputBorder(

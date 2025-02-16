@@ -60,7 +60,7 @@ ThemeData darkMode = ThemeData(
     colorScheme: ColorScheme(
       brightness: Brightness.dark,
       primary: green250,
-      onPrimary: green250,
+      onPrimary: gray350,
       secondary: defaultColor,
       onSecondary: defaultColor,
       error: defaultColor,
