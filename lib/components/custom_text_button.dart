@@ -1,4 +1,3 @@
-import 'package:fishspot_app/src/utils/hex_color_utils.dart';
 import 'package:flutter/material.dart';
 
 class CustomTextButton extends StatelessWidget {
@@ -17,11 +16,7 @@ class CustomTextButton extends StatelessWidget {
       onPressed: onPressed,
       child: Text(
         label,
-        style: TextStyle(
-          color: HexColor('#00D389'),
-          fontWeight: FontWeight.w400,
-          fontSize: 14,
-        ),
+        style: Theme.of(context).textTheme.labelMedium,
       ),
     );
   }

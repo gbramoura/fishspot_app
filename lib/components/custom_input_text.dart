@@ -1,4 +1,4 @@
-import 'package:fishspot_app/src/utils/hex_color_utils.dart';
+import 'package:fishspot_app/utils/hex_color_utils.dart';
 import 'package:flutter/material.dart';
 
 class CustomInputText extends StatelessWidget {

@@ -1,6 +1,6 @@
-import 'package:fishspot_app/src/components/custom_input_text.dart';
-import 'package:fishspot_app/src/components/custom_text_button.dart';
-import 'package:fishspot_app/src/utils/hex_color_utils.dart';
+import 'package:fishspot_app/components/custom_input_text.dart';
+import 'package:fishspot_app/utils/hex_color_utils.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../components/custom_button.dart';
@@ -15,7 +15,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      backgroundColor: HexColor('#292A2C'),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(32),
@@ -35,21 +35,14 @@ class LoginPage extends StatelessWidget {
               Text(
                 'Bem-Vindo',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: HexColor('#F8FAFC'),
-                    fontWeight: FontWeight.w500,
-                    fontSize: 42),
+                style: Theme.of(context).textTheme.headlineLarge,
               ),
               Padding(
                 padding: EdgeInsets.fromLTRB(10, 10, 10, 45),
                 child: Text(
                   "Seja bem vindo ao aplicativo para registro de locais de pesca",
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: HexColor('#E2E8F0'),
-                    fontWeight: FontWeight.w500,
-                    fontSize: 18,
-                  ),
+                  style: Theme.of(context).textTheme.headlineMedium,
                 ),
               ),
               Column(
@@ -81,39 +74,41 @@ class LoginPage extends StatelessWidget {
                 children: [
                   Padding(
                     padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-                    child: Text(
-                      'Esqueceu sua senha?',
-                      style: TextStyle(
-                        color: HexColor('#F8FAFC'),
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16,
+                    child: RichText(
+                      text: TextSpan(
+                        text: 'Esqueceu sua senha?',
+                        style: Theme.of(context).textTheme.displayMedium,
+                        recognizer: TapGestureRecognizer()..onTap = () => {},
                       ),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 50),
+              SizedBox(height: 40),
               CustomButton(
                 onPressed: () {},
                 fixedSize: Size(286, 48),
                 label: 'Entrar',
               ),
-              SizedBox(height: 5),
+              SizedBox(height: 15),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Não possui uma conta?',
-                    style: TextStyle(
-                      color: HexColor('#F8FAFC'),
-                      fontWeight: FontWeight.w400,
-                      fontSize: 14,
+                  RichText(
+                    text: TextSpan(
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: 'Não possui uma conta? ',
+                          style: Theme.of(context).textTheme.displayMedium,
+                        ),
+                        TextSpan(
+                          text: 'Registre-se',
+                          style: Theme.of(context).textTheme.labelSmall,
+                          recognizer: TapGestureRecognizer()..onTap = () => {},
+                        ),
+                      ],
                     ),
-                  ),
-                  CustomTextButton(
-                    label: 'Registre-se',
-                    onPressed: () {},
-                  ),
+                  )
                 ],
               )
             ],
