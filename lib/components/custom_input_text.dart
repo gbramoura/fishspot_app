@@ -5,7 +5,7 @@ class CustomInputText extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final bool obscureText;
-  final Icon? icon;
+  final IconData? icon;
 
   const CustomInputText({
     super.key,
@@ -23,7 +23,10 @@ class CustomInputText extends StatelessWidget {
       style: TextStyle(fontSize: 14),
       decoration: InputDecoration(
         border: OutlineInputBorder(),
-        suffixIcon: icon,
+        suffixIcon: Icon(
+          icon,
+          color: HexColor('#666B70'),
+        ),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(
             color: Theme.of(context).buttonTheme.colorScheme?.primary ??

@@ -1,5 +1,4 @@
 import 'package:fishspot_app/components/custom_input_text.dart';
-import 'package:fishspot_app/utils/hex_color_utils.dart';
 import 'package:flutter/material.dart';
 
 import '../components/custom_button.dart';
@@ -51,20 +50,14 @@ class LoginPage extends StatelessWidget {
                     controller: usernameController,
                     hintText: 'Email',
                     obscureText: false,
-                    icon: Icon(
-                      Icons.email,
-                      color: HexColor('#666B70'),
-                    ),
+                    icon: Icons.email,
                   ),
                   SizedBox(height: 25),
                   CustomInputText(
                     controller: passwordController,
                     hintText: 'Senha',
                     obscureText: true,
-                    icon: Icon(
-                      Icons.lock,
-                      color: HexColor('#666B70'),
-                    ),
+                    icon: Icons.lock,
                   ),
                 ],
               ),

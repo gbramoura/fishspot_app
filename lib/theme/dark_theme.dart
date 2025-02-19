@@ -7,12 +7,12 @@ Color gray = HexColor('#E2E8F0');
 Color gray350 = HexColor('#35383A');
 Color green250 = HexColor('00D389');
 Color green200 = HexColor('#00D389');
+Color surface = HexColor('#292A2C');
 
 ThemeData darkMode = ThemeData(
   brightness: Brightness.dark,
   colorScheme: ColorScheme.dark(
-    // background
-    surface: HexColor('#292A2C'),
+    surface: surface,
   ),
   textTheme: TextTheme(
     headlineLarge: TextStyle(

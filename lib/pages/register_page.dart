@@ -1,5 +1,4 @@
 import 'package:fishspot_app/components/custom_input_text.dart';
-import 'package:fishspot_app/utils/hex_color_utils.dart';
 import 'package:flutter/material.dart';
 
 import '../components/custom_button.dart';
@@ -45,40 +44,28 @@ class RegisterPage extends StatelessWidget {
                     controller: usernameController,
                     hintText: 'Name',
                     obscureText: true,
-                    icon: Icon(
-                      Icons.person,
-                      color: HexColor('#666B70'),
-                    ),
+                    icon: Icons.person,
                   ),
                   SizedBox(height: 25),
                   CustomInputText(
                     controller: emailController,
                     hintText: 'E-mail',
                     obscureText: true,
-                    icon: Icon(
-                      Icons.email,
-                      color: HexColor('#666B70'),
-                    ),
+                    icon: Icons.email,
                   ),
                   SizedBox(height: 25),
                   CustomInputText(
                     controller: passwordController,
                     hintText: 'Senha',
                     obscureText: true,
-                    icon: Icon(
-                      Icons.lock,
-                      color: HexColor('#666B70'),
-                    ),
+                    icon: Icons.lock,
                   ),
                   SizedBox(height: 25),
                   CustomInputText(
                     controller: confirmPasswordController,
                     hintText: 'Confirmar Senha',
                     obscureText: true,
-                    icon: Icon(
-                      Icons.lock,
-                      color: HexColor('#666B70'),
-                    ),
+                    icon: Icons.lock,
                   ),
                 ],
               ),

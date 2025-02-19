@@ -7,11 +7,12 @@ Color gray350 = HexColor('#35383A');
 Color gray150 = HexColor('#666B70');
 Color blue750 = HexColor('#2A5967');
 Color blue700 = HexColor('#2A5967');
+Color surface = HexColor('#F4F3F3');
 
 ThemeData lighMode = ThemeData(
   brightness: Brightness.light,
   colorScheme: ColorScheme.light(
-    surface: HexColor('#F4F3F3'),
+    surface: surface,
   ),
   textTheme: TextTheme(
     headlineLarge: TextStyle(
