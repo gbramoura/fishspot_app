@@ -11,7 +11,7 @@ class CustomInputText extends StatelessWidget {
     super.key,
     required this.controller,
     required this.hintText,
-    required this.obscureText,
+    this.obscureText = false,
     this.icon,
   });
 
@@ -20,7 +20,10 @@ class CustomInputText extends StatelessWidget {
     return TextField(
       controller: controller,
       obscureText: obscureText,
-      style: TextStyle(fontSize: 14),
+      style: TextStyle(
+        color: HexColor('#35383A'),
+        fontSize: 14,
+      ),
       decoration: InputDecoration(
         border: OutlineInputBorder(),
         suffixIcon: Icon(

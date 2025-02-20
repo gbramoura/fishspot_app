@@ -43,14 +43,12 @@ class RegisterPage extends StatelessWidget {
                   CustomInputText(
                     controller: usernameController,
                     hintText: 'Name',
-                    obscureText: true,
                     icon: Icons.person,
                   ),
                   SizedBox(height: 25),
                   CustomInputText(
                     controller: emailController,
                     hintText: 'E-mail',
-                    obscureText: true,
                     icon: Icons.email,
                   ),
                   SizedBox(height: 25),

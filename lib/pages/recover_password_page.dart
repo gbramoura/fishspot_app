@@ -1,13 +1,12 @@
-import 'package:fishspot_app/components/custom_input_text.dart';
 import 'package:flutter/material.dart';
 
 import '../components/custom_button.dart';
+import '../components/custom_input_text.dart';
 
-class LoginPage extends StatelessWidget {
-  LoginPage({super.key});
+class RecoverPasswordPage extends StatelessWidget {
+  RecoverPasswordPage({super.key});
 
-  final usernameController = TextEditingController();
-  final passwordController = TextEditingController();
+  final mailController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -31,14 +30,14 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
               Text(
-                'Bem-Vindo',
+                'Recuperar Senha',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
               Padding(
-                padding: EdgeInsets.fromLTRB(10, 10, 10, 45),
+                padding: EdgeInsets.fromLTRB(15, 10, 15, 45),
                 child: Text(
-                  "Seja bem vindo ao aplicativo para registro de locais de pesca",
+                  "Um token de acesso sera enviado para o e-mail informado para validação",
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
@@ -47,45 +46,17 @@ class LoginPage extends StatelessWidget {
                 children: [
                   SizedBox(height: 10),
                   CustomInputText(
-                    controller: usernameController,
-                    hintText: 'Email',
-                    icon: Icons.email,
-                  ),
-                  SizedBox(height: 25),
-                  CustomInputText(
-                    controller: passwordController,
-                    hintText: 'Senha',
-                    obscureText: true,
-                    icon: Icons.lock,
+                    controller: mailController,
+                    hintText: 'E-mail',
+                    icon: Icons.mail,
                   ),
                 ],
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-                    child: Semantics(
-                      label: 'Esqueceu sua senha?',
-                      button: true,
-                      child: GestureDetector(
-                        onTap: () {},
-                        child: RichText(
-                          text: TextSpan(
-                            text: 'Esqueceu sua senha?',
-                            style: Theme.of(context).textTheme.displayMedium,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 55),
+              SizedBox(height: 45),
               CustomButton(
                 onPressed: () {},
                 fixedSize: Size(286, 48),
-                label: 'Entrar',
+                label: 'Enviar',
               ),
               SizedBox(height: 15),
               Row(
@@ -93,19 +64,19 @@ class LoginPage extends StatelessWidget {
                 children: [
                   RichText(
                     text: TextSpan(
-                      text: 'Não possui uma conta?',
+                      text: 'Deseja cancelar a recuperação de senha?',
                       style: Theme.of(context).textTheme.displayMedium,
                     ),
                   ),
                   SizedBox(width: 5),
                   Semantics(
-                    label: 'Registre-se',
+                    label: 'Cancelar',
                     button: true,
                     child: GestureDetector(
                       onTap: () {},
                       child: RichText(
                         text: TextSpan(
-                          text: 'Registre-se',
+                          text: 'Cancelar',
                           style: TextStyle(
                             color:
                                 Theme.of(context).textTheme.labelSmall?.color,
