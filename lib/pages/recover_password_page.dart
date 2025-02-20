@@ -48,7 +48,10 @@ class RecoverPasswordPage extends StatelessWidget {
                   CustomInputText(
                     controller: mailController,
                     hintText: 'E-mail',
-                    icon: Icons.mail,
+                    icon: Icon(
+                      Icons.mail,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
                   ),
                 ],
               ),

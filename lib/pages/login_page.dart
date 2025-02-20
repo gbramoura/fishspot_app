@@ -49,14 +49,20 @@ class LoginPage extends StatelessWidget {
                   CustomInputText(
                     controller: usernameController,
                     hintText: 'Email',
-                    icon: Icons.email,
+                    icon: Icon(
+                      Icons.email,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
                   ),
                   SizedBox(height: 25),
                   CustomInputText(
                     controller: passwordController,
                     hintText: 'Senha',
                     obscureText: true,
-                    icon: Icons.lock,
+                    icon: Icon(
+                      Icons.lock,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
                   ),
                 ],
               ),

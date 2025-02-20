@@ -49,14 +49,20 @@ class ChangePasswordPage extends StatelessWidget {
                   CustomInputText(
                     controller: passwordController,
                     hintText: 'Senha',
-                    icon: Icons.lock,
+                    icon: Icon(
+                      Icons.lock,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
                     obscureText: true,
                   ),
                   SizedBox(height: 25),
                   CustomInputText(
                     controller: confirmPasswordController,
                     hintText: 'Confirmar Senha',
-                    icon: Icons.lock,
+                    icon: Icon(
+                      Icons.lock,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
                     obscureText: true,
                   ),
                 ],

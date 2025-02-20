@@ -3,13 +3,40 @@ import 'package:flutter/material.dart';
 
 import '../components/custom_button.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   RegisterPage({super.key});
 
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
   final usernameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+
+  bool passwordObscureText = true;
+  bool confirmPasswordObscureText = true;
+
+  handlePressedPasswordObscureText() {
+    setState(() {
+      passwordObscureText = !passwordObscureText;
+    });
+  }
+
+  handlePressedConfirmPasswordObscureText() {
+    setState(() {
+      confirmPasswordObscureText = !confirmPasswordObscureText;
+    });
+  }
+
+  renderVisibleIcon(bool isVisible) {
+    return Icon(
+      isVisible ? Icons.visibility : Icons.visibility_off,
+      color: Theme.of(context).iconTheme.color,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,27 +70,47 @@ class RegisterPage extends StatelessWidget {
                   CustomInputText(
                     controller: usernameController,
                     hintText: 'Name',
-                    icon: Icons.person,
+                    icon: Icon(
+                      Icons.person,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
                   ),
                   SizedBox(height: 25),
                   CustomInputText(
                     controller: emailController,
                     hintText: 'E-mail',
-                    icon: Icons.email,
+                    icon: Icon(
+                      Icons.email,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
                   ),
                   SizedBox(height: 25),
                   CustomInputText(
                     controller: passwordController,
                     hintText: 'Senha',
-                    obscureText: true,
-                    icon: Icons.lock,
+                    obscureText: passwordObscureText,
+                    icon: Icon(
+                      Icons.lock,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
+                    actionIcon: IconButton(
+                      onPressed: handlePressedPasswordObscureText,
+                      icon: renderVisibleIcon(passwordObscureText),
+                    ),
                   ),
                   SizedBox(height: 25),
                   CustomInputText(
                     controller: confirmPasswordController,
                     hintText: 'Confirmar Senha',
-                    obscureText: true,
-                    icon: Icons.lock,
+                    obscureText: confirmPasswordObscureText,
+                    icon: Icon(
+                      Icons.lock,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
+                    actionIcon: IconButton(
+                      onPressed: handlePressedConfirmPasswordObscureText,
+                      icon: renderVisibleIcon(confirmPasswordObscureText),
+                    ),
                   ),
                 ],
               ),

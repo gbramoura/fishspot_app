@@ -14,6 +14,7 @@ ThemeData lighMode = ThemeData(
   colorScheme: ColorScheme.light(
     surface: surface,
   ),
+  iconTheme: IconThemeData(color: gray150),
   textTheme: TextTheme(
     headlineLarge: TextStyle(
       color: gray350,
