@@ -8,6 +8,7 @@ Color gray150 = HexColor('#666B70');
 Color blue750 = HexColor('#2A5967');
 Color blue700 = HexColor('#2A5967');
 Color surface = HexColor('#F4F3F3');
+Color red250 = HexColor('#ee2b2b');
 
 ThemeData lighMode = ThemeData(
   brightness: Brightness.light,
@@ -68,6 +69,22 @@ ThemeData lighMode = ThemeData(
       onError: defaultColor,
       surface: defaultColor,
       onSurface: defaultColor,
+    ),
+  ),
+  inputDecorationTheme: InputDecorationTheme(
+    errorBorder: OutlineInputBorder(
+      borderSide: BorderSide(
+        color: red250,
+      ),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderSide: BorderSide(
+        color: HexColor('#ee2b2b'),
+        width: 1.5,
+      ),
+    ),
+    errorStyle: TextStyle(
+      color: red250,
     ),
   ),
 );

@@ -1,10 +1,9 @@
-import 'package:fishspot_app/components/custom_input_text.dart';
+import 'package:fishspot_app/components/custom_button.dart';
+import 'package:fishspot_app/components/custom_input_form_text.dart';
 import 'package:flutter/material.dart';
 
-import '../components/custom_button.dart';
-
 class RegisterPage extends StatefulWidget {
-  RegisterPage({super.key});
+  const RegisterPage({super.key});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -16,22 +15,61 @@ class _RegisterPageState extends State<RegisterPage> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
+  final formGlobalKey = GlobalKey<FormState>();
+
   bool passwordObscureText = true;
   bool confirmPasswordObscureText = true;
 
-  handlePressedPasswordObscureText() {
+  void handlePressedPasswordObscureText() {
     setState(() {
       passwordObscureText = !passwordObscureText;
     });
   }
 
-  handlePressedConfirmPasswordObscureText() {
+  void handlePressedConfirmPasswordObscureText() {
     setState(() {
       confirmPasswordObscureText = !confirmPasswordObscureText;
     });
   }
 
-  renderVisibleIcon(bool isVisible) {
+  void handleRegisterButton() {
+    if (!formGlobalKey.currentState!.validate()) {
+      return;
+    }
+  }
+
+  String? handleNameValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'O campo nome é obrigatório';
+    }
+    return null;
+  }
+
+  String? handleMailValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'O campo e-mail é obrigatório';
+    }
+    return null;
+  }
+
+  String? handlePasswordValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'O campo senha é obrigatório';
+    }
+    return null;
+  }
+
+  String? handleConfirmPasswordValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'O campo senha é obrigatório';
+    }
+    if (passwordController.text != confirmPasswordController.text) {
+      return 'As senhas não se coincidem';
+    }
+    return null;
+  }
+
+  Widget renderVisibleIcon(bool isVisible) {
     return Icon(
       isVisible ? Icons.visibility : Icons.visibility_off,
       color: Theme.of(context).iconTheme.color,
@@ -65,60 +103,72 @@ class _RegisterPageState extends State<RegisterPage> {
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
               SizedBox(height: 35),
-              Column(
-                children: [
-                  CustomInputText(
-                    controller: usernameController,
-                    hintText: 'Name',
-                    icon: Icon(
-                      Icons.person,
-                      color: Theme.of(context).iconTheme.color,
+              Form(
+                key: formGlobalKey,
+                child: Column(
+                  children: [
+                    Column(
+                      children: [
+                        CustomInputFormText(
+                          controller: usernameController,
+                          hintText: 'Name',
+                          validator: handleNameValidator,
+                          icon: Icon(
+                            Icons.person,
+                            color: Theme.of(context).iconTheme.color,
+                          ),
+                        ),
+                        SizedBox(height: 25),
+                        CustomInputFormText(
+                          controller: emailController,
+                          hintText: 'E-mail',
+                          validator: handleMailValidator,
+                          textInputType: TextInputType.emailAddress,
+                          icon: Icon(
+                            Icons.email,
+                            color: Theme.of(context).iconTheme.color,
+                          ),
+                        ),
+                        SizedBox(height: 25),
+                        CustomInputFormText(
+                          controller: passwordController,
+                          hintText: 'Senha',
+                          validator: handlePasswordValidator,
+                          obscureText: passwordObscureText,
+                          icon: Icon(
+                            Icons.lock,
+                            color: Theme.of(context).iconTheme.color,
+                          ),
+                          actionIcon: IconButton(
+                            onPressed: handlePressedPasswordObscureText,
+                            icon: renderVisibleIcon(passwordObscureText),
+                          ),
+                        ),
+                        SizedBox(height: 25),
+                        CustomInputFormText(
+                          controller: confirmPasswordController,
+                          hintText: 'Confirmar Senha',
+                          validator: handleConfirmPasswordValidator,
+                          obscureText: confirmPasswordObscureText,
+                          icon: Icon(
+                            Icons.lock,
+                            color: Theme.of(context).iconTheme.color,
+                          ),
+                          actionIcon: IconButton(
+                            onPressed: handlePressedConfirmPasswordObscureText,
+                            icon: renderVisibleIcon(confirmPasswordObscureText),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  SizedBox(height: 25),
-                  CustomInputText(
-                    controller: emailController,
-                    hintText: 'E-mail',
-                    icon: Icon(
-                      Icons.email,
-                      color: Theme.of(context).iconTheme.color,
+                    SizedBox(height: 35),
+                    CustomButton(
+                      onPressed: handleRegisterButton,
+                      fixedSize: Size(286, 48),
+                      label: 'Registrar',
                     ),
-                  ),
-                  SizedBox(height: 25),
-                  CustomInputText(
-                    controller: passwordController,
-                    hintText: 'Senha',
-                    obscureText: passwordObscureText,
-                    icon: Icon(
-                      Icons.lock,
-                      color: Theme.of(context).iconTheme.color,
-                    ),
-                    actionIcon: IconButton(
-                      onPressed: handlePressedPasswordObscureText,
-                      icon: renderVisibleIcon(passwordObscureText),
-                    ),
-                  ),
-                  SizedBox(height: 25),
-                  CustomInputText(
-                    controller: confirmPasswordController,
-                    hintText: 'Confirmar Senha',
-                    obscureText: confirmPasswordObscureText,
-                    icon: Icon(
-                      Icons.lock,
-                      color: Theme.of(context).iconTheme.color,
-                    ),
-                    actionIcon: IconButton(
-                      onPressed: handlePressedConfirmPasswordObscureText,
-                      icon: renderVisibleIcon(confirmPasswordObscureText),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 45),
-              CustomButton(
-                onPressed: () {},
-                fixedSize: Size(286, 48),
-                label: 'Entrar',
+                  ],
+                ),
               ),
               SizedBox(height: 15),
               Row(
