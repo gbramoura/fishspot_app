@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../components/custom_button.dart';
-import '../components/custom_input_text.dart';
+import '../components/custom_text_field.dart';
 
 class ChangePasswordPage extends StatelessWidget {
   ChangePasswordPage({super.key});
@@ -46,7 +46,7 @@ class ChangePasswordPage extends StatelessWidget {
               Column(
                 children: [
                   SizedBox(height: 10),
-                  CustomInputText(
+                  CustomTextField(
                     controller: passwordController,
                     hintText: 'Senha',
                     icon: Icon(
@@ -56,7 +56,7 @@ class ChangePasswordPage extends StatelessWidget {
                     obscureText: true,
                   ),
                   SizedBox(height: 25),
-                  CustomInputText(
+                  CustomTextField(
                     controller: confirmPasswordController,
                     hintText: 'Confirmar Senha',
                     icon: Icon(

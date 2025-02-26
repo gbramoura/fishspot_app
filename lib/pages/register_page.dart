@@ -1,5 +1,5 @@
 import 'package:fishspot_app/components/custom_button.dart';
-import 'package:fishspot_app/components/custom_input_form_text.dart';
+import 'package:fishspot_app/components/custom_text_form_field.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:flutter/material.dart';
 
@@ -118,7 +118,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   children: [
                     Column(
                       children: [
-                        CustomInputFormText(
+                        CustomTextFormField(
                           controller: usernameController,
                           hintText: 'Name',
                           validator: handleNameValidator,
@@ -128,7 +128,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
                         SizedBox(height: 25),
-                        CustomInputFormText(
+                        CustomTextFormField(
                           controller: emailController,
                           hintText: 'E-mail',
                           validator: handleMailValidator,
@@ -139,7 +139,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
                         SizedBox(height: 25),
-                        CustomInputFormText(
+                        CustomTextFormField(
                           controller: passwordController,
                           hintText: 'Senha',
                           validator: handlePasswordValidator,
@@ -154,7 +154,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                         ),
                         SizedBox(height: 25),
-                        CustomInputFormText(
+                        CustomTextFormField(
                           controller: confirmPasswordController,
                           hintText: 'Confirmar Senha',
                           validator: handleConfirmPasswordValidator,

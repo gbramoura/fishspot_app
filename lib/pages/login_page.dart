@@ -1,5 +1,5 @@
 import 'package:fishspot_app/components/custom_button.dart';
-import 'package:fishspot_app/components/custom_input_form_text.dart';
+import 'package:fishspot_app/components/custom_text_form_field.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:flutter/material.dart';
 
@@ -66,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
               Column(
                 children: [
                   SizedBox(height: 10),
-                  CustomInputFormText(
+                  CustomTextFormField(
                     controller: usernameController,
                     hintText: 'Email',
                     icon: Icon(
@@ -75,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   SizedBox(height: 25),
-                  CustomInputFormText(
+                  CustomTextFormField(
                     controller: passwordController,
                     hintText: 'Senha',
                     obscureText: passwordObscureText,

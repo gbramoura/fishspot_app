@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../components/custom_button.dart';
-import '../components/custom_input_text.dart';
+import '../components/custom_text_field.dart';
 
 class ValidateRecoverPasswordPage extends StatelessWidget {
   ValidateRecoverPasswordPage({super.key});
@@ -45,7 +45,7 @@ class ValidateRecoverPasswordPage extends StatelessWidget {
               Column(
                 children: [
                   SizedBox(height: 10),
-                  CustomInputText(
+                  CustomTextField(
                     controller: oneController,
                     hintText: '-',
                   ),

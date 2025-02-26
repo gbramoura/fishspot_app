@@ -1,15 +1,16 @@
 import 'package:fishspot_app/utils/hex_color_utils.dart';
 import 'package:flutter/material.dart';
 
-class CustomInputText extends StatelessWidget {
+class CustomTextFormField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final bool obscureText;
   final Icon? icon;
   final Widget? actionIcon;
   final TextInputType? textInputType;
+  final String? Function(String?)? validator;
 
-  const CustomInputText({
+  const CustomTextFormField({
     super.key,
     required this.controller,
     required this.hintText,
@@ -17,14 +18,16 @@ class CustomInputText extends StatelessWidget {
     this.icon,
     this.actionIcon,
     this.textInputType,
+    this.validator,
   });
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
+      validator: validator,
+      cursorColor: HexColor('#35383A'),
       controller: controller,
       obscureText: obscureText,
-      cursorColor: HexColor('#35383A'),
       style: TextStyle(
         color: HexColor('#35383A'),
         fontSize: 14,
@@ -47,6 +50,10 @@ class CustomInputText extends StatelessWidget {
         ),
         hintText: hintText,
         filled: true,
+        errorBorder: Theme.of(context).inputDecorationTheme.errorBorder,
+        focusedErrorBorder:
+            Theme.of(context).inputDecorationTheme.focusedErrorBorder,
+        errorStyle: Theme.of(context).inputDecorationTheme.errorStyle,
         fillColor: HexColor('#FFFFFF'),
         hintStyle: TextStyle(
           color: HexColor('#9B959F'),
