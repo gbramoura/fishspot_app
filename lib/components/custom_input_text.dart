@@ -24,6 +24,7 @@ class CustomInputText extends StatelessWidget {
     return TextField(
       controller: controller,
       obscureText: obscureText,
+      cursorColor: HexColor('#35383A'),
       style: TextStyle(
         color: HexColor('#35383A'),
         fontSize: 14,

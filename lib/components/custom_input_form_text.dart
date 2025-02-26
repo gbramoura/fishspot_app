@@ -25,6 +25,7 @@ class CustomInputFormText extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       validator: validator,
+      cursorColor: HexColor('#35383A'),
       controller: controller,
       obscureText: obscureText,
       style: TextStyle(

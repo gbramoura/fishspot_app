@@ -1,5 +1,6 @@
 import 'package:fishspot_app/components/custom_button.dart';
 import 'package:fishspot_app/components/custom_input_form_text.dart';
+import 'package:fishspot_app/services/api_service.dart';
 import 'package:flutter/material.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -10,15 +11,30 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final apiService = ApiService();
+
   final usernameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-
   final formGlobalKey = GlobalKey<FormState>();
 
   bool passwordObscureText = true;
   bool confirmPasswordObscureText = true;
+
+  void handleRegisterButton() async {
+    if (!formGlobalKey.currentState!.validate()) {
+      return;
+    }
+
+    try {
+      dynamic response = await apiService.registerUser({
+        'name': usernameController.text,
+        'email': emailController.text,
+        'password': passwordController.text,
+      });
+    } finally {}
+  }
 
   void handlePressedPasswordObscureText() {
     setState(() {
@@ -32,36 +48,36 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
-  void handleRegisterButton() {
-    if (!formGlobalKey.currentState!.validate()) {
-      return;
-    }
-  }
-
   String? handleNameValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'O campo nome é obrigatório';
+      return 'Nome é obrigatório';
     }
     return null;
   }
 
   String? handleMailValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'O campo e-mail é obrigatório';
+      return 'E-mail é obrigatório';
     }
     return null;
   }
 
   String? handlePasswordValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'O campo senha é obrigatório';
+      return 'Senha é obrigatória';
+    }
+    if (value.length < 8) {
+      return 'A senha deve ter mais que 8 caracteres';
     }
     return null;
   }
 
   String? handleConfirmPasswordValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'O campo senha é obrigatório';
+      return 'Confirmação de senha é obrigatória';
+    }
+    if (value.length < 8) {
+      return 'A confirmação deve ter mais que 8 caracteres';
     }
     if (passwordController.text != confirmPasswordController.text) {
       return 'As senhas não se coincidem';

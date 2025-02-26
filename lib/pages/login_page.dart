@@ -1,13 +1,33 @@
-import 'package:fishspot_app/components/custom_input_text.dart';
+import 'package:fishspot_app/components/custom_input_form_text.dart';
 import 'package:flutter/material.dart';
 
 import '../components/custom_button.dart';
 
-class LoginPage extends StatelessWidget {
-  LoginPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+
+  bool passwordObscureText = true;
+
+  void handlePressedPasswordObscureText() {
+    setState(() {
+      passwordObscureText = !passwordObscureText;
+    });
+  }
+
+  Widget renderVisibleIcon(bool isVisible) {
+    return Icon(
+      isVisible ? Icons.visibility : Icons.visibility_off,
+      color: Theme.of(context).iconTheme.color,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +66,7 @@ class LoginPage extends StatelessWidget {
               Column(
                 children: [
                   SizedBox(height: 10),
-                  CustomInputText(
+                  CustomInputFormText(
                     controller: usernameController,
                     hintText: 'Email',
                     icon: Icon(
@@ -55,13 +75,17 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 25),
-                  CustomInputText(
+                  CustomInputFormText(
                     controller: passwordController,
                     hintText: 'Senha',
-                    obscureText: true,
+                    obscureText: passwordObscureText,
                     icon: Icon(
                       Icons.lock,
                       color: Theme.of(context).iconTheme.color,
+                    ),
+                    actionIcon: IconButton(
+                      onPressed: handlePressedPasswordObscureText,
+                      icon: renderVisibleIcon(passwordObscureText),
                     ),
                   ),
                 ],
