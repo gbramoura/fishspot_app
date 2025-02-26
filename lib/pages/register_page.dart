@@ -85,13 +85,6 @@ class _RegisterPageState extends State<RegisterPage> {
     return null;
   }
 
-  Widget renderVisibleIcon(bool isVisible) {
-    return Icon(
-      isVisible ? Icons.visibility : Icons.visibility_off,
-      color: Theme.of(context).iconTheme.color,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -201,7 +194,9 @@ class _RegisterPageState extends State<RegisterPage> {
                     label: 'Entre',
                     button: true,
                     child: GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
                       child: RichText(
                         text: TextSpan(
                           text: 'Entre',
@@ -228,6 +223,13 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget renderVisibleIcon(bool isVisible) {
+    return Icon(
+      isVisible ? Icons.visibility : Icons.visibility_off,
+      color: Theme.of(context).iconTheme.color,
     );
   }
 }

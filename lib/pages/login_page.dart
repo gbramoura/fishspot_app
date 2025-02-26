@@ -1,7 +1,7 @@
+import 'package:fishspot_app/components/custom_button.dart';
 import 'package:fishspot_app/components/custom_input_form_text.dart';
+import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:flutter/material.dart';
-
-import '../components/custom_button.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -99,7 +99,10 @@ class _LoginPageState extends State<LoginPage> {
                       label: 'Esqueceu sua senha?',
                       button: true,
                       child: GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushNamed(
+                              context, RouteConstants.recoverPassword);
+                        },
                         child: RichText(
                           text: TextSpan(
                             text: 'Esqueceu sua senha?',
@@ -132,7 +135,9 @@ class _LoginPageState extends State<LoginPage> {
                     label: 'Registre-se',
                     button: true,
                     child: GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pushNamed(context, RouteConstants.register);
+                      },
                       child: RichText(
                         text: TextSpan(
                           text: 'Registre-se',

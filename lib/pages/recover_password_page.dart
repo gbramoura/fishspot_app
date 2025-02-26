@@ -1,7 +1,7 @@
+import 'package:fishspot_app/components/custom_button.dart';
+import 'package:fishspot_app/components/custom_input_text.dart';
+import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:flutter/material.dart';
-
-import '../components/custom_button.dart';
-import '../components/custom_input_text.dart';
 
 class RecoverPasswordPage extends StatelessWidget {
   RecoverPasswordPage({super.key});
@@ -76,7 +76,9 @@ class RecoverPasswordPage extends StatelessWidget {
                     label: 'Cancelar',
                     button: true,
                     child: GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pushNamed(context, RouteConstants.login);
+                      },
                       child: RichText(
                         text: TextSpan(
                           text: 'Cancelar',
