@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:fishspot_app/exceptions/http_response_exception.dart';
+import 'package:fishspot_app/types/http_response_error.dart';
 import 'package:http/http.dart' as http;
 
 class HttpService {
@@ -29,6 +31,22 @@ class HttpService {
       return jsonDecode(response.body);
     }
 
-    throw Exception('Erro na requisição: ${response.statusCode}');
+    if (response.body != '') {
+      var body = jsonDecode(response.body);
+      throw HttpResponseException(
+        data: HttpResponseError(
+          code: response.statusCode,
+          message: body['message'] ?? '',
+          errors: body['errors'] ?? [],
+        ),
+      );
+    }
+
+    throw HttpResponseException(
+      data: HttpResponseError(
+        code: response.statusCode,
+        message: 'Error ao tentar entrar em contato com servidor',
+      ),
+    );
   }
 }

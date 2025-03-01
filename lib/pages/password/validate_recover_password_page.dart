@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../components/custom_button.dart';
-import '../components/custom_text_field.dart';
+import '../../components/custom_button.dart';
+import '../../components/custom_text_field.dart';
 
 class ValidateRecoverPasswordPage extends StatelessWidget {
   ValidateRecoverPasswordPage({super.key});

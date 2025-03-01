@@ -13,8 +13,20 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  final formGlobalKey = GlobalKey<FormState>();
 
   bool passwordObscureText = true;
+  bool loadingHttpRequest = false;
+
+  void handleLogin() {
+    if (!formGlobalKey.currentState!.validate()) {
+      return;
+    }
+
+    setState(() {
+      loadingHttpRequest = true;
+    });
+  }
 
   void handlePressedPasswordObscureText() {
     setState(() {

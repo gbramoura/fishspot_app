@@ -1,5 +1,9 @@
+import 'package:fishspot_app/components/custom_alert_dialog.dart';
 import 'package:fishspot_app/components/custom_button.dart';
 import 'package:fishspot_app/components/custom_text_form_field.dart';
+import 'package:fishspot_app/constants/route_constants.dart';
+import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
+import 'package:fishspot_app/exceptions/http_response_exception.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:flutter/material.dart';
 
@@ -33,14 +37,17 @@ class _RegisterPageState extends State<RegisterPage> {
     });
 
     try {
-      dynamic response = await apiService.registerUser({
+      dynamic response = await apiService.register({
         'name': usernameController.text,
         'email': emailController.text,
         'password': passwordController.text,
       });
+
+      renderSuccessDialog();
+    } on HttpResponseException catch (e) {
+      renderDialog(e.data.code, e.data.message);
     } catch (e) {
-      print('error');
-      print(e);
+      renderDialog(500, null);
     } finally {
       setState(() {
         loadingHttpRequest = false;
@@ -95,6 +102,57 @@ class _RegisterPageState extends State<RegisterPage> {
       return 'As senhas não se coincidem';
     }
     return null;
+  }
+
+  void renderSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          type: CustomDialogAlertType.success,
+          title: 'Registrado com Sucesso',
+          message:
+              'Seus dados foram registrados com sucesso sendo possível realizar a autenticação.',
+          button: CustomButton(
+            label: 'Ok',
+            fixedSize: Size(double.infinity, 48),
+            onPressed: () {
+              Navigator.pushNamed(context, RouteConstants.login);
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  void renderDialog(int code, String? message) {
+    String errorMessage =
+        'Não foi possivel registrar o usuário devido a um erro desconhecido';
+    String errorTitle = 'Erro ao Realizar Registro';
+    String errorButtonLabel = 'Tentar Novamente';
+
+    String warnTitle = 'Registro não Realizado';
+    String warnMessage = message ?? '';
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          type: code == 400
+              ? CustomDialogAlertType.warn
+              : CustomDialogAlertType.error,
+          title: code == 400 ? warnTitle : errorTitle,
+          message: code == 400 ? warnMessage : errorMessage,
+          button: CustomButton(
+            label: code == 400 ? 'Ok' : errorButtonLabel,
+            fixedSize: Size(double.infinity, 48),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        );
+      },
+    );
   }
 
   @override
