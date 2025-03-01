@@ -8,6 +8,6 @@ class ApiService {
   }
 
   Future<dynamic> login(Map<String, dynamic> payload) async {
-    return await httpService.post('auth/register', body: payload);
+    return await httpService.post('auth/login', body: payload);
   }
 }
