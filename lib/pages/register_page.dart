@@ -21,11 +21,16 @@ class _RegisterPageState extends State<RegisterPage> {
 
   bool passwordObscureText = true;
   bool confirmPasswordObscureText = true;
+  bool loadingHttpRequest = false;
 
   void handleRegisterButton() async {
     if (!formGlobalKey.currentState!.validate()) {
       return;
     }
+
+    setState(() {
+      loadingHttpRequest = true;
+    });
 
     try {
       dynamic response = await apiService.registerUser({
@@ -33,7 +38,14 @@ class _RegisterPageState extends State<RegisterPage> {
         'email': emailController.text,
         'password': passwordController.text,
       });
-    } finally {}
+    } catch (e) {
+      print('error');
+      print(e);
+    } finally {
+      setState(() {
+        loadingHttpRequest = false;
+      });
+    }
   }
 
   void handlePressedPasswordObscureText() {
@@ -175,6 +187,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       onPressed: handleRegisterButton,
                       fixedSize: Size(286, 48),
                       label: 'Registrar',
+                      loading: loadingHttpRequest,
                     ),
                   ],
                 ),
