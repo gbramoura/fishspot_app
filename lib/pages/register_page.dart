@@ -37,7 +37,7 @@ class _RegisterPageState extends State<RegisterPage> {
     });
 
     try {
-      dynamic response = await apiService.register({
+      await apiService.register({
         'name': usernameController.text,
         'email': emailController.text,
         'password': passwordController.text,
