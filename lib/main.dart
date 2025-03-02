@@ -1,5 +1,5 @@
 import 'package:fishspot_app/constants/route_constants.dart';
-import 'package:fishspot_app/pages/dashboard_page.dart';
+import 'package:fishspot_app/pages/home_page.dart';
 import 'package:fishspot_app/pages/login_page.dart';
 import 'package:fishspot_app/pages/password/recover_password_page.dart';
 import 'package:fishspot_app/pages/register_page.dart';
@@ -62,7 +62,7 @@ class App extends StatelessWidget {
         RouteConstants.login: (context) => const LoginPage(),
         RouteConstants.register: (context) => const RegisterPage(),
         RouteConstants.recoverPassword: (context) => RecoverPasswordPage(),
-        RouteConstants.dashboard: (context) => DashboardPage(),
+        RouteConstants.home: (context) => HomePage(),
       },
     );
   }

@@ -1,7 +1,7 @@
-import 'package:fishspot_app/models/http_response_error.dart';
+import 'package:fishspot_app/models/http_response.dart';
 
 class HttpResponseException implements Exception {
-  final HttpResponseError data;
+  final HttpResponse data;
 
   HttpResponseException({required this.data});
 

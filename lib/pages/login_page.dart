@@ -2,10 +2,14 @@ import 'package:fishspot_app/components/custom_alert_dialog.dart';
 import 'package:fishspot_app/components/custom_button.dart';
 import 'package:fishspot_app/components/custom_text_form_field.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
+import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/exceptions/http_response_exception.dart';
+import 'package:fishspot_app/models/http_response.dart';
+import 'package:fishspot_app/repositories/settings_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -24,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
   bool passwordObscureText = true;
   bool loadingHttpRequest = false;
 
-  void handleLogin() async {
+  void handleLogin(context) async {
     if (!formGlobalKey.currentState!.validate()) {
       return;
     }
@@ -34,13 +38,23 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      dynamic response = await apiService.login({
+      HttpResponse response = await apiService.login({
         'email': emailController.text,
         'password': passwordController.text,
       });
 
-      // Fazer a autenticação do usuario e navegar para home
-      Navigator.pushNamed(context, RouteConstants.dashboard);
+      var settings = Provider.of<SettingRepository>(context, listen: false);
+
+      settings.setString(
+        SharedPreferencesConstants.jwtToken,
+        response.response['token'],
+      );
+      settings.setString(
+        SharedPreferencesConstants.refreshToken,
+        response.response['refreshToken'],
+      );
+
+      Navigator.pushNamed(context, RouteConstants.home);
     } on HttpResponseException catch (e) {
       renderDialog(e.data.code, e.data.message);
     } catch (e) {
@@ -60,11 +74,11 @@ class _LoginPageState extends State<LoginPage> {
 
   void renderDialog(int code, String? message) {
     String errorMessage =
-        'Não foi possivel registrar o usuário devido a um erro desconhecido';
-    String errorTitle = 'Erro ao Realizar Registro';
+        'Não foi possivel autenticar usuario devido a um erro desconhecido';
+    String errorTitle = 'Erro ao Autenticar-se';
     String errorButtonLabel = 'Tentar Novamente';
 
-    String warnTitle = 'Registro não Realizado';
+    String warnTitle = 'Falha da Autenticação';
     String warnMessage = message ?? '';
 
     showDialog(
@@ -200,7 +214,7 @@ class _LoginPageState extends State<LoginPage> {
                     SizedBox(height: 55),
                     CustomButton(
                       loading: loadingHttpRequest,
-                      onPressed: handleLogin,
+                      onPressed: () => handleLogin(context),
                       fixedSize: Size(286, 48),
                       label: 'Entrar',
                     ),

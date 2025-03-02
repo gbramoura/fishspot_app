@@ -6,6 +6,18 @@ class SettingRepository extends ChangeNotifier {
 
   SettingRepository({required this.prefs});
 
+  String? getString(String key) {
+    return prefs.getString(key);
+  }
+
+  bool? getBool(String key) {
+    return prefs.getBool(key);
+  }
+
+  int? getInt(String key) {
+    return prefs.getInt(key);
+  }
+
   void setBool(String key, bool value) async {
     await prefs.setBool(key, value);
   }

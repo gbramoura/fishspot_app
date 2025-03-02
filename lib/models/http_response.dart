@@ -1,18 +1,21 @@
-class HttpResponseError {
+class HttpResponse {
   final int code;
   final String message;
+  final dynamic response;
   final List<HttpResponseErrorFiled>? errors;
 
-  HttpResponseError({
+  HttpResponse({
     required this.code,
     required this.message,
     this.errors,
+    this.response,
   });
 
-  factory HttpResponseError.fromJson(Map<String, dynamic> json) {
-    return HttpResponseError(
+  factory HttpResponse.fromJson(Map<String, dynamic> json) {
+    return HttpResponse(
       code: json['code'],
       message: json['message'],
+      response: json['response'],
       errors: json['erros']
           ?.map((error) => HttpResponseErrorFiled.fromJson(error))
           ?.toList(),

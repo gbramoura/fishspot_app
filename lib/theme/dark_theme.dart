@@ -12,6 +12,7 @@ Color surface = HexColor('#292A2C');
 Color red250 = HexColor('#ee2b2b');
 
 ThemeData darkMode = ThemeData(
+  splashFactory: NoSplash.splashFactory,
   brightness: Brightness.dark,
   colorScheme: ColorScheme.dark(
     surface: surface,

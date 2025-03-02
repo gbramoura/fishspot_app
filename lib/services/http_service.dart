@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:fishspot_app/exceptions/http_response_exception.dart';
-import 'package:fishspot_app/models/http_response_error.dart';
+import 'package:fishspot_app/models/http_response.dart';
 import 'package:http/http.dart' as http;
 
 class HttpService {
@@ -35,7 +35,7 @@ class HttpService {
     return _handleResponse(response);
   }
 
-  dynamic _handleResponse(http.Response response) {
+  HttpResponse _handleResponse(http.Response response) {
     const httpSuccessCodes = [200, 201];
     const httpUnauthorizedCodes = [401];
 
@@ -44,16 +44,17 @@ class HttpService {
     }
 
     if (httpSuccessCodes.contains(response.statusCode)) {
-      return jsonDecode(response.body);
+      var body = jsonDecode(response.body);
+      return HttpResponse.fromJson(body);
     }
 
     if (response.body != '') {
       var body = jsonDecode(response.body);
-      throw HttpResponseException(data: HttpResponseError.fromJson(body));
+      throw HttpResponseException(data: HttpResponse.fromJson(body));
     }
 
     throw HttpResponseException(
-      data: HttpResponseError(
+      data: HttpResponse(
         code: response.statusCode,
         message: 'Error ao tentar entrar em contato com servidor',
       ),
