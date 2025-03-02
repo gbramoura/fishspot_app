@@ -1,4 +1,5 @@
 import 'package:fishspot_app/constants/route_constants.dart';
+import 'package:fishspot_app/pages/auth_page.dart';
 import 'package:fishspot_app/pages/home_page.dart';
 import 'package:fishspot_app/pages/login_page.dart';
 import 'package:fishspot_app/pages/password/recover_password_page.dart';
@@ -22,9 +23,6 @@ void main() async {
 
   // TODO: Loadin the stuff here
   Future.delayed(Duration(seconds: 5), () {});
-
-  // TODO: Authenticate and place the correct route
-  Future.delayed(Duration(seconds: 10), () {});
 
   runApp(ChangeNotifierProvider(
     create: (context) => SettingRepository(prefs: prefs),
@@ -57,7 +55,7 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: lighMode,
       darkTheme: darkMode,
-      home: LoginPage(),
+      home: AuthPage(),
       routes: {
         RouteConstants.login: (context) => const LoginPage(),
         RouteConstants.register: (context) => const RegisterPage(),

@@ -39,10 +39,6 @@ class HttpService {
     const httpSuccessCodes = [200, 201];
     const httpUnauthorizedCodes = [401];
 
-    if (httpUnauthorizedCodes.contains(response.statusCode)) {
-      // TODO: User is unautorized, show reset preferencs and navigate to login page
-    }
-
     if (httpSuccessCodes.contains(response.statusCode)) {
       var body = jsonDecode(response.body);
       return HttpResponse.fromJson(body);
@@ -51,6 +47,15 @@ class HttpService {
     if (response.body != '') {
       var body = jsonDecode(response.body);
       throw HttpResponseException(data: HttpResponse.fromJson(body));
+    }
+
+    if (httpUnauthorizedCodes.contains(response.statusCode)) {
+      throw HttpResponseException(
+        data: HttpResponse(
+          code: response.statusCode,
+          message: 'Usuario não autenticado',
+        ),
+      );
     }
 
     throw HttpResponseException(
