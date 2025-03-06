@@ -15,73 +15,73 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final apiService = ApiService();
+  final _apiService = ApiService();
 
-  final usernameController = TextEditingController();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
-  final formGlobalKey = GlobalKey<FormState>();
+  final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  final _formGlobalKey = GlobalKey<FormState>();
 
-  bool passwordObscureText = true;
-  bool confirmPasswordObscureText = true;
-  bool loadingHttpRequest = false;
+  bool _passwordObscureText = true;
+  bool _confirmPasswordObscureText = true;
+  bool _loadingHttpRequest = false;
 
-  void handleRegisterButton() async {
-    if (!formGlobalKey.currentState!.validate()) {
+  void _handleRegisterButton() async {
+    if (!_formGlobalKey.currentState!.validate()) {
       return;
     }
 
     setState(() {
-      loadingHttpRequest = true;
+      _loadingHttpRequest = true;
     });
 
     try {
-      await apiService.register({
-        'name': usernameController.text,
-        'email': emailController.text,
-        'password': passwordController.text,
+      await _apiService.register({
+        'name': _usernameController.text,
+        'email': _emailController.text,
+        'password': _passwordController.text,
       });
 
-      renderSuccessDialog();
+      _renderSuccessDialog();
     } on HttpResponseException catch (e) {
-      renderDialog(e.data.code, e.data.message);
+      _renderDialog(e.data.code, e.data.message);
     } catch (e) {
-      renderDialog(500, null);
+      _renderDialog(500, null);
     } finally {
       setState(() {
-        loadingHttpRequest = false;
+        _loadingHttpRequest = false;
       });
     }
   }
 
-  void handlePressedPasswordObscureText() {
+  void _handlePressedPasswordObscureText() {
     setState(() {
-      passwordObscureText = !passwordObscureText;
+      _passwordObscureText = !_passwordObscureText;
     });
   }
 
-  void handlePressedConfirmPasswordObscureText() {
+  void _handlePressedConfirmPasswordObscureText() {
     setState(() {
-      confirmPasswordObscureText = !confirmPasswordObscureText;
+      _confirmPasswordObscureText = !_confirmPasswordObscureText;
     });
   }
 
-  String? handleNameValidator(String? value) {
+  String? _handleNameValidator(String? value) {
     if (value == null || value.isEmpty) {
       return 'Nome é obrigatório';
     }
     return null;
   }
 
-  String? handleMailValidator(String? value) {
+  String? _handleMailValidator(String? value) {
     if (value == null || value.isEmpty) {
       return 'E-mail é obrigatório';
     }
     return null;
   }
 
-  String? handlePasswordValidator(String? value) {
+  String? _handlePasswordValidator(String? value) {
     if (value == null || value.isEmpty) {
       return 'Senha é obrigatória';
     }
@@ -91,20 +91,20 @@ class _RegisterPageState extends State<RegisterPage> {
     return null;
   }
 
-  String? handleConfirmPasswordValidator(String? value) {
+  String? _handleConfirmPasswordValidator(String? value) {
     if (value == null || value.isEmpty) {
       return 'Confirmação de senha é obrigatória';
     }
     if (value.length < 8) {
       return 'A confirmação deve ter mais que 8 caracteres';
     }
-    if (passwordController.text != confirmPasswordController.text) {
+    if (_passwordController.text != _confirmPasswordController.text) {
       return 'As senhas não se coincidem';
     }
     return null;
   }
 
-  void renderSuccessDialog() {
+  void _renderSuccessDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -125,7 +125,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  void renderDialog(int code, String? message) {
+  void _renderDialog(int code, String? message) {
     String errorMessage =
         'Não foi possivel registrar o usuário devido a um erro desconhecido';
     String errorTitle = 'Erro ao Realizar Registro';
@@ -183,15 +183,15 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               SizedBox(height: 35),
               Form(
-                key: formGlobalKey,
+                key: _formGlobalKey,
                 child: Column(
                   children: [
                     Column(
                       children: [
                         CustomTextFormField(
-                          controller: usernameController,
+                          controller: _usernameController,
                           hintText: 'Name',
-                          validator: handleNameValidator,
+                          validator: _handleNameValidator,
                           icon: Icon(
                             Icons.person,
                             color: Theme.of(context).iconTheme.color,
@@ -199,9 +199,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         SizedBox(height: 25),
                         CustomTextFormField(
-                          controller: emailController,
+                          controller: _emailController,
                           hintText: 'E-mail',
-                          validator: handleMailValidator,
+                          validator: _handleMailValidator,
                           textInputType: TextInputType.emailAddress,
                           icon: Icon(
                             Icons.email,
@@ -210,42 +210,43 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         SizedBox(height: 25),
                         CustomTextFormField(
-                          controller: passwordController,
+                          controller: _passwordController,
                           hintText: 'Senha',
-                          validator: handlePasswordValidator,
-                          obscureText: passwordObscureText,
+                          validator: _handlePasswordValidator,
+                          obscureText: _passwordObscureText,
                           icon: Icon(
                             Icons.lock,
                             color: Theme.of(context).iconTheme.color,
                           ),
                           actionIcon: IconButton(
-                            onPressed: handlePressedPasswordObscureText,
-                            icon: renderVisibleIcon(passwordObscureText),
+                            onPressed: _handlePressedPasswordObscureText,
+                            icon: _renderVisibleIcon(_passwordObscureText),
                           ),
                         ),
                         SizedBox(height: 25),
                         CustomTextFormField(
-                          controller: confirmPasswordController,
+                          controller: _confirmPasswordController,
                           hintText: 'Confirmar Senha',
-                          validator: handleConfirmPasswordValidator,
-                          obscureText: confirmPasswordObscureText,
+                          validator: _handleConfirmPasswordValidator,
+                          obscureText: _confirmPasswordObscureText,
                           icon: Icon(
                             Icons.lock,
                             color: Theme.of(context).iconTheme.color,
                           ),
                           actionIcon: IconButton(
-                            onPressed: handlePressedConfirmPasswordObscureText,
-                            icon: renderVisibleIcon(confirmPasswordObscureText),
+                            onPressed: _handlePressedConfirmPasswordObscureText,
+                            icon:
+                                _renderVisibleIcon(_confirmPasswordObscureText),
                           ),
                         ),
                       ],
                     ),
                     SizedBox(height: 35),
                     CustomButton(
-                      onPressed: handleRegisterButton,
+                      onPressed: _handleRegisterButton,
                       fixedSize: Size(286, 48),
                       label: 'Registrar',
-                      loading: loadingHttpRequest,
+                      loading: _loadingHttpRequest,
                     ),
                   ],
                 ),
@@ -297,7 +298,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  Widget renderVisibleIcon(bool isVisible) {
+  Widget _renderVisibleIcon(bool isVisible) {
     return Icon(
       isVisible ? Icons.visibility : Icons.visibility_off,
       color: Theme.of(context).iconTheme.color,

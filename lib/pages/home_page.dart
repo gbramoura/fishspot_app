@@ -1,7 +1,9 @@
 import 'package:fishspot_app/components/custom_bottom_navigation_bar.dart';
+import 'package:fishspot_app/pages/loading_page.dart';
 import 'package:fishspot_app/pages/map/map_page.dart';
 import 'package:fishspot_app/pages/profile/profile_page.dart';
 import 'package:fishspot_app/pages/spot/spot_page.dart';
+import 'package:fishspot_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,16 +14,34 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int currentIndex = 0;
-  List<Widget> body = const [
+  int _currentIndex = 0;
+  bool _loading = false;
+  List<Widget> _body = const [
     MapPage(),
     SpotPage(),
     ProfilePage(),
   ];
 
-  handleOnTap(int index) {
+  Future<void> _handleNavigatePage(int index) async {
     setState(() {
-      currentIndex = index;
+      _currentIndex = index;
+      _loading = true;
+    });
+
+    if (!await AuthService.isUserAuthenticated(context)) {
+      if (mounted) {
+        AuthService.clearUserCredentials(context);
+        AuthService.showAuthDialog(context);
+      }
+    }
+
+    if (mounted) {
+      await AuthService.refreshUserCredentials(context);
+    }
+
+    setState(() {
+      _currentIndex = index;
+      _loading = false;
     });
   }
 
@@ -30,10 +50,10 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       extendBody: true,
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: body[currentIndex],
+      body: _loading ? LoadingPage() : _body[_currentIndex],
       bottomNavigationBar: CustomBottomNavigationBar(
-        onTap: handleOnTap,
-        currentIndex: currentIndex,
+        onTap: _handleNavigatePage,
+        currentIndex: _currentIndex,
       ),
     );
   }

@@ -11,6 +11,10 @@ class ApiService {
     return await httpService.post('auth/login', body: payload);
   }
 
+  Future<dynamic> refreshToken(Map<String, dynamic> payload) async {
+    return await httpService.post('auth/refresh-token', body: payload);
+  }
+
   Future<dynamic> isAuth(String token) async {
     return await httpService.post('auth/is-auth', body: {}, token: token);
   }

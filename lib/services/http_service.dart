@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:fishspot_app/constants/http_constants.dart';
 import 'package:fishspot_app/exceptions/http_response_exception.dart';
 import 'package:fishspot_app/models/http_response.dart';
 import 'package:http/http.dart' as http;
@@ -36,8 +37,7 @@ class HttpService {
   }
 
   HttpResponse _handleResponse(http.Response response) {
-    const httpSuccessCodes = [200, 201];
-    const httpUnauthorizedCodes = [401];
+    var httpSuccessCodes = [HTTP.Ok, HTTP.Created];
 
     if (httpSuccessCodes.contains(response.statusCode)) {
       var body = jsonDecode(response.body);
@@ -47,15 +47,6 @@ class HttpService {
     if (response.body != '') {
       var body = jsonDecode(response.body);
       throw HttpResponseException(data: HttpResponse.fromJson(body));
-    }
-
-    if (httpUnauthorizedCodes.contains(response.statusCode)) {
-      throw HttpResponseException(
-        data: HttpResponse(
-          code: response.statusCode,
-          message: 'Usuario não autenticado',
-        ),
-      );
     }
 
     throw HttpResponseException(

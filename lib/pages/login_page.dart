@@ -21,26 +21,26 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final apiService = ApiService();
 
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final formGlobalKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _formGlobalKey = GlobalKey<FormState>();
 
-  bool passwordObscureText = true;
-  bool loadingHttpRequest = false;
+  bool _passwordObscureText = true;
+  bool _loadingHttpRequest = false;
 
-  void handleLogin(context) async {
-    if (!formGlobalKey.currentState!.validate()) {
+  void _handleLogin(context) async {
+    if (!_formGlobalKey.currentState!.validate()) {
       return;
     }
 
     setState(() {
-      loadingHttpRequest = true;
+      _loadingHttpRequest = true;
     });
 
     try {
       HttpResponse response = await apiService.login({
-        'email': emailController.text,
-        'password': passwordController.text,
+        'email': _emailController.text,
+        'password': _passwordController.text,
       });
 
       var settings = Provider.of<SettingRepository>(context, listen: false);
@@ -56,23 +56,23 @@ class _LoginPageState extends State<LoginPage> {
 
       Navigator.pushNamed(context, RouteConstants.home);
     } on HttpResponseException catch (e) {
-      renderDialog(e.data.code, e.data.message);
+      _renderDialog(e.data.code, e.data.message);
     } catch (e) {
-      renderDialog(500, null);
+      _renderDialog(500, null);
     } finally {
       setState(() {
-        loadingHttpRequest = false;
+        _loadingHttpRequest = false;
       });
     }
   }
 
-  void handlePressedPasswordObscureText() {
+  void _handlePressedPasswordObscureText() {
     setState(() {
-      passwordObscureText = !passwordObscureText;
+      _passwordObscureText = !_passwordObscureText;
     });
   }
 
-  void renderDialog(int code, String? message) {
+  void _renderDialog(int code, String? message) {
     String errorMessage =
         'Não foi possivel autenticar usuario devido a um erro desconhecido';
     String errorTitle = 'Erro ao Autenticar-se';
@@ -102,14 +102,14 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  String? handleEmailValidator(String? value) {
+  String? _handleEmailValidator(String? value) {
     if (value == null || value.isEmpty) {
       return 'E-mail é obrigatória';
     }
     return null;
   }
 
-  String? handlePasswordValidator(String? value) {
+  String? _handlePasswordValidator(String? value) {
     if (value == null || value.isEmpty) {
       return 'Senha é obrigatória';
     }
@@ -154,15 +154,15 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               Form(
-                key: formGlobalKey,
+                key: _formGlobalKey,
                 child: Column(
                   children: [
                     Column(
                       children: [
                         SizedBox(height: 10),
                         CustomTextFormField(
-                          controller: emailController,
-                          validator: handleEmailValidator,
+                          controller: _emailController,
+                          validator: _handleEmailValidator,
                           hintText: 'E-mail',
                           icon: Icon(
                             Icons.email,
@@ -171,17 +171,17 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         SizedBox(height: 25),
                         CustomTextFormField(
-                          controller: passwordController,
+                          controller: _passwordController,
                           hintText: 'Senha',
-                          validator: handlePasswordValidator,
-                          obscureText: passwordObscureText,
+                          validator: _handlePasswordValidator,
+                          obscureText: _passwordObscureText,
                           icon: Icon(
                             Icons.lock,
                             color: Theme.of(context).iconTheme.color,
                           ),
                           actionIcon: IconButton(
-                            onPressed: handlePressedPasswordObscureText,
-                            icon: renderVisibleIcon(passwordObscureText),
+                            onPressed: _handlePressedPasswordObscureText,
+                            icon: _renderVisibleIcon(_passwordObscureText),
                           ),
                         ),
                       ],
@@ -213,8 +213,8 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     SizedBox(height: 55),
                     CustomButton(
-                      loading: loadingHttpRequest,
-                      onPressed: () => handleLogin(context),
+                      loading: _loadingHttpRequest,
+                      onPressed: () => _handleLogin(context),
                       fixedSize: Size(286, 48),
                       label: 'Entrar',
                     ),
@@ -268,7 +268,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget renderVisibleIcon(bool isVisible) {
+  Widget _renderVisibleIcon(bool isVisible) {
     return Icon(
       isVisible ? Icons.visibility : Icons.visibility_off,
       color: Theme.of(context).iconTheme.color,
