@@ -14,6 +14,7 @@ class HttpService {
     final response = await http.get(
       Uri.parse('$baseUrl/$path'),
       headers: {
+        'Accept-Language': 'pt-BR',
         'Authorization': 'Bearer $token',
       },
     );
@@ -28,6 +29,24 @@ class HttpService {
     final response = await http.post(
       Uri.parse('$baseUrl/$path'),
       headers: {
+        'Accept-Language': 'pt-BR',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(body),
+    );
+    return _handleResponse(response);
+  }
+
+  Future<dynamic> put(
+    String path, {
+    required Map<String, dynamic> body,
+    String? token,
+  }) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/$path'),
+      headers: {
+        'Accept-Language': 'pt-BR',
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
