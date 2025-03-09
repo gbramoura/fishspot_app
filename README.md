@@ -3,10 +3,10 @@
 Fish Spot is a mobile application designed for fishing enthusiasts to discover, register, and share their favorite fishing locations. With an intuitive interface, users can log details about their fishing experiences and connect with a community of fellow anglers.
 
 Some examples of the interface should be seen below:
-<div>
-  <img  src="https://github.com/user-attachments/assets/7319f57f-ba09-4ea0-a7a3-71db8fcb4d0d" alt="fishspot login page" style="width:250px;"/>
-  <img src="https://github.com/user-attachments/assets/e41b90a3-9afd-4df9-ab55-c4e1ff428b45" alt="fishspot register page" style="width:250px;"/>
-  <img src="https://github.com/user-attachments/assets/ba7c4e55-899d-4437-9299-18c40bc10bc9" alt="fishspot register page" style="width:250px;"/>
+
+<div align=center>
+  <img src="https://github.com/user-attachments/assets/1dca1b00-2a7c-425a-a402-776aa72b3939" alt="fishspot login page" style="width:250px;"/>
+  <img src="https://github.com/user-attachments/assets/5c8057c5-7e51-4840-8472-860356c5a565" alt="fishspot register page" style="width:250px;"/>
 </div>
 
 > These are not the final spec of FishSpot Application
