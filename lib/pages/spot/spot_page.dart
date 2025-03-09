@@ -5,10 +5,18 @@ class SpotPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size(double.infinity, 86),
-        child: Text('FishSpot'),
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        title: Text(
+          'FishSpot',
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).textTheme.headlineLarge?.color,
+            fontSize: 22,
+          ),
+        ),
       ),
       body: Center(
         child: Column(

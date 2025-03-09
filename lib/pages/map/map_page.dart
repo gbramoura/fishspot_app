@@ -5,11 +5,8 @@ class MapPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size(double.infinity, 86),
-        child: Text('FishSpot'),
-      ),
+    return Scaffold(
+      appBar: _renderAppBar(context),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -21,6 +18,34 @@ class MapPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  _renderAppBar(dynamic context) {
+    return AppBar(
+      automaticallyImplyLeading: false,
+      backgroundColor: Colors.transparent,
+      title: Row(
+        children: [
+          Text(
+            'FishSpot',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).textTheme.headlineLarge?.color,
+              fontSize: 22,
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        IconButton(
+          onPressed: () {},
+          icon: Icon(Icons.search),
+          color: Theme.of(context).textTheme.headlineLarge?.color,
+          iconSize: 32,
+        ),
+        SizedBox(width: 10)
+      ],
     );
   }
 }
