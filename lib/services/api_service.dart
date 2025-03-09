@@ -26,4 +26,8 @@ class ApiService {
   Future<dynamic> updateUser(Map<String, dynamic> payload, String token) async {
     return await httpService.put('user', body: payload, token: token);
   }
+
+  Future<dynamic> getImage(String id, String token) async {
+    return await httpService.get('resources/$id', token: token);
+  }
 }

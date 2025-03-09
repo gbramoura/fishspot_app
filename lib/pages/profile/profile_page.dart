@@ -1,26 +1,95 @@
 import 'package:fishspot_app/components/custom_button.dart';
+import 'package:fishspot_app/constants/shared_preferences_constants.dart';
+import 'package:fishspot_app/models/http_response.dart';
+import 'package:fishspot_app/pages/loading_page.dart';
+import 'package:fishspot_app/repositories/settings_repository.dart';
+import 'package:fishspot_app/services/api_service.dart';
+import 'package:fishspot_app/services/auth_service.dart';
 import 'package:fishspot_app/utils/hex_color_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  final ApiService _apiService = ApiService();
+  final Map<String, dynamic> _userProfileData = {};
+  bool _loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  _loadUserData() async {
+    setState(() {
+      _loading = true;
+    });
+
+    var settings = Provider.of<SettingRepository>(context, listen: false);
+    var token = settings.getString(SharedPreferencesConstants.jwtToken);
+
+    try {
+      AuthService.refreshUserCredentials(context);
+      HttpResponse userResponse = await _apiService.getUser(token ?? '');
+
+      _userProfileData.addAll({
+        'name': userResponse.response['name'],
+        'description': userResponse.response['description'],
+        'registries': userResponse.response['registries'],
+        'fishes': userResponse.response['fishes'],
+        'lures': userResponse.response['lures'],
+        'image_id': userResponse.response['image']
+      });
+    } catch (e) {
+      if (mounted) {
+        AuthService.clearUserCredentials(context);
+        AuthService.showInternalErrorDialog(context);
+      }
+    }
+
+    if (_userProfileData['image_id'] != null) {
+      try {
+        HttpResponse imgResponse = await _apiService.getImage(
+          _userProfileData['image_id'],
+          token ?? '',
+        );
+
+        _userProfileData.addAll({'image': imgResponse.response});
+      } catch (e) {
+        _userProfileData.addAll({'image': null});
+      }
+    }
+
+    setState(() {
+      _loading = false;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _renderAppBar(context),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _renderUserDescription(context),
-            Divider(color: HexColor('#E2E8F0'), thickness: 0.3),
-            _renderSpotRegistered(context),
-          ],
-        ),
-      ),
-    );
+    return _loading
+        ? LoadingPage()
+        : Scaffold(
+            appBar: _renderAppBar(context),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _renderUserDescription(context),
+                  Divider(color: HexColor('#E2E8F0'), thickness: 0.3),
+                  _renderSpotRegistered(context),
+                ],
+              ),
+            ),
+          );
   }
 
   _renderUserDescription(dynamic context) {
@@ -40,7 +109,8 @@ class ProfilePage extends StatelessWidget {
                 ),
                 child: Image(
                   fit: BoxFit.fill,
-                  image: AssetImage('assets/images/fish-spot-icon.png'),
+                  image: AssetImage(_userProfileData['image'] ??
+                      'assets/images/fish-spot-icon.png'),
                 ),
               ),
               SizedBox(width: 20),
@@ -49,7 +119,7 @@ class ProfilePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Gabriel Alves de Moura',
+                      _userProfileData['name'],
                       softWrap: true,
                       style: TextStyle(
                         color: Theme.of(context).textTheme.headlineLarge?.color,
@@ -58,7 +128,7 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Trabalho com programação, entretanto sou pescador nas horas vagas 🐟 🐟 🐟 🐟 🦈',
+                      _userProfileData['description'],
                       textAlign: TextAlign.start,
                       softWrap: true,
                       style: TextStyle(
@@ -78,7 +148,7 @@ class ProfilePage extends StatelessWidget {
             Expanded(
               child: Column(
                 children: [
-                  Text('1'),
+                  Text(_userProfileData['registries'] ?? '0'),
                   Text('Registros'),
                 ],
               ),
@@ -86,7 +156,7 @@ class ProfilePage extends StatelessWidget {
             Expanded(
               child: Column(
                 children: [
-                  Text('4'),
+                  Text(_userProfileData['fishes'] ?? '0'),
                   Text('Peixes'),
                 ],
               ),
@@ -94,7 +164,7 @@ class ProfilePage extends StatelessWidget {
             Expanded(
               child: Column(
                 children: [
-                  Text('6'),
+                  Text(_userProfileData['lures'] ?? '0'),
                   Text('Iscas'),
                 ],
               ),

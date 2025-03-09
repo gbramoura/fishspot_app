@@ -77,4 +77,28 @@ class AuthService {
       },
     );
   }
+
+  static void showInternalErrorDialog(dynamic context) {
+    var title = 'Erro Interno do Servidor';
+    var message =
+        'Devido a um erro desconhecido no servidor não é possivel seguir com a utilização do software';
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          type: CustomDialogAlertType.error,
+          title: title,
+          message: message,
+          button: CustomButton(
+            label: 'Ok',
+            fixedSize: Size(double.infinity, 48),
+            onPressed: () {
+              Navigator.pushNamed(context, RouteConstants.login);
+            },
+          ),
+        );
+      },
+    );
+  }
 }
