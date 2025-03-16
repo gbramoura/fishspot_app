@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'http_service.dart';
 
 class ApiService {
+  final url = '10.0.2.2:5010';
   final _httpService = HttpService(baseUrl: '10.0.2.2:5010');
 
   Future<dynamic> register(Map<String, dynamic> payload) async {
@@ -40,5 +43,16 @@ class ApiService {
     String token,
   ) async {
     return await _httpService.get('spot/by-user', token: token, query: query);
+  }
+
+  Future<dynamic> attachUserImage(Map<String, File> files, String token) async {
+    return await _httpService.uploadMultipart(
+      'resources/attach-to-user',
+      files: files,
+    );
+  }
+
+  String getResource(String id, String token) {
+    return Uri.http(url, '/resources/$id', {'token': token}).toString();
   }
 }

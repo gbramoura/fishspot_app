@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:fishspot_app/constants/http_constants.dart';
 import 'package:fishspot_app/exceptions/http_response_exception.dart';
 import 'package:fishspot_app/models/http_response.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
 
 class HttpService {
   final String baseUrl;
@@ -51,9 +54,45 @@ class HttpService {
     return _handleResponse(response);
   }
 
+  Future<HttpResponse> uploadMultipart(
+    String path, {
+    Map<String, String>? fields,
+    Map<String, File>? files,
+  }) async {
+    final url = Uri.http(baseUrl, '/$path');
+    final request = http.MultipartRequest('POST', url);
+
+    fields?.forEach((key, value) {
+      request.fields[key] = value;
+    });
+
+    files?.forEach((key, file) async {
+      var filename = file.path.split('/').last;
+      var stream = http.ByteStream(file.openRead());
+      var length = await file.length();
+      var type = MediaType.parse(
+          lookupMimeType(filename) ?? 'application/octet-stream');
+
+      var multipartFile = http.MultipartFile(
+        key,
+        stream,
+        length,
+        filename: filename,
+        contentType: type,
+      );
+
+      request.files.add(multipartFile);
+    });
+
+    final response = await request.send();
+
+    return _handleStreamResponse(response);
+  }
+
   Map<String, String> _getDefaultHeader(
     String? token, {
     bool? jsonContentType = false,
+    bool? multiPartFormData = false,
   }) {
     var header = <String, String>{
       'Accept-Language': 'pt-BR',
@@ -62,6 +101,10 @@ class HttpService {
 
     if (jsonContentType != null && jsonContentType) {
       header.addAll({'Content-Type': 'application/json'});
+    }
+
+    if (multiPartFormData != null && multiPartFormData) {
+      header.addAll({'Content-Type': 'multipart/form-data'});
     }
 
     return header;
@@ -77,6 +120,31 @@ class HttpService {
 
     if (response.body != '') {
       var body = jsonDecode(response.body);
+      throw HttpResponseException(data: HttpResponse.fromJson(body));
+    }
+
+    throw HttpResponseException(
+      data: HttpResponse(
+        code: response.statusCode,
+        message: 'Error ao tentar entrar em contato com servidor',
+      ),
+    );
+  }
+
+  Future<HttpResponse> _handleStreamResponse(
+      http.StreamedResponse response) async {
+    var httpSuccessCodes = [HTTP.Ok, HTTP.Created];
+
+    if (httpSuccessCodes.contains(response.statusCode)) {
+      var responseBody = await response.stream.bytesToString();
+      var body = jsonDecode(responseBody);
+      return HttpResponse.fromJson(body);
+    }
+
+    final responseBody = await response.stream.bytesToString();
+
+    if (responseBody != '') {
+      var body = jsonDecode(responseBody);
       throw HttpResponseException(data: HttpResponse.fromJson(body));
     }
 

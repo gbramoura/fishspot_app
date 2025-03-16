@@ -1,4 +1,5 @@
 import 'package:fishspot_app/components/custom_button.dart';
+import 'package:fishspot_app/components/custom_circle_avatar.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
@@ -58,19 +59,6 @@ class _ProfilePageState extends State<ProfilePage> {
       }
     }
 
-    if (_userProfileData['image_id'] != null) {
-      try {
-        HttpResponse imgResponse = await _apiService.getImage(
-          _userProfileData['image_id'],
-          token,
-        );
-
-        _userProfileData.addAll({'image': imgResponse.response});
-      } catch (e) {
-        _userProfileData.addAll({'image': null});
-      }
-    }
-
     try {
       HttpResponse locationsResponse = await _apiService.getUserLocations({
         'PageSize': '12',
@@ -88,6 +76,18 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       _loading = false;
     });
+  }
+
+  _getUserImagePath() {
+    var settings = Provider.of<SettingRepository>(context, listen: false);
+    var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
+
+    if (_userProfileData['image_id'] != null &&
+        _userProfileData['image_id'] != '') {
+      return _apiService.getResource(_userProfileData['image_id'], token);
+    }
+
+    return '';
   }
 
   @override
@@ -121,25 +121,18 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   _renderUserDescription(dynamic context) {
-    final userImage = _userProfileData['image'] != null
-        ? Image.network(_userProfileData['image'], fit: BoxFit.fill)
-        : Icon(Icons.person, size: 80);
-
     return Column(
       children: [
         Padding(
           padding: EdgeInsets.fromLTRB(20, 20, 20, 30),
           child: Row(
             children: [
-              Container(
-                width: 100,
+              SizedBox(
                 height: 100,
-                decoration: BoxDecoration(
-                  color: ColorsConstants.gray100,
-                  borderRadius: BorderRadius.circular(100),
-                  border: Border.all(width: 1, color: ColorsConstants.gray100),
+                width: 100,
+                child: CustomCircleAvatar(
+                  imageUrl: _getUserImagePath(),
                 ),
-                child: userImage,
               ),
               SizedBox(width: 20),
               Expanded(
