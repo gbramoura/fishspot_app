@@ -330,7 +330,10 @@ class _ProfilePageState extends State<ProfilePage> {
   _renderAppBar(dynamic context) {
     return AppBar(
       automaticallyImplyLeading: false,
-      backgroundColor: Colors.transparent,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      foregroundColor: Theme.of(context).colorScheme.surface,
+      surfaceTintColor: Theme.of(context).colorScheme.surface,
+      shadowColor: ColorsConstants.gray350,
       title: Row(
         children: [
           //SizedBox(width: 5),
