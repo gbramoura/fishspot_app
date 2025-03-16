@@ -1,13 +1,19 @@
+import 'dart:io';
+
+import 'package:fishspot_app/components/custom_alert_dialog.dart';
 import 'package:fishspot_app/components/custom_button.dart';
+import 'package:fishspot_app/components/custom_circle_avatar.dart';
 import 'package:fishspot_app/components/custom_text_form_field.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
+import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/models/http_response.dart';
 import 'package:fishspot_app/pages/loading_page.dart';
 import 'package:fishspot_app/repositories/settings_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class ProfileUserEditPage extends StatefulWidget {
@@ -19,8 +25,10 @@ class ProfileUserEditPage extends StatefulWidget {
 
 class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
   final ApiService _apiService = ApiService();
-  String _image = '';
   final _formGlobalKey = GlobalKey<FormState>();
+
+  String _image_id = '';
+  File? _image;
 
   final _nameController = TextEditingController();
   final _usernameController = TextEditingController();
@@ -50,7 +58,7 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
       AuthService.refreshUserCredentials(context);
       HttpResponse resp = await _apiService.getUser(token);
 
-      _image = resp.response['image'] ?? '';
+      _image_id = resp.response['image'] ?? '';
       _nameController.text = resp.response['name'] ?? '';
       _usernameController.text = resp.response['username'] ?? '';
       _descriptionController.text = resp.response['description'] ?? '';
@@ -70,18 +78,44 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
       }
     }
 
-    if (_image.isNotEmpty) {
-      try {
-        HttpResponse imgResponse = await _apiService.getImage(_image, token);
-        _image = imgResponse.response;
-      } catch (e) {
-        _image = '';
-      }
-    }
-
     setState(() {
       _loading = false;
     });
+  }
+
+  _handleChangeImage(dynamic context) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile == null) {
+      return;
+    }
+
+    var settings = Provider.of<SettingRepository>(context, listen: false);
+    var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
+
+    try {
+      HttpResponse response = await _apiService.attachUserImage(
+        {'file': File(pickedFile.path)},
+        token,
+      );
+
+      setState(() {
+        _image_id = response.response.toString();
+      });
+    } catch (e) {
+      _renderProfileImageError(context);
+    }
+  }
+
+  _getUserImagePath() {
+    var settings = Provider.of<SettingRepository>(context, listen: false);
+    var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
+
+    if (_image_id.isEmpty) {
+      return '';
+    }
+    return _apiService.getResource(_image_id, token);
   }
 
   @override
@@ -93,43 +127,38 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
     return Scaffold(
       appBar: _renderAppBar(context),
       body: Center(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          _renderEditProfileImage(context),
-          _renderProfileForm(),
-        ],
-      )),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _renderEditProfileImage(context),
+            _renderProfileForm(),
+          ],
+        ),
+      ),
     );
   }
 
   _renderEditProfileImage(context) {
-    final userImage = _image.isNotEmpty
-        ? Image.network(_image, fit: BoxFit.fill)
-        : Icon(Icons.person, size: 80);
-
     return Column(
       children: [
         SizedBox(height: 30),
-        Container(
-          width: 112,
-          height: 112,
-          decoration: BoxDecoration(
-            color: ColorsConstants.gray100,
-            shape: BoxShape.circle,
+        SizedBox(
+          height: 100,
+          width: 100,
+          child: CustomCircleAvatar(
+            imageUrl: _getUserImagePath(),
           ),
-          child: userImage,
         ),
         SizedBox(height: 10),
         Semantics(
           label: 'Editar Foto',
           button: true,
           child: GestureDetector(
-            onTap: () {},
+            onTap: () => _handleChangeImage(context),
             child: RichText(
               text: TextSpan(
-                text: 'Registre-se',
+                text: 'Editar Foto',
                 style: TextStyle(
                   color: ColorsConstants.blue150,
                   fontWeight: FontWeight.w600,
@@ -280,6 +309,27 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
           ),
         ],
       ),
+    );
+  }
+
+  _renderProfileImageError(dynamic context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          type: CustomDialogAlertType.error,
+          title: 'Error ao Alterar Foto de Perfil',
+          message:
+              'Devido a algum erro inesperado a foto de perfil não foi alterada',
+          button: CustomButton(
+            label: 'Ok',
+            fixedSize: Size(double.infinity, 48),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        );
+      },
     );
   }
 }

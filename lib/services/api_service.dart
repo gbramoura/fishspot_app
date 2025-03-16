@@ -49,6 +49,7 @@ class ApiService {
     return await _httpService.uploadMultipart(
       'resources/attach-to-user',
       files: files,
+      token: token,
     );
   }
 

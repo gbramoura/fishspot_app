@@ -5,8 +5,6 @@ import 'package:fishspot_app/constants/http_constants.dart';
 import 'package:fishspot_app/exceptions/http_response_exception.dart';
 import 'package:fishspot_app/models/http_response.dart';
 import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
-import 'package:mime/mime.dart';
 
 class HttpService {
   final String baseUrl;
@@ -58,31 +56,23 @@ class HttpService {
     String path, {
     Map<String, String>? fields,
     Map<String, File>? files,
+    String? token,
   }) async {
     final url = Uri.http(baseUrl, '/$path');
     final request = http.MultipartRequest('POST', url);
 
+    request.headers.addAll(_getDefaultHeader(token));
     fields?.forEach((key, value) {
       request.fields[key] = value;
     });
 
-    files?.forEach((key, file) async {
-      var filename = file.path.split('/').last;
-      var stream = http.ByteStream(file.openRead());
-      var length = await file.length();
-      var type = MediaType.parse(
-          lookupMimeType(filename) ?? 'application/octet-stream');
-
-      var multipartFile = http.MultipartFile(
-        key,
-        stream,
-        length,
-        filename: filename,
-        contentType: type,
-      );
-
-      request.files.add(multipartFile);
-    });
+    if (files != null) {
+      for (var entry in files.entries) {
+        request.files.add(
+          await http.MultipartFile.fromPath(entry.key, entry.value.path),
+        );
+      }
+    }
 
     final response = await request.send();
 

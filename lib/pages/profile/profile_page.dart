@@ -8,6 +8,7 @@ import 'package:fishspot_app/pages/loading_page.dart';
 import 'package:fishspot_app/repositories/settings_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
+import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:provider/provider.dart';
@@ -198,7 +199,7 @@ class _ProfilePageState extends State<ProfilePage> {
           child: CustomButton(
             label: 'Editar Perfil',
             onPressed: () {
-              Navigator.pushNamed(context, RouteConstants.editUser);
+              NavigationService.push(context, RouteConstants.editUser);
             },
             fixedSize: Size(double.maxFinite, 38),
           ),
@@ -350,7 +351,7 @@ class _ProfilePageState extends State<ProfilePage> {
       actions: [
         IconButton(
           onPressed: () {
-            Navigator.pushNamed(context, RouteConstants.configuration);
+            NavigationService.push(context, RouteConstants.configuration);
           },
           icon: Icon(Icons.menu),
           color: Theme.of(context).textTheme.headlineLarge?.color,
