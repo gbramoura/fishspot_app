@@ -4,6 +4,7 @@ import 'package:fishspot_app/pages/home_page.dart';
 import 'package:fishspot_app/pages/login_page.dart';
 import 'package:fishspot_app/pages/password/recover_password_page.dart';
 import 'package:fishspot_app/pages/profile/profile_user_configuration_page.dart';
+import 'package:fishspot_app/pages/profile/profile_user_edit_page.dart';
 import 'package:fishspot_app/pages/register_page.dart';
 import 'package:fishspot_app/pages/splash_page.dart';
 import 'package:fishspot_app/repositories/settings_repository.dart';
@@ -63,7 +64,8 @@ class App extends StatelessWidget {
         RouteConstants.recoverPassword: (context) => RecoverPasswordPage(),
         RouteConstants.home: (context) => HomePage(),
         RouteConstants.configuration: (context) =>
-            ProfileUserConfigurationPage()
+            ProfileUserConfigurationPage(),
+        RouteConstants.editUser: (context) => ProfileUserEditPage()
       },
     );
   }

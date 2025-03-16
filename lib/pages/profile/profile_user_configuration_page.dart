@@ -93,7 +93,7 @@ class _ProfileUserConfigurationPageState
             style: TextStyle(
               fontWeight: FontWeight.w600,
               color: Theme.of(context).textTheme.headlineLarge?.color,
-              fontSize: 22,
+              fontSize: 18,
             ),
           ),
         ],

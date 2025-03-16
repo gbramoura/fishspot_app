@@ -24,6 +24,7 @@ class ColorsConstants {
   static Color gray350 = HexColor('#35383A');
 
   // Blue
+  static Color blue150 = HexColor('#3EC2EA');
   static Color blue750 = HexColor('#2A5967');
   static Color blue700 = HexColor('#2A5967');
 }

@@ -1,4 +1,5 @@
 import 'package:fishspot_app/components/custom_button.dart';
+import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/models/http_response.dart';
@@ -6,8 +7,8 @@ import 'package:fishspot_app/pages/loading_page.dart';
 import 'package:fishspot_app/repositories/settings_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
-import 'package:fishspot_app/utils/hex_color_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -103,15 +104,17 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       appBar: _renderAppBar(context),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _renderUserDescription(context),
-            divider,
-            spotRegistered,
-          ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _renderUserDescription(context),
+              divider,
+              spotRegistered,
+            ],
+          ),
         ),
       ),
     );
@@ -119,7 +122,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   _renderUserDescription(dynamic context) {
     final userImage = _userProfileData['image'] != null
-        ? Image(fit: BoxFit.fill, image: AssetImage(_userProfileData['image']))
+        ? Image.network(_userProfileData['image'], fit: BoxFit.fill)
         : Icon(Icons.person, size: 80);
 
     return Column(
@@ -132,9 +135,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: HexColor('#D9D9D9'),
+                  color: ColorsConstants.gray100,
                   borderRadius: BorderRadius.circular(100),
-                  border: Border.all(width: 1, color: HexColor('#D9D9D9')),
+                  border: Border.all(width: 1, color: ColorsConstants.gray100),
                 ),
                 child: userImage,
               ),
@@ -201,7 +204,9 @@ class _ProfilePageState extends State<ProfilePage> {
           padding: EdgeInsets.fromLTRB(22, 0, 22, 0),
           child: CustomButton(
             label: 'Editar Perfil',
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, RouteConstants.editUser);
+            },
             fixedSize: Size(double.maxFinite, 38),
           ),
         ),
@@ -229,10 +234,11 @@ class _ProfilePageState extends State<ProfilePage> {
             primary: true,
             shrinkWrap: true,
             crossAxisCount: 3,
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
+            crossAxisSpacing: 2,
+            mainAxisSpacing: 2,
             children: _renderSpotRegistteredItems(),
-          )
+            physics: NeverScrollableScrollPhysics(),
+          ),
         ],
       ),
     );
@@ -240,31 +246,44 @@ class _ProfilePageState extends State<ProfilePage> {
 
   _renderSpotRegistteredItems() {
     return _userLocationsData.map((entry) {
-      var decoration = entry['image'] != null
-          ? AssetImage('assets/images/fish-spot-icon.png')
-          : AssetImage(entry['image']);
+      final isImageProvided = entry['image'] != null && entry['image'] != '';
+      final icon = DecorationImage(
+        image: Svg('assets/images/no-photography.svg'),
+        fit: BoxFit.none,
+      );
+
+      final image = DecorationImage(
+        image: NetworkImage(entry['image']),
+        fit: BoxFit.fill,
+      );
 
       return Container(
-        color: HexColor('#D9D9D9'),
+        color: ColorsConstants.gray100,
         child: Container(
           decoration: BoxDecoration(
-            image: DecorationImage(
-              image: decoration,
-              fit: BoxFit.fill,
-            ),
+            image: isImageProvided ? image : icon,
           ),
-          child: Column(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Container(
-                padding: EdgeInsets.fromLTRB(3, 1, 3, 1),
-                color: Color.fromRGBO(0, 0, 0, 0.35),
-                child: Text(
-                  entry['title'],
-                  style: TextStyle(
-                    color: HexColor('E2E8F0'),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(3, 0, 3, 0),
+                  height: 32,
+                  color: Color.fromRGBO(0, 0, 0, 0.35),
+                  child: Center(
+                    child: Text(
+                      entry['title'],
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: ColorsConstants.gray50,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
               ),
