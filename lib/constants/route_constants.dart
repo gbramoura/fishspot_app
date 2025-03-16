@@ -3,4 +3,5 @@ class RouteConstants {
   static String register = '/register';
   static String recoverPassword = '/recover-password';
   static String home = '/home';
+  static String configuration = '/profile-configuration';
 }
