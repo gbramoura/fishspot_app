@@ -101,4 +101,9 @@ class AuthService {
       },
     );
   }
+
+  static void logout(dynamic context) {
+    clearUserCredentials(context);
+    Navigator.pushNamed(context, RouteConstants.login);
+  }
 }

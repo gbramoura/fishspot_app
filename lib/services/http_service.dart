@@ -10,13 +10,15 @@ class HttpService {
 
   HttpService({required this.baseUrl});
 
-  Future<dynamic> get(String path, {String? token}) async {
+  Future<dynamic> get(
+    String path, {
+    String? token,
+    Map<String, dynamic>? query,
+  }) async {
+    final url = Uri.http(baseUrl, '/$path', query);
     final response = await http.get(
-      Uri.parse('$baseUrl/$path'),
-      headers: {
-        'Accept-Language': 'pt-BR',
-        'Authorization': 'Bearer $token',
-      },
+      url,
+      headers: _getDefaultHeader(token),
     );
     return _handleResponse(response);
   }
@@ -26,13 +28,10 @@ class HttpService {
     required Map<String, dynamic> body,
     String? token,
   }) async {
+    final url = Uri.http(baseUrl, '/$path');
     final response = await http.post(
-      Uri.parse('$baseUrl/$path'),
-      headers: {
-        'Accept-Language': 'pt-BR',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
+      url,
+      headers: _getDefaultHeader(token, jsonContentType: true),
       body: jsonEncode(body),
     );
     return _handleResponse(response);
@@ -43,16 +42,29 @@ class HttpService {
     required Map<String, dynamic> body,
     String? token,
   }) async {
+    final url = Uri.http(baseUrl, '/$path');
     final response = await http.put(
-      Uri.parse('$baseUrl/$path'),
-      headers: {
-        'Accept-Language': 'pt-BR',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
+      url,
+      headers: _getDefaultHeader(token, jsonContentType: true),
       body: jsonEncode(body),
     );
     return _handleResponse(response);
+  }
+
+  Map<String, String> _getDefaultHeader(
+    String? token, {
+    bool? jsonContentType = false,
+  }) {
+    var header = <String, String>{
+      'Accept-Language': 'pt-BR',
+      'Authorization': 'Bearer $token',
+    };
+
+    if (jsonContentType != null && jsonContentType) {
+      header.addAll({'Content-Type': 'application/json'});
+    }
+
+    return header;
   }
 
   HttpResponse _handleResponse(http.Response response) {

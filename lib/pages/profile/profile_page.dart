@@ -1,4 +1,5 @@
 import 'package:fishspot_app/components/custom_button.dart';
+import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/models/http_response.dart';
 import 'package:fishspot_app/pages/loading_page.dart';
@@ -19,6 +20,8 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final ApiService _apiService = ApiService();
   final Map<String, dynamic> _userProfileData = {};
+  final List<dynamic> _userLocationsData = [];
+
   bool _loading = false;
 
   @override
@@ -33,19 +36,19 @@ class _ProfilePageState extends State<ProfilePage> {
     });
 
     var settings = Provider.of<SettingRepository>(context, listen: false);
-    var token = settings.getString(SharedPreferencesConstants.jwtToken);
+    var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
     try {
       AuthService.refreshUserCredentials(context);
-      HttpResponse userResponse = await _apiService.getUser(token ?? '');
+      HttpResponse userResponse = await _apiService.getUser(token);
 
       _userProfileData.addAll({
         'name': userResponse.response['name'],
         'description': userResponse.response['description'],
-        'registries': userResponse.response['registries'],
-        'fishes': userResponse.response['fishes'],
-        'lures': userResponse.response['lures'],
-        'image_id': userResponse.response['image']
+        'image_id': userResponse.response['image'],
+        'registries': userResponse.response['spotDetails']['registries'],
+        'fishes': userResponse.response['spotDetails']['fishes'],
+        'lures': userResponse.response['spotDetails']['lures']
       });
     } catch (e) {
       if (mounted) {
@@ -58,12 +61,26 @@ class _ProfilePageState extends State<ProfilePage> {
       try {
         HttpResponse imgResponse = await _apiService.getImage(
           _userProfileData['image_id'],
-          token ?? '',
+          token,
         );
 
         _userProfileData.addAll({'image': imgResponse.response});
       } catch (e) {
         _userProfileData.addAll({'image': null});
+      }
+    }
+
+    try {
+      HttpResponse locationsResponse = await _apiService.getUserLocations({
+        'PageSize': '12',
+        'PageNumber': '1',
+      }, token);
+
+      _userLocationsData.addAll(locationsResponse.response);
+    } catch (e) {
+      if (mounted) {
+        AuthService.clearUserCredentials(context);
+        AuthService.showInternalErrorDialog(context);
       }
     }
 
@@ -74,25 +91,37 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return _loading
-        ? LoadingPage()
-        : Scaffold(
-            appBar: _renderAppBar(context),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _renderUserDescription(context),
-                  Divider(color: HexColor('#E2E8F0'), thickness: 0.3),
-                  _renderSpotRegistered(context),
-                ],
-              ),
-            ),
-          );
+    final divider =
+        Divider(color: Theme.of(context).iconTheme.color, thickness: 0.3);
+    final spotRegistered = _userLocationsData.isEmpty
+        ? _renderEmptySpotRegistered()
+        : _renderSpotRegistered(context);
+
+    if (_loading) {
+      return LoadingPage();
+    }
+
+    return Scaffold(
+      appBar: _renderAppBar(context),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _renderUserDescription(context),
+            divider,
+            spotRegistered,
+          ],
+        ),
+      ),
+    );
   }
 
   _renderUserDescription(dynamic context) {
+    final userImage = _userProfileData['image'] != null
+        ? Image(fit: BoxFit.fill, image: AssetImage(_userProfileData['image']))
+        : Icon(Icons.person, size: 80);
+
     return Column(
       children: [
         Padding(
@@ -107,11 +136,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   borderRadius: BorderRadius.circular(100),
                   border: Border.all(width: 1, color: HexColor('#D9D9D9')),
                 ),
-                child: Image(
-                  fit: BoxFit.fill,
-                  image: AssetImage(_userProfileData['image'] ??
-                      'assets/images/fish-spot-icon.png'),
-                ),
+                child: userImage,
               ),
               SizedBox(width: 20),
               Expanded(
@@ -148,7 +173,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Expanded(
               child: Column(
                 children: [
-                  Text(_userProfileData['registries'] ?? '0'),
+                  Text(_userProfileData['registries'].toString()),
                   Text('Registros'),
                 ],
               ),
@@ -156,7 +181,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Expanded(
               child: Column(
                 children: [
-                  Text(_userProfileData['fishes'] ?? '0'),
+                  Text(_userProfileData['fishes'].toString()),
                   Text('Peixes'),
                 ],
               ),
@@ -164,7 +189,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Expanded(
               child: Column(
                 children: [
-                  Text(_userProfileData['lures'] ?? '0'),
+                  Text(_userProfileData['lures'].toString()),
                   Text('Iscas'),
                 ],
               ),
@@ -200,22 +225,90 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           SizedBox(height: 15),
-          Column(
-            // TODO: Make the list after create the spot
+          GridView.count(
+            primary: true,
+            shrinkWrap: true,
+            crossAxisCount: 3,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+            children: _renderSpotRegistteredItems(),
+          )
+        ],
+      ),
+    );
+  }
+
+  _renderSpotRegistteredItems() {
+    return _userLocationsData.map((entry) {
+      var decoration = entry['image'] != null
+          ? AssetImage('assets/images/fish-spot-icon.png')
+          : AssetImage(entry['image']);
+
+      return Container(
+        color: HexColor('#D9D9D9'),
+        child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: decoration,
+              fit: BoxFit.fill,
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Container(
-                width: 124,
-                height: 124,
-                decoration: BoxDecoration(
-                  color: HexColor('#D9D9D9'),
-                  border: Border.all(width: 1, color: HexColor('#D9D9D9')),
-                ),
-                child: Image(
-                  fit: BoxFit.fill,
-                  image: AssetImage('assets/images/fish-spot-icon.png'),
+                padding: EdgeInsets.fromLTRB(3, 1, 3, 1),
+                color: Color.fromRGBO(0, 0, 0, 0.35),
+                child: Text(
+                  entry['title'],
+                  style: TextStyle(
+                    color: HexColor('E2E8F0'),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],
+          ),
+        ),
+      );
+    }).toList();
+  }
+
+  _renderEmptySpotRegistered() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Pescas Registradas',
+            style: TextStyle(
+              color: Theme.of(context).textTheme.headlineLarge?.color,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          SizedBox(height: 90),
+          Center(
+            child: Column(
+              children: [
+                Icon(
+                  Icons.no_photography,
+                  color: Theme.of(context).iconTheme.color,
+                  size: 112,
+                ),
+                Text(
+                  'Nenhuma pesca \n registrada',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Theme.of(context).iconTheme.color,
+                    fontSize: 28,
+                    fontWeight: FontWeight.w400,
+                  ),
+                )
+              ],
+            ),
           )
         ],
       ),
@@ -241,7 +334,9 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       actions: [
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, RouteConstants.configuration);
+          },
           icon: Icon(Icons.menu),
           color: Theme.of(context).textTheme.headlineLarge?.color,
           iconSize: 32,
