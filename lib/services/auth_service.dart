@@ -28,7 +28,7 @@ class AuthService {
     }
   }
 
-  static Future<void> refreshUserCredentials(dynamic context) async {
+  static Future<void> refreshCredentials(dynamic context) async {
     var settings = Provider.of<SettingRepository>(context, listen: false);
     var apiService = ApiService();
 
@@ -50,7 +50,12 @@ class AuthService {
     );
   }
 
-  static void clearUserCredentials(dynamic context) {
+  static void validate(dynamic context) async {
+    var isAuth = await isUserAuthenticated(context);
+    if (!isAuth) {}
+  }
+
+  static void clearCredentials(dynamic context) {
     var settings = Provider.of<SettingRepository>(context, listen: false);
     settings.clear();
   }
@@ -100,10 +105,5 @@ class AuthService {
         );
       },
     );
-  }
-
-  static void logout(dynamic context) {
-    clearUserCredentials(context);
-    Navigator.pushNamed(context, RouteConstants.login);
   }
 }

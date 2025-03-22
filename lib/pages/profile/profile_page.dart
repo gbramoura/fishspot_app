@@ -42,7 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
     var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
     try {
-      AuthService.refreshUserCredentials(context);
+      AuthService.refreshCredentials(context);
       HttpResponse userResponse = await _apiService.getUser(token);
 
       _userProfileData.addAll({
@@ -55,7 +55,7 @@ class _ProfilePageState extends State<ProfilePage> {
       });
     } catch (e) {
       if (mounted) {
-        AuthService.clearUserCredentials(context);
+        AuthService.clearCredentials(context);
         AuthService.showInternalErrorDialog(context);
       }
     }
@@ -69,7 +69,7 @@ class _ProfilePageState extends State<ProfilePage> {
       _userLocationsData.addAll(locationsResponse.response);
     } catch (e) {
       if (mounted) {
-        AuthService.clearUserCredentials(context);
+        AuthService.clearCredentials(context);
         AuthService.showInternalErrorDialog(context);
       }
     }

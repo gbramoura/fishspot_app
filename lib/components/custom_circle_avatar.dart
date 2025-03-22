@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:flutter/material.dart';
 
@@ -6,11 +7,7 @@ class CustomCircleAvatar extends StatelessWidget {
 
   const CustomCircleAvatar({super.key, required this.imageUrl});
 
-  Widget _handleBuilder(dynamic ctx, Widget child, ImageChunkEvent? loading) {
-    if (loading == null) {
-      return child;
-    }
-
+  Widget _handleBuilder(dynamic ctx, String url, DownloadProgress download) {
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
@@ -24,7 +21,7 @@ class CustomCircleAvatar extends StatelessWidget {
     );
   }
 
-  Widget _handleError(dynamic ctx, Object exception, StackTrace? trace) {
+  Widget _handleError(dynamic ctx, String url, dynamic obj) {
     return _renderEmptyImage();
   }
 
@@ -51,13 +48,12 @@ class CustomCircleAvatar extends StatelessWidget {
     }
 
     return ClipOval(
-      child: Image.network(
-        imageUrl,
+      child: CachedNetworkImage(
+        imageUrl: imageUrl,
         width: 100,
-        height: 100,
         fit: BoxFit.cover,
-        loadingBuilder: _handleBuilder,
-        errorBuilder: _handleError,
+        progressIndicatorBuilder: _handleBuilder,
+        errorWidget: _handleError,
       ),
     );
   }

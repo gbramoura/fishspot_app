@@ -30,13 +30,13 @@ class _HomePageState extends State<HomePage> {
 
     if (!await AuthService.isUserAuthenticated(context)) {
       if (mounted) {
-        AuthService.clearUserCredentials(context);
+        AuthService.clearCredentials(context);
         AuthService.showAuthDialog(context);
       }
     }
 
     if (mounted) {
-      await AuthService.refreshUserCredentials(context);
+      await AuthService.refreshCredentials(context);
     }
 
     setState(() {

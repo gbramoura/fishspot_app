@@ -1,6 +1,6 @@
 import 'package:fishspot_app/components/custom_button.dart';
 import 'package:fishspot_app/pages/loading_page.dart';
-import 'package:fishspot_app/services/auth_service.dart';
+import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -34,6 +34,10 @@ class _ProfileUserConfigurationPageState
     setState(() {
       _loading = false;
     });
+  }
+
+  _handleLogout() {
+    NavigationService.logout(context);
   }
 
   @override
@@ -73,9 +77,7 @@ class _ProfileUserConfigurationPageState
             SizedBox(height: 50),
             CustomButton(
               label: 'Encerrar Sessão',
-              onPressed: () {
-                AuthService.logout(context);
-              },
+              onPressed: _handleLogout,
             )
           ],
         ),

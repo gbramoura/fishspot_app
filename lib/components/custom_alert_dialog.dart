@@ -23,8 +23,6 @@ class CustomAlertDialog extends StatelessWidget {
         return AssetImage('assets/images/icons-error-150.png');
       case CustomDialogAlertType.warn:
         return AssetImage('assets/images/icons-warn-100.png');
-      default:
-        return AssetImage('assets/images/fish-spot-icon.png');
     }
   }
 

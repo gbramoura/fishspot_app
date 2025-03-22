@@ -55,7 +55,7 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
     var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
     try {
-      AuthService.refreshUserCredentials(context);
+      AuthService.refreshCredentials(context);
       HttpResponse resp = await _apiService.getUser(token);
 
       _image_id = resp.response['image'] ?? '';
@@ -73,7 +73,7 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
       }
     } catch (e) {
       if (mounted) {
-        AuthService.clearUserCredentials(context);
+        AuthService.clearCredentials(context);
         AuthService.showInternalErrorDialog(context);
       }
     }
