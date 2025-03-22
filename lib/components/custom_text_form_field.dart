@@ -9,6 +9,8 @@ class CustomTextFormField extends StatelessWidget {
   final Widget? actionIcon;
   final TextInputType? textInputType;
   final String? Function(String?)? validator;
+  final bool expands;
+  final int? maxLines;
 
   const CustomTextFormField({
     super.key,
@@ -19,6 +21,8 @@ class CustomTextFormField extends StatelessWidget {
     this.actionIcon,
     this.textInputType,
     this.validator,
+    this.expands = false,
+    this.maxLines = 1,
   });
 
   @override
@@ -33,6 +37,9 @@ class CustomTextFormField extends StatelessWidget {
         fontSize: 14,
       ),
       keyboardType: textInputType,
+      expands: expands,
+      maxLines: maxLines,
+      textAlignVertical: TextAlignVertical.top,
       decoration: InputDecoration(
         border: OutlineInputBorder(),
         prefixIcon: icon,

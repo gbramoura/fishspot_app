@@ -7,11 +7,13 @@ import 'package:fishspot_app/components/custom_text_form_field.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
+import 'package:fishspot_app/exceptions/http_response_exception.dart';
 import 'package:fishspot_app/models/http_response.dart';
 import 'package:fishspot_app/pages/loading_page.dart';
 import 'package:fishspot_app/repositories/settings_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
+import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -27,8 +29,7 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
   final ApiService _apiService = ApiService();
   final _formGlobalKey = GlobalKey<FormState>();
 
-  String _image_id = '';
-  File? _image;
+  String _imageId = '';
 
   final _nameController = TextEditingController();
   final _usernameController = TextEditingController();
@@ -51,14 +52,14 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
       _loading = true;
     });
 
-    var settings = Provider.of<SettingRepository>(context, listen: false);
-    var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
-
     try {
+      var settings = Provider.of<SettingRepository>(context, listen: false);
+      var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
+
       AuthService.refreshCredentials(context);
       HttpResponse resp = await _apiService.getUser(token);
 
-      _image_id = resp.response['image'] ?? '';
+      _imageId = resp.response['image'] ?? '';
       _nameController.text = resp.response['name'] ?? '';
       _usernameController.text = resp.response['username'] ?? '';
       _descriptionController.text = resp.response['description'] ?? '';
@@ -83,7 +84,7 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
     });
   }
 
-  _handleChangeImage(dynamic context) async {
+  _handleChangeImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
@@ -91,20 +92,53 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
       return;
     }
 
-    var settings = Provider.of<SettingRepository>(context, listen: false);
-    var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
-
     try {
-      HttpResponse response = await _apiService.attachUserImage(
-        {'file': File(pickedFile.path)},
-        token,
-      );
+      if (!mounted) return;
+      var settings = Provider.of<SettingRepository>(context, listen: false);
+      var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
+      var payload = {'file': File(pickedFile.path)};
+
+      HttpResponse response = await _apiService.attachUserImage(payload, token);
 
       setState(() {
-        _image_id = response.response.toString();
+        _imageId = response.response.toString();
       });
     } catch (e) {
+      if (!mounted) return;
       _renderProfileImageError(context);
+    }
+  }
+
+  _handleUpdate() async {
+    if (!_formGlobalKey.currentState!.validate()) {
+      return;
+    }
+
+    try {
+      var settings = Provider.of<SettingRepository>(context, listen: false);
+      var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
+
+      var strNumber = _numberController.text;
+      var payload = {
+        'name': _nameController.text,
+        'username': _usernameController.text,
+        'description': _descriptionController.text,
+        'address': {
+          'street': _streetController.text,
+          'number': int.parse(strNumber.isEmpty ? '0' : strNumber),
+          'neighborhood': _neighborhoodController.text,
+          'zipCode': _zipCodeController.text,
+        }
+      };
+
+      await _apiService.updateUser(payload, token);
+
+      if (!mounted) return;
+      NavigationService.pop(context);
+    } on HttpResponseException catch (e) {
+      _renderDialog(e.data.code, e.data.message);
+    } catch (e) {
+      _renderDialog(500, null);
     }
   }
 
@@ -112,10 +146,65 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
     var settings = Provider.of<SettingRepository>(context, listen: false);
     var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
-    if (_image_id.isEmpty) {
-      return '';
+    return _imageId.isEmpty ? '' : _apiService.getResource(_imageId, token);
+  }
+
+  String? _nameValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Nome não pode ser vazio';
     }
-    return _apiService.getResource(_image_id, token);
+    if (value.length > 245) {
+      return 'Numero maximo de 245 caracters atingida';
+    }
+    return null;
+  }
+
+  String? _usernameValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Nome de usuário não pode ser vazio';
+    }
+    if (value.length > 20) {
+      return 'Numero maximo de 20 caracters atingida';
+    }
+    return null;
+  }
+
+  String? _descriptionValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Descrição não pode ser vazio';
+    }
+    if (value.length > 245) {
+      return 'Numero maximo de 245 caracters atingida';
+    }
+    return null;
+  }
+
+  String? _streetValidator(String? value) {
+    if (value != null && value.length > 245) {
+      return 'Numero maximo de 245 caracters atingida';
+    }
+    return null;
+  }
+
+  String? _numberValidator(String? value) {
+    if (value != null && value.length > 8) {
+      return 'Numero maximo de caracters atingida';
+    }
+    return null;
+  }
+
+  String? _neighborhoodValidator(String? value) {
+    if (value != null && value.length > 245) {
+      return 'Numero maximo de 245 caracters atingida';
+    }
+    return null;
+  }
+
+  String? _zipCodeValidator(String? value) {
+    if (value != null && value.length > 8) {
+      return 'Numero maximo de 8 caracters atingida';
+    }
+    return null;
   }
 
   @override
@@ -126,14 +215,16 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
 
     return Scaffold(
       appBar: _renderAppBar(context),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _renderEditProfileImage(context),
-            _renderProfileForm(),
-          ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _renderEditProfileImage(context),
+              _renderProfileForm(),
+            ],
+          ),
         ),
       ),
     );
@@ -155,7 +246,7 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
           label: 'Editar Foto',
           button: true,
           child: GestureDetector(
-            onTap: () => _handleChangeImage(context),
+            onTap: () => _handleChangeImage(),
             child: RichText(
               text: TextSpan(
                 text: 'Editar Foto',
@@ -185,6 +276,7 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
               children: [
                 SizedBox(height: 35),
                 CustomTextFormField(
+                  validator: _nameValidator,
                   controller: _nameController,
                   hintText: 'Name',
                   icon: Icon(
@@ -194,6 +286,7 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
                 ),
                 SizedBox(height: 20),
                 CustomTextFormField(
+                  validator: _usernameValidator,
                   controller: _usernameController,
                   hintText: 'Nome de usuário',
                   icon: Icon(
@@ -202,9 +295,17 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
                   ),
                 ),
                 SizedBox(height: 20),
-                CustomTextFormField(
-                  controller: _descriptionController,
-                  hintText: 'Descrição',
+                SizedBox(
+                  height: 120,
+                  width: double.infinity,
+                  child: CustomTextFormField(
+                    validator: _descriptionValidator,
+                    controller: _descriptionController,
+                    textInputType: TextInputType.multiline,
+                    hintText: 'Descrição',
+                    expands: true,
+                    maxLines: null,
+                  ),
                 ),
                 SizedBox(height: 45),
                 Text(
@@ -225,10 +326,12 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
                 ),
                 SizedBox(height: 10),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Flexible(
                       flex: 3,
                       child: CustomTextFormField(
+                        validator: _streetValidator,
                         controller: _streetController,
                         hintText: 'Rua',
                         icon: Icon(
@@ -241,6 +344,7 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
                     Flexible(
                       flex: 1,
                       child: CustomTextFormField(
+                        validator: _numberValidator,
                         controller: _numberController,
                         hintText: 'N°',
                       ),
@@ -249,10 +353,12 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
                 ),
                 SizedBox(height: 20),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Flexible(
                       flex: 3,
                       child: CustomTextFormField(
+                        validator: _neighborhoodValidator,
                         controller: _neighborhoodController,
                         hintText: 'Bairro',
                         icon: Icon(
@@ -265,6 +371,7 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
                     Flexible(
                       flex: 2,
                       child: CustomTextFormField(
+                        validator: _zipCodeValidator,
                         controller: _zipCodeController,
                         hintText: 'CEP',
                         icon: Icon(
@@ -282,7 +389,7 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
                     CustomButton(
                       label: 'Confirmar',
                       fixedSize: Size(182, 48),
-                      onPressed: () {},
+                      onPressed: () => _handleUpdate(),
                     ),
                   ],
                 ),
@@ -319,10 +426,39 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
         return CustomAlertDialog(
           type: CustomDialogAlertType.error,
           title: 'Error ao Alterar Foto de Perfil',
-          message:
-              'Devido a algum erro inesperado a foto de perfil não foi alterada',
+          message: '',
           button: CustomButton(
             label: 'Ok',
+            fixedSize: Size(double.infinity, 48),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  void _renderDialog(int code, String? message) {
+    String errorTitle = 'Error ao Alterar Foto de Perfil';
+    String errorMessage =
+        'Devido a algum erro inesperado a foto de perfil não foi alterada';
+    String errorButtonLabel = 'Tentar Novamente';
+
+    String warnTitle = 'Alteração não Realizado';
+    String warnMessage = message ?? '';
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          type: code == 400
+              ? CustomDialogAlertType.warn
+              : CustomDialogAlertType.error,
+          title: code == 400 ? warnTitle : errorTitle,
+          message: code == 400 ? warnMessage : errorMessage,
+          button: CustomButton(
+            label: code == 400 ? 'Ok' : errorButtonLabel,
             fixedSize: Size(double.infinity, 48),
             onPressed: () {
               Navigator.pop(context);

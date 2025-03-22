@@ -38,12 +38,19 @@ class _ProfilePageState extends State<ProfilePage> {
       _loading = true;
     });
 
+    _userLocationsData.clear();
+    _userProfileData.clear();
+
     var settings = Provider.of<SettingRepository>(context, listen: false);
     var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
     try {
       AuthService.refreshCredentials(context);
       HttpResponse userResponse = await _apiService.getUser(token);
+      HttpResponse locationsResponse = await _apiService.getUserLocations({
+        'PageSize': '12',
+        'PageNumber': '1',
+      }, token);
 
       _userProfileData.addAll({
         'name': userResponse.response['name'],
@@ -53,18 +60,6 @@ class _ProfilePageState extends State<ProfilePage> {
         'fishes': userResponse.response['spotDetails']['fishes'],
         'lures': userResponse.response['spotDetails']['lures']
       });
-    } catch (e) {
-      if (mounted) {
-        AuthService.clearCredentials(context);
-        AuthService.showInternalErrorDialog(context);
-      }
-    }
-
-    try {
-      HttpResponse locationsResponse = await _apiService.getUserLocations({
-        'PageSize': '12',
-        'PageNumber': '1',
-      }, token);
 
       _userLocationsData.addAll(locationsResponse.response);
     } catch (e) {
@@ -93,28 +88,34 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final divider =
-        Divider(color: Theme.of(context).iconTheme.color, thickness: 0.3);
-    final spotRegistered = _userLocationsData.isEmpty
-        ? _renderEmptySpotRegistered()
-        : _renderSpotRegistered(context);
-
     if (_loading) {
       return LoadingPage();
     }
 
+    final divider = Divider(
+      color: Theme.of(context).iconTheme.color,
+      thickness: 0.3,
+    );
+    final spotRegistered = _userLocationsData.isEmpty
+        ? _renderEmptySpotRegistered()
+        : _renderSpotRegistered(context);
+
     return Scaffold(
       appBar: _renderAppBar(context),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _renderUserDescription(context),
-              divider,
-              spotRegistered,
-            ],
+      body: RefreshIndicator(
+        color: Theme.of(context).textTheme.headlineLarge?.color,
+        onRefresh: () => _loadUserData(),
+        child: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _renderUserDescription(context),
+                divider,
+                spotRegistered,
+              ],
+            ),
           ),
         ),
       ),

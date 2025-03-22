@@ -14,7 +14,7 @@ class NavigationService {
     Navigator.pushNamed(context, route);
   }
 
-  static void pop(dynamic context, String route) async {
+  static void pop(dynamic context) async {
     if (!await AuthService.isUserAuthenticated(context)) {
       AuthService.clearCredentials(context);
       AuthService.showAuthDialog(context);
