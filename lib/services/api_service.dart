@@ -1,10 +1,12 @@
 import 'dart:io';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'http_service.dart';
 
 class ApiService {
-  final url = '10.0.2.2:5010';
-  final _httpService = HttpService(baseUrl: '10.0.2.2:5010');
+  final _url = dotenv.get('API_BASE_URL');
+  final _httpService = HttpService(baseUrl: dotenv.get('API_BASE_URL'));
 
   Future<dynamic> register(Map<String, dynamic> payload) async {
     return await _httpService.post('auth/register', body: payload);
@@ -54,6 +56,6 @@ class ApiService {
   }
 
   String getResource(String id, String token) {
-    return Uri.http(url, '/resources/$id', {'token': token}).toString();
+    return Uri.https(_url, '/resources/$id', {'token': token}).toString();
   }
 }

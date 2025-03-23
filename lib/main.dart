@@ -11,6 +11,7 @@ import 'package:fishspot_app/repositories/settings_repository.dart';
 import 'package:fishspot_app/theme/dark_theme.dart';
 import 'package:fishspot_app/theme/light_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,8 +24,7 @@ void main() async {
     child: const BuildingApp(),
   ));
 
-  // TODO: Loadin the stuff here
-  Future.delayed(Duration(seconds: 5), () {});
+  await dotenv.load(fileName: '.env');
 
   runApp(ChangeNotifierProvider(
     create: (context) => SettingRepository(prefs: prefs),

@@ -16,7 +16,7 @@ class HttpService {
     String? token,
     Map<String, dynamic>? query,
   }) async {
-    final url = Uri.http(baseUrl, '/$path', query);
+    final url = Uri.https(baseUrl, '/$path', query);
     final response = await http.get(
       url,
       headers: _getDefaultHeader(token),
@@ -29,7 +29,7 @@ class HttpService {
     required Map<String, dynamic> body,
     String? token,
   }) async {
-    final url = Uri.http(baseUrl, '/$path');
+    final url = Uri.https(baseUrl, '/$path');
     final response = await http.post(
       url,
       headers: _getDefaultHeader(token, jsonContentType: true),
@@ -43,7 +43,7 @@ class HttpService {
     required Map<String, dynamic> body,
     String? token,
   }) async {
-    final url = Uri.http(baseUrl, '/$path');
+    final url = Uri.https(baseUrl, '/$path');
     final response = await http.put(
       url,
       headers: _getDefaultHeader(token, jsonContentType: true),
@@ -58,7 +58,7 @@ class HttpService {
     Map<String, File>? files,
     String? token,
   }) async {
-    final url = Uri.http(baseUrl, '/$path');
+    final url = Uri.https(baseUrl, '/$path');
     final request = http.MultipartRequest('POST', url);
 
     request.headers.addAll(_getDefaultHeader(token));
