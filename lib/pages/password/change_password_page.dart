@@ -1,3 +1,4 @@
+import 'package:fishspot_app/components/custom_text_button.dart';
 import 'package:flutter/material.dart';
 
 import '../../components/custom_button.dart';
@@ -84,29 +85,16 @@ class ChangePasswordPage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 5),
-                  Semantics(
+                  CustomTextButton(
                     label: 'Cancelar',
-                    button: true,
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: RichText(
-                        text: TextSpan(
-                          text: 'Cancelar',
-                          style: TextStyle(
-                            color:
-                                Theme.of(context).textTheme.labelSmall?.color,
-                            fontWeight: Theme.of(context)
-                                .textTheme
-                                .labelSmall
-                                ?.fontWeight,
-                            fontSize: Theme.of(context)
-                                .textTheme
-                                .labelSmall
-                                ?.fontSize,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ),
+                    onTap: () {},
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.labelSmall?.color,
+                      fontWeight:
+                          Theme.of(context).textTheme.labelSmall?.fontWeight,
+                      fontSize:
+                          Theme.of(context).textTheme.labelSmall?.fontSize,
+                      decoration: TextDecoration.underline,
                     ),
                   ),
                 ],

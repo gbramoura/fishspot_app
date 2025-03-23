@@ -59,8 +59,8 @@ class App extends StatelessWidget {
       darkTheme: darkMode,
       home: AuthPage(),
       routes: {
-        RouteConstants.login: (context) => const LoginPage(),
-        RouteConstants.register: (context) => const RegisterPage(),
+        RouteConstants.login: (context) => LoginPage(),
+        RouteConstants.register: (context) => RegisterPage(),
         RouteConstants.recoverPassword: (context) => RecoverPasswordPage(),
         RouteConstants.home: (context) => HomePage(),
         RouteConstants.configuration: (context) =>

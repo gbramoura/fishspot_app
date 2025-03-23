@@ -13,34 +13,40 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  final apiService = ApiService();
+  final _service = ApiService();
 
   @override
   initState() {
     super.initState();
-    validate();
+    _validate();
   }
 
-  Future<void> validate() async {
+  Future<void> _validate() async {
     var settings = Provider.of<SettingRepository>(context, listen: false);
 
     try {
       String? token = settings.getString(SharedPreferencesConstants.jwtToken);
 
       if (token == null || token.isEmpty) {
-        Navigator.pushNamed(context, RouteConstants.login);
+        return _callNavigator(RouteConstants.login);
       }
 
-      await apiService.isAuth(token ?? '');
+      await _service.isAuth(token ?? '');
 
       if (mounted) {
-        Navigator.pushNamed(context, RouteConstants.home);
+        _callNavigator(RouteConstants.home);
       }
     } catch (e) {
       if (mounted) {
-        Navigator.pushNamed(context, RouteConstants.login);
+        _callNavigator(RouteConstants.login);
       }
     }
+  }
+
+  _callNavigator(String route) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.pushNamed(context, route);
+    });
   }
 
   @override

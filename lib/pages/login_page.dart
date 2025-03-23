@@ -1,5 +1,6 @@
 import 'package:fishspot_app/components/custom_alert_dialog.dart';
 import 'package:fishspot_app/components/custom_button.dart';
+import 'package:fishspot_app/components/custom_text_button.dart';
 import 'package:fishspot_app/components/custom_text_form_field.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
@@ -71,6 +72,14 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       _passwordObscureText = !_passwordObscureText;
     });
+  }
+
+  void _handleForgetPassword() {
+    Navigator.pushNamed(context, RouteConstants.recoverPassword);
+  }
+
+  void _handleRegister() {
+    Navigator.pushNamed(context, RouteConstants.register);
   }
 
   void _renderDialog(int code, String? message) {
@@ -189,28 +198,16 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ],
                       ),
+                      SizedBox(height: 5),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Padding(
                             padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-                            child: Semantics(
+                            child: CustomTextButton(
                               label: 'Esqueceu sua senha?',
-                              button: true,
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                      context, RouteConstants.recoverPassword);
-                                },
-                                child: RichText(
-                                  text: TextSpan(
-                                    text: 'Esqueceu sua senha?',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .displayMedium,
-                                  ),
-                                ),
-                              ),
+                              onTap: () => _handleForgetPassword(),
+                              style: Theme.of(context).textTheme.displayMedium,
                             ),
                           ),
                         ],
@@ -225,7 +222,7 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   ),
                 ),
-                SizedBox(height: 15),
+                SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -236,33 +233,18 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     SizedBox(width: 5),
-                    Semantics(
+                    CustomTextButton(
                       label: 'Registre-se',
-                      button: true,
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, RouteConstants.register);
-                        },
-                        child: RichText(
-                          text: TextSpan(
-                            text: 'Registre-se',
-                            style: TextStyle(
-                              color:
-                                  Theme.of(context).textTheme.labelSmall?.color,
-                              fontWeight: Theme.of(context)
-                                  .textTheme
-                                  .labelSmall
-                                  ?.fontWeight,
-                              fontSize: Theme.of(context)
-                                  .textTheme
-                                  .labelSmall
-                                  ?.fontSize,
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                        ),
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.labelSmall?.color,
+                        fontWeight:
+                            Theme.of(context).textTheme.labelSmall?.fontWeight,
+                        fontSize:
+                            Theme.of(context).textTheme.labelSmall?.fontSize,
+                        decoration: TextDecoration.underline,
                       ),
-                    ),
+                      onTap: () => _handleRegister(),
+                    )
                   ],
                 )
               ],

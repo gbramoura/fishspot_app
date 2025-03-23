@@ -1,5 +1,6 @@
 import 'package:fishspot_app/components/custom_alert_dialog.dart';
 import 'package:fishspot_app/components/custom_button.dart';
+import 'package:fishspot_app/components/custom_text_button.dart';
 import 'package:fishspot_app/components/custom_text_form_field.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
@@ -251,7 +252,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ],
                 ),
               ),
-              SizedBox(height: 15),
+              SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -262,32 +263,19 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                   SizedBox(width: 5),
-                  Semantics(
+                  CustomTextButton(
                     label: 'Entre',
-                    button: true,
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: RichText(
-                        text: TextSpan(
-                          text: 'Entre',
-                          style: TextStyle(
-                            color:
-                                Theme.of(context).textTheme.labelSmall?.color,
-                            fontWeight: Theme.of(context)
-                                .textTheme
-                                .labelSmall
-                                ?.fontWeight,
-                            fontSize: Theme.of(context)
-                                .textTheme
-                                .labelSmall
-                                ?.fontSize,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ),
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.labelSmall?.color,
+                      fontWeight:
+                          Theme.of(context).textTheme.labelSmall?.fontWeight,
+                      fontSize:
+                          Theme.of(context).textTheme.labelSmall?.fontSize,
+                      decoration: TextDecoration.underline,
                     ),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
                   ),
                 ],
               )
