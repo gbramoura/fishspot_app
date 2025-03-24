@@ -4,7 +4,10 @@ import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/models/http_response.dart';
+import 'package:fishspot_app/models/spot_location.dart';
+import 'package:fishspot_app/models/user_profile.dart';
 import 'package:fishspot_app/pages/loading_page.dart';
+import 'package:fishspot_app/pages/profile/profile_user_spot_view_page.dart';
 import 'package:fishspot_app/repositories/settings_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
@@ -22,9 +25,8 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final ApiService _apiService = ApiService();
-  final Map<String, dynamic> _userProfileData = {};
-  final List<dynamic> _userLocationsData = [];
-
+  final List<SpotLocation> _userLocations = [];
+  UserProfile _userProfile = UserProfile(username: '', name: '', email: '');
   bool _loading = false;
 
   @override
@@ -38,9 +40,6 @@ class _ProfilePageState extends State<ProfilePage> {
       _loading = true;
     });
 
-    _userLocationsData.clear();
-    _userProfileData.clear();
-
     var settings = Provider.of<SettingRepository>(context, listen: false);
     var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
@@ -52,16 +51,10 @@ class _ProfilePageState extends State<ProfilePage> {
         'PageNumber': '1',
       }, token);
 
-      _userProfileData.addAll({
-        'name': userResponse.response['name'],
-        'description': userResponse.response['description'],
-        'image_id': userResponse.response['image'],
-        'registries': userResponse.response['spotDetails']['registries'],
-        'fishes': userResponse.response['spotDetails']['fishes'],
-        'lures': userResponse.response['spotDetails']['lures']
-      });
+      _userProfile = UserProfile.fromJson(userResponse.response);
 
-      _userLocationsData.addAll(locationsResponse.response);
+      _userLocations.clear();
+      _userLocations.addAll(_parseFishingSpots(locationsResponse.response));
     } catch (e) {
       if (mounted) {
         AuthService.clearCredentials(context);
@@ -74,15 +67,17 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
+  List<SpotLocation> _parseFishingSpots(List<dynamic> jsonList) {
+    return jsonList.map((json) => SpotLocation.fromJson(json)).toList();
+  }
+
   _getUserImagePath() {
     var settings = Provider.of<SettingRepository>(context, listen: false);
     var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
-    if (_userProfileData['image_id'] != null &&
-        _userProfileData['image_id'] != '') {
-      return _apiService.getResource(_userProfileData['image_id'], token);
+    if (_userProfile.image != null) {
+      return _apiService.getResource(_userProfile.image!, token);
     }
-
     return '';
   }
 
@@ -96,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage> {
       color: Theme.of(context).iconTheme.color,
       thickness: 0.3,
     );
-    final spotRegistered = _userLocationsData.isEmpty
+    final spotRegistered = _userLocations.isEmpty
         ? _renderEmptySpotRegistered()
         : _renderSpotRegistered(context);
 
@@ -140,9 +135,10 @@ class _ProfilePageState extends State<ProfilePage> {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      _userProfileData['name'],
+                      _userProfile.name,
                       softWrap: true,
                       style: TextStyle(
                         color: Theme.of(context).textTheme.headlineLarge?.color,
@@ -151,7 +147,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     Text(
-                      _userProfileData['description'],
+                      _userProfile.description!,
                       textAlign: TextAlign.start,
                       softWrap: true,
                       style: TextStyle(
@@ -171,7 +167,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Expanded(
               child: Column(
                 children: [
-                  Text(_userProfileData['registries'].toString()),
+                  Text(_userProfile.spotDetails!.registries.toString()),
                   Text('Registros'),
                 ],
               ),
@@ -179,7 +175,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Expanded(
               child: Column(
                 children: [
-                  Text(_userProfileData['fishes'].toString()),
+                  Text(_userProfile.spotDetails!.fishes.toString()),
                   Text('Peixes'),
                 ],
               ),
@@ -187,7 +183,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Expanded(
               child: Column(
                 children: [
-                  Text(_userProfileData['lures'].toString()),
+                  Text(_userProfile.spotDetails!.lures.toString()),
                   Text('Iscas'),
                 ],
               ),
@@ -200,7 +196,7 @@ class _ProfilePageState extends State<ProfilePage> {
           child: CustomButton(
             label: 'Editar Perfil',
             onPressed: () {
-              NavigationService.push(context, RouteConstants.editUser);
+              NavigationService.pushNamed(context, RouteConstants.editUser);
             },
             fixedSize: Size(double.maxFinite, 38),
           ),
@@ -240,49 +236,59 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   _renderSpotRegistteredItems() {
-    return _userLocationsData.map((entry) {
-      final isImageProvided = entry['image'] != null && entry['image'] != '';
+    return _userLocations.map((entry) {
+      final isImageProvided = entry.image != null && entry.image != '';
       final icon = DecorationImage(
         image: Svg('assets/images/no-photography.svg'),
         fit: BoxFit.none,
       );
 
       final image = DecorationImage(
-        image: NetworkImage(entry['image']),
+        image: NetworkImage(entry.image!),
         fit: BoxFit.fill,
       );
 
-      return Container(
-        color: ColorsConstants.gray100,
+      return GestureDetector(
+        onTap: () {
+          NavigationService.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProfileUserSpotViewPage(spotId: entry.id),
+            ),
+          );
+        },
         child: Container(
-          decoration: BoxDecoration(
-            image: isImageProvided ? image : icon,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Expanded(
-                child: Container(
-                  padding: EdgeInsets.fromLTRB(3, 0, 3, 0),
-                  height: 32,
-                  color: Color.fromRGBO(0, 0, 0, 0.35),
-                  child: Center(
-                    child: Text(
-                      entry['title'],
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: ColorsConstants.gray50,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
+          color: ColorsConstants.gray100,
+          child: Container(
+            decoration: BoxDecoration(
+              image: isImageProvided ? image : icon,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.fromLTRB(3, 0, 3, 0),
+                    height: 32,
+                    color: Color.fromRGBO(0, 0, 0, 0.35),
+                    child: Center(
+                      child: Text(
+                        entry.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: ColorsConstants.gray50,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -352,7 +358,7 @@ class _ProfilePageState extends State<ProfilePage> {
       actions: [
         IconButton(
           onPressed: () {
-            NavigationService.push(context, RouteConstants.configuration);
+            NavigationService.pushNamed(context, RouteConstants.configuration);
           },
           icon: Icon(Icons.menu),
           color: Theme.of(context).textTheme.headlineLarge?.color,

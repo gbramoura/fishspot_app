@@ -9,6 +9,7 @@ import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/exceptions/http_response_exception.dart';
 import 'package:fishspot_app/models/http_response.dart';
+import 'package:fishspot_app/models/user_profile.dart';
 import 'package:fishspot_app/pages/loading_page.dart';
 import 'package:fishspot_app/repositories/settings_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
@@ -22,15 +23,12 @@ class ProfileUserEditPage extends StatefulWidget {
   const ProfileUserEditPage({super.key});
 
   @override
-  State<ProfileUserEditPage> createState() => _ProfileUserEditPagePageState();
+  State<ProfileUserEditPage> createState() => _ProfileUserEditPageState();
 }
 
-class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
+class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
   final ApiService _apiService = ApiService();
   final _formGlobalKey = GlobalKey<FormState>();
-
-  String _imageId = '';
-
   final _nameController = TextEditingController();
   final _usernameController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -39,6 +37,7 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
   final _neighborhoodController = TextEditingController();
   final _zipCodeController = TextEditingController();
 
+  String _imageId = '';
   bool _loading = false;
 
   @override
@@ -58,19 +57,18 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
 
       AuthService.refreshCredentials(context);
       HttpResponse resp = await _apiService.getUser(token);
+      UserProfile user = UserProfile.fromJson(resp.response);
 
-      _imageId = resp.response['image'] ?? '';
-      _nameController.text = resp.response['name'] ?? '';
-      _usernameController.text = resp.response['username'] ?? '';
-      _descriptionController.text = resp.response['description'] ?? '';
-      _streetController.text = resp.response['address']['street'] ?? '';
-      _neighborhoodController.text =
-          resp.response['address']['neighborhood'] ?? '';
-      _zipCodeController.text = resp.response['address']['zipCode'] ?? '';
+      _imageId = user.image ?? '';
+      _nameController.text = user.name;
+      _usernameController.text = user.username;
+      _descriptionController.text = user.description ?? '';
+      _streetController.text = user.address?.street ?? '';
+      _neighborhoodController.text = user.address?.neighborhood ?? '';
+      _zipCodeController.text = user.address?.zipCode ?? '';
 
-      if (resp.response['address']['number'] != null &&
-          resp.response['address']['number'] > 0) {
-        _numberController.text = resp.response['address']['number'].toString();
+      if (user.address?.number != null && user.address!.number > 0) {
+        _numberController.text = user.address!.number.toString();
       }
     } catch (e) {
       if (mounted) {
@@ -393,6 +391,7 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
                     ),
                   ],
                 ),
+                SizedBox(height: 10),
               ],
             )
           ],
@@ -403,7 +402,10 @@ class _ProfileUserEditPagePageState extends State<ProfileUserEditPage> {
 
   _renderAppBar(dynamic context) {
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      foregroundColor: Theme.of(context).colorScheme.surface,
+      surfaceTintColor: Theme.of(context).colorScheme.surface,
+      shadowColor: ColorsConstants.gray350,
       title: Row(
         children: [
           Text(
