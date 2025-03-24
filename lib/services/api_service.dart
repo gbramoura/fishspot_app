@@ -58,4 +58,8 @@ class ApiService {
   String getResource(String id, String token) {
     return Uri.https(_url, '/resources/$id', {'token': token}).toString();
   }
+
+  Future<dynamic> getSpot(String id, String token) async {
+    return await _httpService.get('spot/$id', token: token);
+  }
 }
