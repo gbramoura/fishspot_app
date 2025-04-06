@@ -46,7 +46,6 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
 
       HttpResponse resp = await _apiService.getSpot(widget.spotId, token);
       setState(() {
-        _loading = false;
         _spot = Spot.fromJson(resp.response);
       });
 
@@ -70,39 +69,30 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
     return _apiService.getResource(id, token);
   }
 
-  _getDifficultyColor(String rate) {
-    switch (rate) {
-      case 'VeryEasy':
-        return ColorsConstants.green50;
-      case 'Easy':
-        return ColorsConstants.green100;
-      case 'Medium':
-        return ColorsConstants.yellow50;
-      case 'Hard':
-        return ColorsConstants.red100;
-      case 'VeryHard':
-        return ColorsConstants.red100;
-      default:
-        return Theme.of(context).textTheme.titleLarge?.color;
-    }
-  }
+  _getDifficultyColor(String rate) => switch (rate) {
+        'VeryEasy' => ColorsConstants.green50,
+        'Easy' => ColorsConstants.green100,
+        'Medium' => ColorsConstants.yellow50,
+        'Hard' => ColorsConstants.red100,
+        'VeryHard' => ColorsConstants.red100,
+        _ => Theme.of(context).textTheme.titleLarge?.color,
+      };
 
-  _getRiskColor(String rate) {
-    switch (rate) {
-      case 'VeryLow':
-        return ColorsConstants.green50;
-      case 'Low':
-        return ColorsConstants.green100;
-      case 'Medium':
-        return ColorsConstants.yellow50;
-      case 'High':
-        return ColorsConstants.red100;
-      case 'VeryHigh':
-        return ColorsConstants.red100;
-      default:
-        return Theme.of(context).textTheme.titleLarge?.color;
-    }
-  }
+  _getRiskColor(String rate) => switch (rate) {
+        'VeryLow' => ColorsConstants.green50,
+        'Low' => ColorsConstants.green100,
+        'Medium' => ColorsConstants.yellow50,
+        'High' => ColorsConstants.red100,
+        'VeryHigh' => ColorsConstants.red100,
+        _ => Theme.of(context).textTheme.titleLarge?.color,
+      };
+
+  _getUnitMeasure(String? unit) => switch (unit) {
+        'Grams' => 'g',
+        'Kilograms' => 'Kg',
+        'Ton' => 'T',
+        _ => '',
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -112,16 +102,14 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
 
     return Scaffold(
       appBar: _renderAppBar(context),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _renderHeader(context),
-            _renderBodyImages(context),
-            _renderSpotTab(context)
-          ],
-        ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          _renderHeader(context),
+          _renderBodyImages(context),
+          _renderTabs(context)
+        ],
       ),
     );
   }
@@ -143,85 +131,9 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
             ),
           ),
           SizedBox(height: 10),
-          Row(
-            children: [
-              Text(
-                'Nivel de Risco: ',
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.titleLarge?.color,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                ),
-              ),
-              Text(
-                '${_spot?.locationRisk.rate}',
-                style: TextStyle(
-                  color: _getRiskColor(_spot?.locationRisk.rate ?? ''),
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
-              )
-            ],
-          ),
+          _renderRiskText(),
           SizedBox(height: 10),
-          Row(
-            children: [
-              Text(
-                'Dificuldade de Chegada: ',
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.titleLarge?.color,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                ),
-              ),
-              Text(
-                '${_spot?.locationRisk.rate}',
-                style: TextStyle(
-                  color:
-                      _getDifficultyColor(_spot?.locationDifficulty.rate ?? ''),
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
-              )
-            ],
-          )
-        ],
-      ),
-    );
-  }
-
-  _renderSpotTab(dynamic context) {
-    return DefaultTabController(
-      length: 3,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          TabBar(
-            dividerColor: Colors.transparent,
-            indicatorColor: Theme.of(context).textTheme.titleLarge?.color,
-            labelColor: Theme.of(context).textTheme.titleLarge?.color,
-            labelStyle: TextStyle(
-              color: Theme.of(context).textTheme.titleLarge?.color,
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
-            ),
-            tabs: [
-              Tab(text: 'Peixes'),
-              Tab(text: 'Localização'),
-              Tab(text: 'Riscos'),
-            ],
-          ),
-          // TODO: Change this sized box to Expanded
-          SizedBox(
-            height: 300.0,
-            child: TabBarView(
-              children: [
-                Center(child: _renderFishesTab()),
-                Center(child: Text('Content of Tab 2')),
-                Center(child: Text('Content of Tab 3')),
-              ],
-            ),
-          ),
+          _renderDifficultyText(),
         ],
       ),
     );
@@ -272,16 +184,225 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
     );
   }
 
-  _renderFishesTab() {
-    if (_spot == null) return null;
+  _renderTabs(dynamic context) {
+    return Expanded(
+      child: DefaultTabController(
+        length: 3,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            TabBar(
+              dividerColor: Colors.transparent,
+              indicatorColor: Theme.of(context).textTheme.titleLarge?.color,
+              labelColor: Theme.of(context).textTheme.titleLarge?.color,
+              labelStyle: TextStyle(
+                color: Theme.of(context).textTheme.titleLarge?.color,
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+              overlayColor: WidgetStateProperty.all<Color>(
+                Theme.of(context)
+                        .textTheme
+                        .headlineLarge!
+                        .color
+                        ?.withValues(alpha: 0.1) ??
+                    ColorsConstants.gray50,
+              ),
+              tabs: [
+                Tab(text: 'Peixes Pego(s)'),
+                Tab(text: 'Dificuldade'),
+                Tab(text: 'Riscos'),
+              ],
+            ),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  _renderFishesTab(),
+                  _renderLocationTab(),
+                  _renderRiskTab(),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-    return GridView.count(
-      padding: EdgeInsets.fromLTRB(20, 15, 20, 20),
+  _renderFishesTab() {
+    if (_spot == null || _spot!.fishes.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Center(child: Text('Nenhum peixe registrado.')),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(20, 15, 20, 20),
       scrollDirection: Axis.vertical,
-      mainAxisSpacing: 10,
-      crossAxisCount: 1,
-      childAspectRatio: 5,
-      children: _renderFishes(),
+      primary: false,
+      shrinkWrap: true,
+      itemCount: _spot!.fishes.length,
+      itemBuilder: (context, index) {
+        final fish = _spot!.fishes[index];
+        return Container(
+          margin: const EdgeInsets.only(bottom: 10),
+          padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
+          decoration: BoxDecoration(
+            color: ColorsConstants.white50,
+            border: Border.all(
+              color: ColorsConstants.gray50,
+              width: 1.0,
+            ),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    fish.name,
+                    style: TextStyle(
+                      color: ColorsConstants.gray350,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    '●',
+                    style: TextStyle(
+                      color: ColorsConstants.gray350,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 10,
+                    ),
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    '${fish.weight} ${_getUnitMeasure(fish.unitMeasure)}',
+                    style: TextStyle(
+                      color: ColorsConstants.gray350,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  )
+                ],
+              ),
+              Text(
+                fish.lures.join(', '),
+                softWrap: true,
+                style: TextStyle(
+                  color: ColorsConstants.gray150,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 12,
+                ),
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  _renderLocationTab() {
+    var obs = 'Nenhuma observação foi incluida';
+    if (_spot != null && _spot!.locationDifficulty.observation.isNotEmpty) {
+      obs = _spot!.locationDifficulty.observation;
+    }
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+      child: Expanded(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Flexible(
+              flex: 1,
+              child: Text(
+                'Descrição sobre a dificuldade de chegar até o local',
+                softWrap: true,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: Theme.of(context).textTheme.titleLarge?.color,
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            Flexible(
+              flex: 6,
+              fit: FlexFit.tight,
+              child: Text(
+                obs,
+                softWrap: true,
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14,
+                  color: Theme.of(context).textTheme.headlineMedium?.color,
+                ),
+              ),
+            ),
+            Flexible(
+              flex: 1,
+              child: _renderDifficultyText(),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  _renderRiskTab() {
+    var obs = 'Nenhuma observação foi incluida';
+    if (_spot != null && _spot!.locationRisk.observation.isNotEmpty) {
+      obs = _spot!.locationRisk.observation;
+    }
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+      child: Expanded(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Flexible(
+              flex: 1,
+              child: Text(
+                'Descrição dos riscos encontrados',
+                softWrap: true,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                  color: Theme.of(context).textTheme.titleLarge?.color,
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            Flexible(
+              flex: 6,
+              fit: FlexFit.tight,
+              child: Text(
+                obs,
+                softWrap: true,
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14,
+                  color: Theme.of(context).textTheme.headlineMedium?.color,
+                ),
+              ),
+            ),
+            Flexible(
+              flex: 1,
+              child: _renderRiskText(),
+            )
+          ],
+        ),
+      ),
     );
   }
 
@@ -310,60 +431,50 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
     }).toList();
   }
 
-  _renderFishes() {
-    return _spot?.fishes.map((fish) {
-      return Container(
-        padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-        decoration: BoxDecoration(
-          color: ColorsConstants.white50,
-          border: Border.all(
-            color: ColorsConstants.gray50,
-            width: 2.0,
+  _renderRiskText() {
+    return Row(
+      children: [
+        Text(
+          'Nivel de Risco: ',
+          style: TextStyle(
+            color: Theme.of(context).textTheme.titleLarge?.color,
+            fontWeight: FontWeight.w400,
+            fontSize: 14,
           ),
-          borderRadius: BorderRadius.circular(5),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  fish.name,
-                  style: TextStyle(
-                    color: ColorsConstants.gray350,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
-                ),
-                SizedBox(width: 10),
-                Text(
-                  '${fish.weight} ${fish.unitMeasure}',
-                  style: TextStyle(
-                    color: ColorsConstants.gray350,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
-                )
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: fish.lures.map((lure) {
-                return Text(
-                  '$lure, ', // TODO: Change this comma
-                  style: TextStyle(
-                    color: ColorsConstants.gray150,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 12,
-                  ),
-                );
-              }).toList(),
-            )
-          ],
+        Text(
+          '${_spot?.locationRisk.rate}',
+          style: TextStyle(
+            color: _getRiskColor(_spot?.locationRisk.rate ?? ''),
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+          ),
+        )
+      ],
+    );
+  }
+
+  _renderDifficultyText() {
+    return Row(
+      children: [
+        Text(
+          'Dificuldade de Chegada: ',
+          style: TextStyle(
+            color: Theme.of(context).textTheme.titleLarge?.color,
+            fontWeight: FontWeight.w400,
+            fontSize: 14,
+          ),
         ),
-      );
-    }).toList();
+        Text(
+          '${_spot?.locationRisk.rate}',
+          style: TextStyle(
+            color: _getDifficultyColor(_spot?.locationDifficulty.rate ?? ''),
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+          ),
+        )
+      ],
+    );
   }
 
   _renderAppBar(dynamic context) {
