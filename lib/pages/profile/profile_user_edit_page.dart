@@ -402,9 +402,6 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
 
   _renderAppBar(dynamic context) {
     return AppBar(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      foregroundColor: Theme.of(context).colorScheme.surface,
-      surfaceTintColor: Theme.of(context).colorScheme.surface,
       shadowColor: ColorsConstants.gray350,
       title: Row(
         children: [
