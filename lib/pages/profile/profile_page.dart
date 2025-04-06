@@ -315,14 +315,14 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 Icon(
                   Icons.no_photography,
-                  color: Theme.of(context).iconTheme.color,
+                  color: Theme.of(context).textTheme.headlineLarge?.color,
                   size: 112,
                 ),
                 Text(
                   'Nenhuma pesca \n registrada',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Theme.of(context).iconTheme.color,
+                    color: Theme.of(context).textTheme.headlineLarge?.color,
                     fontSize: 28,
                     fontWeight: FontWeight.w400,
                   ),

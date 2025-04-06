@@ -7,10 +7,14 @@ class ColorsConstants {
   static Color lightBackground = HexColor('#F4F3F3');
 
   // Green
-  static Color green250 = HexColor('00D389');
+  static Color green50 = HexColor('#15ff00');
+  static Color green100 = HexColor('##0fb300');
+  static Color green250 = HexColor('#00D389');
   static Color green200 = HexColor('#00D389');
 
   // Red
+  static Color red50 = HexColor('#ff1414');
+  static Color red100 = HexColor('#ad0000');
   static Color red250 = HexColor('#ee2b2b');
 
   // White
@@ -27,4 +31,7 @@ class ColorsConstants {
   static Color blue150 = HexColor('#3EC2EA');
   static Color blue750 = HexColor('#2A5967');
   static Color blue700 = HexColor('#2A5967');
+
+  //Yellow
+  static Color yellow50 = HexColor('#ffde0a');
 }
