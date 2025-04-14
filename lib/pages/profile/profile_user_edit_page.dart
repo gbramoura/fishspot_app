@@ -15,6 +15,7 @@ import 'package:fishspot_app/repositories/settings_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
+import 'package:fishspot_app/utils/image_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -140,13 +141,6 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
     }
   }
 
-  _getUserImagePath() {
-    var settings = Provider.of<SettingRepository>(context, listen: false);
-    var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
-
-    return _imageId.isEmpty ? '' : _apiService.getResource(_imageId, token);
-  }
-
   String? _nameValidator(String? value) {
     if (value == null || value.isEmpty) {
       return 'Nome não pode ser vazio';
@@ -236,7 +230,7 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
           height: 100,
           width: 100,
           child: CustomCircleAvatar(
-            imageUrl: _getUserImagePath(),
+            imageUrl: ImageUtils.getImagePath(_imageId, context),
           ),
         ),
         SizedBox(height: 10),

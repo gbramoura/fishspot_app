@@ -7,6 +7,8 @@ import 'package:fishspot_app/pages/loading_page.dart';
 import 'package:fishspot_app/repositories/settings_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
+import 'package:fishspot_app/utils/image_utils.dart';
+import 'package:fishspot_app/utils/spot_view_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -61,38 +63,6 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
       _loading = false;
     });
   }
-
-  _getImagePath(String id) {
-    var settings = Provider.of<SettingRepository>(context, listen: false);
-    var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
-
-    return _apiService.getResource(id, token);
-  }
-
-  _getDifficultyColor(String rate) => switch (rate) {
-        'VeryEasy' => ColorsConstants.green50,
-        'Easy' => ColorsConstants.green100,
-        'Medium' => ColorsConstants.yellow50,
-        'Hard' => ColorsConstants.red100,
-        'VeryHard' => ColorsConstants.red100,
-        _ => Theme.of(context).textTheme.titleLarge?.color,
-      };
-
-  _getRiskColor(String rate) => switch (rate) {
-        'VeryLow' => ColorsConstants.green50,
-        'Low' => ColorsConstants.green100,
-        'Medium' => ColorsConstants.yellow50,
-        'High' => ColorsConstants.red100,
-        'VeryHigh' => ColorsConstants.red100,
-        _ => Theme.of(context).textTheme.titleLarge?.color,
-      };
-
-  _getUnitMeasure(String? unit) => switch (unit) {
-        'Grams' => 'g',
-        'Kilograms' => 'Kg',
-        'Ton' => 'T',
-        _ => '',
-      };
 
   @override
   Widget build(BuildContext context) {
@@ -173,6 +143,7 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
       );
     }
 
+    // TODO: View this after include more images in the database
     return GridView.count(
       primary: true,
       shrinkWrap: true,
@@ -283,7 +254,7 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
                   ),
                   SizedBox(width: 5),
                   Text(
-                    '${fish.weight} ${_getUnitMeasure(fish.unitMeasure)}',
+                    '${fish.weight} ${SpotViewUtils.getUnitMeasure(fish.unitMeasure)}',
                     style: TextStyle(
                       color: ColorsConstants.gray350,
                       fontWeight: FontWeight.w600,
@@ -423,7 +394,7 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
 
     return _spot?.images.map((image) {
       return CachedNetworkImage(
-        imageUrl: _getImagePath(image),
+        imageUrl: ImageUtils.getImagePath(image, context),
         width: 100,
         fit: BoxFit.cover,
         progressIndicatorBuilder: handle,
@@ -443,9 +414,10 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
           ),
         ),
         Text(
-          '${_spot?.locationRisk.rate}',
+          '${SpotViewUtils.getRiskText(_spot?.locationRisk.rate)}',
           style: TextStyle(
-            color: _getRiskColor(_spot?.locationRisk.rate ?? ''),
+            color:
+                SpotViewUtils.getRiskColor(_spot?.locationRisk.rate, context),
             fontWeight: FontWeight.w600,
             fontSize: 14,
           ),
@@ -466,9 +438,12 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
           ),
         ),
         Text(
-          '${_spot?.locationRisk.rate}',
+          '${SpotViewUtils.getDifficultyText(_spot?.locationDifficulty.rate)}',
           style: TextStyle(
-            color: _getDifficultyColor(_spot?.locationDifficulty.rate ?? ''),
+            color: SpotViewUtils.getDifficultyColor(
+              _spot?.locationDifficulty.rate,
+              context,
+            ),
             fontWeight: FontWeight.w600,
             fontSize: 14,
           ),
