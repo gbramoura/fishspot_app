@@ -1,6 +1,6 @@
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/models/spot_location.dart';
-import 'package:fishspot_app/pages/loading_page.dart';
+import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/repositories/settings_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';

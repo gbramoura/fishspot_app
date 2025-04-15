@@ -1,6 +1,6 @@
 import 'package:fishspot_app/components/custom_bottom_navigation_bar.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
-import 'package:fishspot_app/pages/loading_page.dart';
+import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/map/map_page.dart';
 import 'package:fishspot_app/pages/profile/profile_page.dart';
 import 'package:fishspot_app/pages/spot/spot_page.dart';
@@ -27,8 +27,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _handleNavigatePage(int index) async {
     if (index == 1) {
-      NavigationService.pushNamed(context, RouteConstants.addSpot);
-      return;
+      return NavigationService.pushNamed(context, RouteConstants.addSpot);
     }
 
     setState(() {

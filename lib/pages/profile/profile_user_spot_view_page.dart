@@ -1,15 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
-import 'package:fishspot_app/models/http_response.dart';
 import 'package:fishspot_app/models/spot.dart';
-import 'package:fishspot_app/pages/loading_page.dart';
+import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/repositories/settings_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
 import 'package:fishspot_app/utils/image_utils.dart';
 import 'package:fishspot_app/utils/spot_view_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ProfileUserSpotViewPage extends StatefulWidget {
@@ -43,15 +43,17 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
     });
 
     try {
+      AuthService.refreshCredentials(context);
+
       var settings = Provider.of<SettingRepository>(context, listen: false);
       var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
-      HttpResponse resp = await _apiService.getSpot(widget.spotId, token);
-      setState(() {
-        _spot = Spot.fromJson(resp.response);
-      });
+      var resp = await _apiService.getSpot(widget.spotId, token);
+      var spot = Spot.fromJson(resp.response);
 
-      AuthService.refreshCredentials(context);
+      setState(() {
+        _spot = spot;
+      });
     } catch (e) {
       if (mounted) {
         AuthService.clearCredentials(context);
@@ -101,9 +103,26 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
             ),
           ),
           SizedBox(height: 10),
-          _renderRiskText(),
-          SizedBox(height: 10),
-          _renderDifficultyText(),
+          Row(
+            children: [
+              Text(
+                'Dia da Pesca: ',
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.titleLarge?.color,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14,
+                ),
+              ),
+              Text(
+                DateFormat('yyyy/MM/dd - hh:mm').format(_spot!.date),
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.titleLarge?.color,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              )
+            ],
+          )
         ],
       ),
     );
@@ -116,7 +135,7 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 90),
+            SizedBox(height: 100),
             Center(
               child: Column(
                 children: [
@@ -137,7 +156,7 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
                 ],
               ),
             ),
-            SizedBox(height: 90),
+            SizedBox(height: 100),
           ],
         ),
       );

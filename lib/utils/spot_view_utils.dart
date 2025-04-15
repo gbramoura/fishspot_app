@@ -1,40 +1,43 @@
 import 'package:fishspot_app/constants/colors_constants.dart';
+import 'package:fishspot_app/enums/spot_difficulty_type.dart';
+import 'package:fishspot_app/enums/spot_risk_type.dart';
 import 'package:flutter/material.dart';
 
 class SpotViewUtils {
-  static getRiskColor(String? rate, dynamic context) => switch (rate) {
-        'VeryLow' => ColorsConstants.green50,
-        'Low' => ColorsConstants.green100,
-        'Medium' => ColorsConstants.yellow50,
-        'High' => ColorsConstants.red100,
-        'VeryHigh' => ColorsConstants.red100,
+  static getRiskColor(SpotRiskType? rate, dynamic context) => switch (rate) {
+        SpotRiskType.VeryLow => ColorsConstants.green50,
+        SpotRiskType.Low => ColorsConstants.green100,
+        SpotRiskType.Medium => ColorsConstants.yellow50,
+        SpotRiskType.High => ColorsConstants.red100,
+        SpotRiskType.VeryHigh => ColorsConstants.red100,
         _ => Theme.of(context).textTheme.titleLarge?.color,
       };
 
-  static getRiskText(String? rate) => switch (rate) {
-        'VeryLow' => "Muito Baixo",
-        'Low' => "Baixo",
-        'Medium' => "Mediano(a)",
-        'High' => "Alto(a)",
-        'VeryHigh' => "Muito Alto(a)",
+  static getRiskText(SpotRiskType? rate) => switch (rate) {
+        SpotRiskType.VeryLow => "Muito Baixo",
+        SpotRiskType.Low => "Baixo",
+        SpotRiskType.Medium => "Mediano(a)",
+        SpotRiskType.High => "Alto(a)",
+        SpotRiskType.VeryHigh => "Muito Alto(a)",
         _ => "Nenhum",
       };
 
-  static getDifficultyColor(String? rate, dynamic context) => switch (rate) {
-        'VeryEasy' => ColorsConstants.green50,
-        'Easy' => ColorsConstants.green100,
-        'Medium' => ColorsConstants.yellow50,
-        'Hard' => ColorsConstants.red100,
-        'VeryHard' => ColorsConstants.red100,
+  static getDifficultyColor(SpotDifficultyType? rate, dynamic context) =>
+      switch (rate) {
+        SpotDifficultyType.VeryEasy => ColorsConstants.green50,
+        SpotDifficultyType.Easy => ColorsConstants.green100,
+        SpotDifficultyType.Medium => ColorsConstants.yellow50,
+        SpotDifficultyType.Hard => ColorsConstants.red100,
+        SpotDifficultyType.VeryHard => ColorsConstants.red100,
         _ => Theme.of(context).textTheme.titleLarge?.color,
       };
 
-  static getDifficultyText(String? rate) => switch (rate) {
-        'VeryEasy' => "Muito Facil",
-        'Easy' => "Facil",
-        'Medium' => "Mediano(a)",
-        'Hard' => "Difícil",
-        'VeryHard' => "Muito Difícil",
+  static getDifficultyText(SpotDifficultyType? rate) => switch (rate) {
+        SpotDifficultyType.VeryEasy => "Muito Facil",
+        SpotDifficultyType.Easy => "Facil",
+        SpotDifficultyType.Medium => "Mediano(a)",
+        SpotDifficultyType.Hard => "Difícil",
+        SpotDifficultyType.VeryHard => "Muito Difícil",
         _ => "Nenhum(a)",
       };
 

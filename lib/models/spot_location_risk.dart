@@ -1,5 +1,7 @@
+import 'package:fishspot_app/enums/spot_risk_type.dart';
+
 class SpotLocationRisk {
-  final String rate;
+  final SpotRiskType rate;
   final String observation;
 
   SpotLocationRisk({
@@ -9,8 +11,15 @@ class SpotLocationRisk {
 
   factory SpotLocationRisk.fromJson(Map<String, dynamic> json) {
     return SpotLocationRisk(
-      rate: json['rate'],
+      rate: SpotRiskType.values.firstWhere((e) => e.name == json['rate']),
       observation: json['observation'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'rate': rate.name,
+      'observation': observation,
+    };
   }
 }

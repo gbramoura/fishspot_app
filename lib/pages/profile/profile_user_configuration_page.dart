@@ -1,5 +1,5 @@
 import 'package:fishspot_app/components/custom_button.dart';
-import 'package:fishspot_app/pages/loading_page.dart';
+import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';

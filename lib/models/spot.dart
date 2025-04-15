@@ -1,10 +1,12 @@
 import 'package:fishspot_app/models/spot_fish.dart';
 import 'package:fishspot_app/models/spot_location_difficulty.dart';
 import 'package:fishspot_app/models/spot_location_risk.dart';
+import 'package:fishspot_app/models/user.dart';
 
 class Spot {
   final String title;
   final String observation;
+  final DateTime date;
   final List<num> coordinates;
   final SpotLocationDifficulty locationDifficulty;
   final SpotLocationRisk locationRisk;
@@ -15,6 +17,7 @@ class Spot {
   Spot({
     required this.title,
     required this.observation,
+    required this.date,
     required this.coordinates,
     required this.locationDifficulty,
     required this.locationRisk,
@@ -27,6 +30,7 @@ class Spot {
     return Spot(
       title: json['title'],
       observation: json['observation'],
+      date: DateTime.parse(json['date']),
       coordinates: List<num>.from(json['coordinates']),
       locationDifficulty: SpotLocationDifficulty.fromJson(
         json['locationDifficulty'],
@@ -39,18 +43,18 @@ class Spot {
       user: User.fromJson(json['user']),
     );
   }
-}
 
-class User {
-  final String name;
-
-  User({
-    required this.name,
-  });
-
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      name: json['name'],
-    );
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'observation': observation,
+      'date': date,
+      'coordinates': coordinates,
+      'locationDifficulty': locationDifficulty.toJson(),
+      'locationRisk': locationRisk.toJson(),
+      'images': images,
+      'fishes': fishes.map((fish) => fish.toJson()).toList(),
+      'user': user.toJson(),
+    };
   }
 }

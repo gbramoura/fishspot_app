@@ -1,12 +1,12 @@
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/pages/auth_page.dart';
+import 'package:fishspot_app/pages/commons/splash_page.dart';
 import 'package:fishspot_app/pages/home_page.dart';
 import 'package:fishspot_app/pages/login_page.dart';
 import 'package:fishspot_app/pages/password/recover_password_page.dart';
 import 'package:fishspot_app/pages/profile/profile_user_configuration_page.dart';
 import 'package:fishspot_app/pages/profile/profile_user_edit_page.dart';
 import 'package:fishspot_app/pages/register_page.dart';
-import 'package:fishspot_app/pages/splash_page.dart';
 import 'package:fishspot_app/pages/spot/spot_page.dart';
 import 'package:fishspot_app/repositories/settings_repository.dart';
 import 'package:fishspot_app/theme/dark_theme.dart';
