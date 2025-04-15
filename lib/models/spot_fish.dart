@@ -19,4 +19,13 @@ class SpotFish {
       lures: List<String>.from(json['lures']),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'weight': weight,
+      'unitMeasure': unitMeasure,
+      'lures': lures,
+    };
+  }
 }

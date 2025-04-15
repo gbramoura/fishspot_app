@@ -7,7 +7,8 @@ import 'package:fishspot_app/pages/password/recover_password_page.dart';
 import 'package:fishspot_app/pages/profile/profile_user_configuration_page.dart';
 import 'package:fishspot_app/pages/profile/profile_user_edit_page.dart';
 import 'package:fishspot_app/pages/register_page.dart';
-import 'package:fishspot_app/pages/spot/spot_page.dart';
+import 'package:fishspot_app/pages/spot/spot_location_page.dart';
+import 'package:fishspot_app/repositories/add_spot_repository.dart';
 import 'package:fishspot_app/repositories/settings_repository.dart';
 import 'package:fishspot_app/theme/dark_theme.dart';
 import 'package:fishspot_app/theme/light_theme.dart';
@@ -27,8 +28,15 @@ void main() async {
 
   await dotenv.load(fileName: '.env');
 
-  runApp(ChangeNotifierProvider(
-    create: (context) => SettingRepository(prefs: prefs),
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(
+        create: (context) => SettingRepository(prefs: prefs),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => AddSpotRepository(),
+      ),
+    ],
     child: const App(),
   ));
 }
@@ -67,7 +75,7 @@ class App extends StatelessWidget {
         RouteConstants.configuration: (context) =>
             ProfileUserConfigurationPage(),
         RouteConstants.editUser: (context) => ProfileUserEditPage(),
-        RouteConstants.addSpot: (context) => SpotPage()
+        RouteConstants.addSpot: (context) => SpotLocationPage()
       },
     );
   }

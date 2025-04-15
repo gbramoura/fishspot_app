@@ -3,7 +3,8 @@ import 'package:fishspot_app/components/custom_button.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
-import 'package:fishspot_app/models/http_response.dart';
+import 'package:fishspot_app/models/user_tokens.dart';
+import 'package:fishspot_app/repositories/add_spot_repository.dart';
 import 'package:fishspot_app/repositories/settings_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:flutter/material.dart';
@@ -34,30 +35,24 @@ class AuthService {
 
     var token = settings.getString(SharedPreferencesConstants.jwtToken);
     var rToken = settings.getString(SharedPreferencesConstants.refreshToken);
-
-    HttpResponse response = await apiService.refreshToken({
-      'token': token,
-      'refreshToken': rToken,
-    });
-
-    settings.setString(
-      SharedPreferencesConstants.jwtToken,
-      response.response['token'],
+    var userTokens = UserTokens(
+      token: token ?? '',
+      refreshToken: rToken ?? '',
     );
+
+    var response = await apiService.refreshToken(userTokens.toJson());
+    var user = UserTokens.fromJson(response.response);
+
+    settings.setString(SharedPreferencesConstants.jwtToken, user.token);
     settings.setString(
       SharedPreferencesConstants.refreshToken,
-      response.response['refreshToken'],
+      user.refreshToken,
     );
-  }
-
-  static void validate(dynamic context) async {
-    var isAuth = await isUserAuthenticated(context);
-    if (!isAuth) {}
   }
 
   static void clearCredentials(dynamic context) {
-    var settings = Provider.of<SettingRepository>(context, listen: false);
-    settings.clear();
+    Provider.of<SettingRepository>(context, listen: false).clear();
+    Provider.of<AddSpotRepository>(context, listen: false).clear();
   }
 
   static void showAuthDialog(dynamic context) {

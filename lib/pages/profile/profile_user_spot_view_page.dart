@@ -114,7 +114,9 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
                 ),
               ),
               Text(
-                DateFormat('yyyy/MM/dd - hh:mm').format(_spot!.date),
+                DateFormat('yyyy/MM/dd - hh:mm').format(
+                  _spot?.date ?? DateTime(0, 0, 0),
+                ),
                 style: TextStyle(
                   color: Theme.of(context).textTheme.titleLarge?.color,
                   fontWeight: FontWeight.w600,
