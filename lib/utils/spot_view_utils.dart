@@ -13,7 +13,7 @@ class SpotViewUtils {
         _ => Theme.of(context).textTheme.titleLarge?.color,
       };
 
-  static getRiskText(SpotRiskType? rate) => switch (rate) {
+  static String getRiskText(SpotRiskType? rate) => switch (rate) {
         SpotRiskType.VeryLow => "Muito Baixo",
         SpotRiskType.Low => "Baixo",
         SpotRiskType.Medium => "Mediano(a)",
@@ -32,7 +32,7 @@ class SpotViewUtils {
         _ => Theme.of(context).textTheme.titleLarge?.color,
       };
 
-  static getDifficultyText(SpotDifficultyType? rate) => switch (rate) {
+  static String getDifficultyText(SpotDifficultyType? rate) => switch (rate) {
         SpotDifficultyType.VeryEasy => "Muito Facil",
         SpotDifficultyType.Easy => "Facil",
         SpotDifficultyType.Medium => "Mediano(a)",

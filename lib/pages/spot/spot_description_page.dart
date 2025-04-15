@@ -1,9 +1,13 @@
 import 'package:fishspot_app/components/custom_button.dart';
+import 'package:fishspot_app/components/custom_dropdown_button.dart';
 import 'package:fishspot_app/components/custom_text_form_field.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
+import 'package:fishspot_app/enums/spot_difficulty_type.dart';
+import 'package:fishspot_app/enums/spot_risk_type.dart';
 import 'package:fishspot_app/pages/spot/spot_image_page.dart';
 import 'package:fishspot_app/repositories/add_spot_repository.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
+import 'package:fishspot_app/utils/spot_view_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,42 +20,56 @@ class SpotDescriptionPage extends StatefulWidget {
 
 class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
   final _formGlobalKey = GlobalKey<FormState>();
-  final _riskRateController = TextEditingController();
   final _riskObservationController = TextEditingController();
-  final _difficultyRateController = TextEditingController();
   final _difficultyObservationController = TextEditingController();
 
-  String? _riskRateValidator(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'O risco não pode ser vazio';
-    }
-    return null;
-  }
+  SpotDifficultyType _difficulty = SpotDifficultyType.VeryEasy;
+  SpotRiskType _risk = SpotRiskType.VeryLow;
 
   String? _riskObservationValidator(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'A observação não pode ser vazio';
-    }
-    return null;
-  }
-
-  String? _difficultyRateValidator(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'A dificuldade não pode ser vazio';
+    if (value != null && value.length > 245) {
+      return 'Numero maximo de 245 caracters atingida';
     }
     return null;
   }
 
   String? _difficultyObservationValidator(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'A observação não pode ser vazio';
+    if (value != null && value.length > 245) {
+      return 'Numero maximo de 245 caracters atingida';
     }
     return null;
   }
 
+  _handleChangeDifficulty(String? value) {
+    if (value == null || value.isEmpty) {
+      return;
+    }
+    _difficulty = SpotDifficultyType.values.firstWhere((e) => e.name == value);
+  }
+
+  _handleChangeRisk(String? value) {
+    if (value == null || value.isEmpty) {
+      return;
+    }
+    _risk = SpotRiskType.values.firstWhere((e) => e.name == value);
+  }
+
   _handleNextButton() {
+    if (!_formGlobalKey.currentState!.validate()) {
+      return;
+    }
+
     var route = MaterialPageRoute(builder: (context) => SpotImagePage());
     var addSpot = Provider.of<AddSpotRepository>(context, listen: false);
+
+    addSpot.setDifficulty(
+      _difficulty,
+      _difficultyObservationController.text,
+    );
+    addSpot.setRisk(
+      _risk,
+      _riskObservationController.text,
+    );
 
     NavigationService.push(context, route);
   }
@@ -64,8 +82,8 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            _renderForm(),
-            _renderNext(context),
+            Flexible(child: _renderForm(), flex: 7),
+            Flexible(child: _renderNext(context), flex: 1),
           ],
         ),
       ),
@@ -99,11 +117,12 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
               ),
             ),
             SizedBox(height: 15),
-            // TODO: Change to select
-            CustomTextFormField(
-              validator: _riskRateValidator,
-              controller: _riskRateController,
+            CustomDropdownButton(
               hintText: 'Escolha',
+              values: SpotDifficultyType.values
+                  .map((e) => SpotViewUtils.getDifficultyText(e))
+                  .toList(),
+              onChange: _handleChangeDifficulty,
             ),
             SizedBox(height: 20),
             SizedBox(
@@ -137,11 +156,12 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
               ),
             ),
             SizedBox(height: 15),
-            // TODO: Change to select
-            CustomTextFormField(
-              validator: _difficultyRateValidator,
-              controller: _difficultyRateController,
+            CustomDropdownButton(
               hintText: 'Escolha',
+              values: SpotRiskType.values
+                  .map((e) => SpotViewUtils.getRiskText(e))
+                  .toList(),
+              onChange: _handleChangeRisk,
             ),
             SizedBox(height: 20),
             SizedBox(

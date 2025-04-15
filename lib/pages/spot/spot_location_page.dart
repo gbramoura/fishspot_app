@@ -1,6 +1,7 @@
 import 'package:fishspot_app/components/custom_button.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
+import 'package:fishspot_app/pages/spot/spot_description_page.dart';
 import 'package:fishspot_app/repositories/add_spot_repository.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:fishspot_app/utils/geolocator_utils.dart';
@@ -52,7 +53,7 @@ class _SpotLocationPageState extends State<SpotLocationPage> {
   }
 
   _handleConfirmButton() {
-    var route = MaterialPageRoute(builder: (context) => SpotLocationPage());
+    var route = MaterialPageRoute(builder: (context) => SpotDescriptionPage());
     var addSpot = Provider.of<AddSpotRepository>(context, listen: false);
 
     if (_position == null) {

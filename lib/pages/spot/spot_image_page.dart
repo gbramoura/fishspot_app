@@ -21,8 +21,11 @@ class _SpotImagePageState extends State<SpotImagePage> {
     if (_images.isEmpty) {
       addSpot.setImages(_images);
     }
-
     //NavigationService.push(context, route);
+  }
+
+  _handleAddImage() {
+    // TODO: Make this to add a file an display a list of it
   }
 
   @override
@@ -33,19 +36,49 @@ class _SpotImagePageState extends State<SpotImagePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            _renderForm(context),
-            _renderNext(context),
+            Flexible(child: _renderImages(context), flex: 7),
+            Flexible(child: _renderNext(context), flex: 1),
           ],
         ),
       ),
     );
   }
 
-  _renderForm(dynamic context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+  _renderImages(dynamic context) {
+    if (_images.isEmpty) {
+      return _renderEmptyImages(context);
+    }
+
+    // TODO: render the images that was add
+  }
+
+  _renderEmptyImages(dynamic context) {
+    return Center(
       child: Column(
-        children: [],
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(
+            child: Column(
+              children: [
+                Icon(
+                  Icons.no_photography,
+                  color: Theme.of(context).textTheme.headlineLarge?.color,
+                  size: 90,
+                ),
+                Text(
+                  'Nenhuma Imagem \n registrada',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.headlineLarge?.color,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -82,7 +115,7 @@ class _SpotImagePageState extends State<SpotImagePage> {
       ),
       actions: [
         IconButton(
-          onPressed: () {},
+          onPressed: _handleAddImage,
           icon: Icon(Icons.add_a_photo_outlined),
           color: Theme.of(context).textTheme.headlineLarge?.color,
           iconSize: 32,
