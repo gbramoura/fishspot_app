@@ -7,6 +7,7 @@ import 'package:fishspot_app/pages/profile/profile_user_configuration_page.dart'
 import 'package:fishspot_app/pages/profile/profile_user_edit_page.dart';
 import 'package:fishspot_app/pages/register_page.dart';
 import 'package:fishspot_app/pages/splash_page.dart';
+import 'package:fishspot_app/pages/spot/spot_page.dart';
 import 'package:fishspot_app/repositories/settings_repository.dart';
 import 'package:fishspot_app/theme/dark_theme.dart';
 import 'package:fishspot_app/theme/light_theme.dart';
@@ -65,7 +66,8 @@ class App extends StatelessWidget {
         RouteConstants.home: (context) => HomePage(),
         RouteConstants.configuration: (context) =>
             ProfileUserConfigurationPage(),
-        RouteConstants.editUser: (context) => ProfileUserEditPage()
+        RouteConstants.editUser: (context) => ProfileUserEditPage(),
+        RouteConstants.addSpot: (context) => SpotPage()
       },
     );
   }
