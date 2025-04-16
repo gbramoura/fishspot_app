@@ -23,7 +23,8 @@ class ColorsConstants {
 
   // Gray
   static Color gray50 = HexColor('#E2E8F0');
-  static Color gray100 = HexColor('#D9D9D9');
+  static Color gray75 = HexColor('#D9D9D9');
+  static Color gray100 = HexColor("#798087");
   static Color gray150 = HexColor('#666B70');
   static Color gray350 = HexColor('#35383A');
 

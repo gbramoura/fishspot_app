@@ -1,9 +1,10 @@
+import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatefulWidget {
   final String label;
   final Size? fixedSize;
-  final void Function() onPressed;
+  final void Function()? onPressed;
   final bool loading;
 
   const CustomButton({
@@ -30,8 +31,7 @@ class _CustomButtonState extends State<CustomButton> {
         ),
         backgroundColor: Theme.of(context).buttonTheme.colorScheme?.primary,
         overlayColor: Theme.of(context).buttonTheme.colorScheme?.onPrimary,
-        disabledBackgroundColor:
-            Theme.of(context).buttonTheme.colorScheme?.primary,
+        disabledBackgroundColor: ColorsConstants.gray100,
       ),
       child: _renderButtonChild(),
     );

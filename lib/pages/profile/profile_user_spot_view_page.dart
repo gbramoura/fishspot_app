@@ -403,7 +403,7 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
       return Container(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: ColorsConstants.gray100,
+          color: ColorsConstants.gray75,
         ),
         child: Center(
           child: CircularProgressIndicator(
@@ -435,7 +435,7 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
           ),
         ),
         Text(
-          '${SpotViewUtils.getRiskText(_spot?.locationRisk.rate)}',
+          SpotViewUtils.getRiskText(_spot?.locationRisk.rate),
           style: TextStyle(
             color:
                 SpotViewUtils.getRiskColor(_spot?.locationRisk.rate, context),
@@ -459,7 +459,7 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
           ),
         ),
         Text(
-          '${SpotViewUtils.getDifficultyText(_spot?.locationDifficulty.rate)}',
+          SpotViewUtils.getDifficultyText(_spot?.locationDifficulty.rate),
           style: TextStyle(
             color: SpotViewUtils.getDifficultyColor(
               _spot?.locationDifficulty.rate,

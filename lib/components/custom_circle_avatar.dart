@@ -11,7 +11,7 @@ class CustomCircleAvatar extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: ColorsConstants.gray100,
+        color: ColorsConstants.gray75,
       ),
       child: Center(
         child: CircularProgressIndicator(
@@ -31,7 +31,7 @@ class CustomCircleAvatar extends StatelessWidget {
       height: 100,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: ColorsConstants.gray100,
+        color: ColorsConstants.gray75,
       ),
       child: Icon(
         Icons.person,

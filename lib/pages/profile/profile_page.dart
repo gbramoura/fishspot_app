@@ -258,7 +258,7 @@ class _ProfilePageState extends State<ProfilePage> {
           );
         },
         child: Container(
-          color: ColorsConstants.gray100,
+          color: ColorsConstants.gray75,
           child: Container(
             decoration: BoxDecoration(
               image: isImageProvided ? image : icon,

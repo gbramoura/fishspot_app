@@ -82,6 +82,7 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            SizedBox(height: 10),
             Flexible(child: _renderForm(), flex: 7),
             Flexible(child: _renderNext(context), flex: 1),
           ],
