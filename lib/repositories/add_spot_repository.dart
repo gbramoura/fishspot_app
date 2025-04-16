@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fishspot_app/enums/spot_difficulty_type.dart';
 import 'package:fishspot_app/enums/spot_risk_type.dart';
 import 'package:fishspot_app/models/spot.dart';
@@ -12,7 +14,7 @@ class AddSpotRepository extends ChangeNotifier {
   String _observation = '';
   DateTime _date = DateTime(0, 0, 0);
   List<num> _coordinates = [];
-  List<String> _images = [];
+  List<File> _images = [];
   List<SpotFish> _fishes = [];
   User _user = User(name: '');
   SpotLocationDifficulty _locationDifficulty = SpotLocationDifficulty(
@@ -36,7 +38,7 @@ class AddSpotRepository extends ChangeNotifier {
     _locationRisk = SpotLocationRisk(rate: rate, observation: obs);
   }
 
-  void setImages(List<String> images) {
+  void setImages(List<File> images) {
     _images.addAll(images);
   }
 
@@ -58,7 +60,7 @@ class AddSpotRepository extends ChangeNotifier {
       coordinates: _coordinates,
       locationDifficulty: _locationDifficulty,
       locationRisk: _locationRisk,
-      images: _images,
+      images: _images.map((e) => e.path).toList(),
       fishes: _fishes,
       user: _user,
     );
