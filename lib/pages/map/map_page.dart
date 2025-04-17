@@ -90,8 +90,10 @@ class _MapPageState extends State<MapPage> {
       body: FlutterMap(
         mapController: _mapController,
         options: MapOptions(
-          initialCenter:
-              LatLng(_position?.latitude ?? 0, _position?.longitude ?? 0),
+          initialCenter: LatLng(
+            _position?.latitude ?? 0,
+            _position?.longitude ?? 0,
+          ),
           initialZoom: 15,
         ),
         children: [

@@ -2,8 +2,10 @@ import 'package:fishspot_app/components/custom_button.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/models/spot_fish.dart';
 import 'package:fishspot_app/pages/spot/spot_add_fish_page.dart';
+import 'package:fishspot_app/repositories/add_spot_repository.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 class SpotFishPage extends StatefulWidget {
@@ -14,12 +16,22 @@ class SpotFishPage extends StatefulWidget {
 }
 
 class _SpotFishPageState extends State<SpotFishPage> {
-  final Map<Uuid, SpotFish> _images = {};
+  final Map<Uuid, SpotFish> _fishes = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _clearData();
+  }
+
+  _clearData() {
+    var addSpot = Provider.of<AddSpotRepository>(context, listen: false);
+    addSpot.setFishes([]);
+  }
 
   _handleNextButton(dynamic context) {
     // var route = MaterialPageRoute(builder: (context) => SpotFishPage());
     // var addSpot = Provider.of<AddSpotRepository>(context, listen: false);
-
     // NavigationService.push(context, route);
   }
 
@@ -32,7 +44,7 @@ class _SpotFishPageState extends State<SpotFishPage> {
 
   _handleRemoveFish(Uuid id) {
     setState(() {
-      _images.removeWhere((uuid, fish) => uuid == id);
+      _fishes.removeWhere((uuid, fish) => uuid == id);
     });
   }
 
@@ -54,7 +66,7 @@ class _SpotFishPageState extends State<SpotFishPage> {
   }
 
   _renderFishes(dynamic context) {
-    if (_images.isEmpty) {
+    if (_fishes.isEmpty) {
       return _renderEmptyFishes(context);
     }
 
@@ -124,7 +136,7 @@ class _SpotFishPageState extends State<SpotFishPage> {
         children: [
           CustomButton(
             label: "Proximo",
-            onPressed: _images.isEmpty ? null : _handleNextButton(context),
+            onPressed: _fishes.isEmpty ? null : _handleNextButton(context),
             fixedSize: Size(182, 48),
           ),
         ],

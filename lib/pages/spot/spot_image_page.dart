@@ -9,7 +9,7 @@ import 'package:fishspot_app/repositories/add_spot_repository.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -22,6 +22,17 @@ class SpotImagePage extends StatefulWidget {
 
 class _SpotImagePageState extends State<SpotImagePage> {
   final Map<Uuid, File> _images = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _clearData();
+  }
+
+  _clearData() {
+    var addSpot = Provider.of<AddSpotRepository>(context, listen: false);
+    addSpot.setImages([]);
+  }
 
   _handleNextButton(dynamic context) {
     var route = MaterialPageRoute(builder: (context) => SpotFishPage());
@@ -50,9 +61,9 @@ class _SpotImagePageState extends State<SpotImagePage> {
     for (var pickedFile in pickedFiles) {
       var id = Uuid();
       var file = File(pickedFile.path);
-      var fileExtension = extension(file.path);
+      var fileExtension = path.extension(file.path);
 
-      if (!imagesExtensions.contains(fileExtension)) {
+      if (!imagesExtensions.contains(fileExtension) && mounted) {
         _renderDialog(
           context,
           "Uma ou mais imagens não possuem a extensão esperada (PNG, JPG, JPEG)",

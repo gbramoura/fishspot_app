@@ -26,6 +26,18 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
   SpotDifficultyType _difficulty = SpotDifficultyType.VeryEasy;
   SpotRiskType _risk = SpotRiskType.VeryLow;
 
+  @override
+  void initState() {
+    super.initState();
+    _clearData();
+  }
+
+  _clearData() {
+    var addSpot = Provider.of<AddSpotRepository>(context, listen: false);
+    addSpot.setDifficulty(SpotDifficultyType.VeryEasy, "");
+    addSpot.setRisk(SpotRiskType.VeryLow, "");
+  }
+
   String? _riskObservationValidator(String? value) {
     if (value != null && value.length > 245) {
       return 'Numero maximo de 245 caracters atingida';
