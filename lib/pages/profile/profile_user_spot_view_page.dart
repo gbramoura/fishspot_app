@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
+import 'package:fishspot_app/extensions/string_extension.dart';
 import 'package:fishspot_app/models/spot.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/repositories/settings_repository.dart';
@@ -241,7 +242,7 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
           margin: const EdgeInsets.only(bottom: 10),
           padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
           decoration: BoxDecoration(
-            color: ColorsConstants.white50,
+            color: Theme.of(context).textTheme.headlineLarge?.color,
             border: Border.all(
               color: ColorsConstants.gray50,
               width: 1.0,
@@ -257,9 +258,9 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    fish.name,
+                    fish.name.toTitleCase,
                     style: TextStyle(
-                      color: ColorsConstants.gray350,
+                      color: Theme.of(context).textTheme.labelMedium?.color,
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
                     ),
@@ -268,7 +269,7 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
                   Text(
                     '●',
                     style: TextStyle(
-                      color: ColorsConstants.gray350,
+                      color: Theme.of(context).textTheme.labelMedium?.color,
                       fontWeight: FontWeight.w600,
                       fontSize: 10,
                     ),
@@ -277,7 +278,7 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
                   Text(
                     '${fish.weight} ${SpotViewUtils.getUnitMeasure(fish.unitMeasure)}',
                     style: TextStyle(
-                      color: ColorsConstants.gray350,
+                      color: Theme.of(context).textTheme.labelMedium?.color,
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
                     ),
@@ -285,10 +286,10 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
                 ],
               ),
               Text(
-                fish.lures.join(', '),
+                fish.lures.join(', ').toTitleCase,
                 softWrap: true,
                 style: TextStyle(
-                  color: ColorsConstants.gray150,
+                  color: Theme.of(context).textTheme.labelMedium?.color,
                   fontWeight: FontWeight.w400,
                   fontSize: 12,
                 ),

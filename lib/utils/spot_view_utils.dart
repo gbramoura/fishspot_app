@@ -1,6 +1,7 @@
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/enums/spot_difficulty_type.dart';
 import 'package:fishspot_app/enums/spot_risk_type.dart';
+import 'package:fishspot_app/enums/unit_measure_type.dart';
 import 'package:flutter/material.dart';
 
 class SpotViewUtils {
@@ -22,6 +23,15 @@ class SpotViewUtils {
         _ => "Nenhum",
       };
 
+  static SpotRiskType getRiskFromText(String? rate) => switch (rate) {
+        "Muito Baixo" => SpotRiskType.VeryLow,
+        "Baixo" => SpotRiskType.Low,
+        "Mediano(a)" => SpotRiskType.Medium,
+        "Alto(a)" => SpotRiskType.High,
+        "Muito Alto(a)" => SpotRiskType.VeryHigh,
+        _ => SpotRiskType.VeryLow,
+      };
+
   static getDifficultyColor(SpotDifficultyType? rate, dynamic context) =>
       switch (rate) {
         SpotDifficultyType.VeryEasy => ColorsConstants.green50,
@@ -41,10 +51,34 @@ class SpotViewUtils {
         _ => "Nenhum(a)",
       };
 
-  static getUnitMeasure(String? unit) => switch (unit) {
-        'Grams' => 'g',
-        'Kilograms' => 'Kg',
-        'Ton' => 'T',
+  static SpotDifficultyType getDifficultyFromText(String? rate) =>
+      switch (rate) {
+        "Muito Facil" => SpotDifficultyType.VeryEasy,
+        "Facil" => SpotDifficultyType.Easy,
+        "Mediano(a)" => SpotDifficultyType.Medium,
+        "Difícil" => SpotDifficultyType.Hard,
+        "Muito Difícil" => SpotDifficultyType.VeryHard,
+        _ => SpotDifficultyType.VeryEasy,
+      };
+
+  static String getUnitMeasure(UnitMeasureType? unit) => switch (unit) {
+        UnitMeasureType.Grams => 'g',
+        UnitMeasureType.Kilograms => 'Kg',
+        UnitMeasureType.Ton => 't',
         _ => '',
+      };
+
+  static String getUnitMeasureText(UnitMeasureType? unit) => switch (unit) {
+        UnitMeasureType.Grams => 'Grama(s)',
+        UnitMeasureType.Kilograms => 'Quilograma(s)',
+        UnitMeasureType.Ton => 'Tonelada(s)',
+        _ => '',
+      };
+
+  static UnitMeasureType getUnitMeasureFromText(String? unit) => switch (unit) {
+        'Grama(s)' => UnitMeasureType.Grams,
+        'Quilograma(s)' => UnitMeasureType.Kilograms,
+        'Tonelada(s)' => UnitMeasureType.Ton,
+        _ => UnitMeasureType.Grams,
       };
 }

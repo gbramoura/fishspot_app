@@ -1,9 +1,12 @@
 import 'package:fishspot_app/components/custom_button.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
+import 'package:fishspot_app/extensions/string_extension.dart';
 import 'package:fishspot_app/models/spot_fish.dart';
+import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/spot/spot_add_fish_page.dart';
 import 'package:fishspot_app/repositories/add_spot_repository.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
+import 'package:fishspot_app/utils/spot_view_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -16,17 +19,28 @@ class SpotFishPage extends StatefulWidget {
 }
 
 class _SpotFishPageState extends State<SpotFishPage> {
-  final Map<Uuid, SpotFish> _fishes = {};
+  Map<Uuid, SpotFish> _fishes = {};
+  bool _loading = false;
 
   @override
   void initState() {
     super.initState();
-    _clearData();
+    _loadData();
   }
 
-  _clearData() {
+  _loadData() {
+    setState(() {
+      _loading = true;
+    });
+
     var addSpot = Provider.of<AddSpotRepository>(context, listen: false);
-    addSpot.setFishes([]);
+    var fishes = addSpot.getFishes();
+    var fishesMap = {for (var e in fishes) Uuid(): e};
+
+    setState(() {
+      _fishes = fishesMap;
+      _loading = false;
+    });
   }
 
   _handleNextButton(dynamic context) {
@@ -35,7 +49,7 @@ class _SpotFishPageState extends State<SpotFishPage> {
     // NavigationService.push(context, route);
   }
 
-  _handleAddFish() {
+  _handleAddFish() async {
     NavigationService.push(
       context,
       MaterialPageRoute(builder: (context) => SpotAddFishPage()),
@@ -50,11 +64,16 @@ class _SpotFishPageState extends State<SpotFishPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_loading) {
+      return LoadingPage();
+    }
+
     return Scaffold(
       appBar: _renderAppBar(context),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 10),
             Flexible(child: _renderFishes(context), flex: 7),
@@ -94,7 +113,103 @@ class _SpotFishPageState extends State<SpotFishPage> {
   }
 
   _renderPickedFishes(dynamic context) {
-    return Column();
+    return ListView.builder(
+      scrollDirection: Axis.vertical,
+      primary: false,
+      shrinkWrap: true,
+      itemCount: _fishes.entries.length,
+      itemBuilder: (context, index) {
+        final id = _fishes.entries.toList()[index].key;
+        final fish = _fishes.entries.toList()[index].value;
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 10),
+          padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
+          decoration: BoxDecoration(
+            color: Theme.of(context).textTheme.headlineLarge?.color,
+            border: Border.all(
+              color: ColorsConstants.gray50,
+              width: 1.0,
+            ),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: Row(
+            children: [
+              Flexible(
+                flex: 6,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          fish.name.toTitleCase,
+                          style: TextStyle(
+                            color:
+                                Theme.of(context).textTheme.labelMedium?.color,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                        SizedBox(width: 5),
+                        Text(
+                          '●',
+                          style: TextStyle(
+                            color:
+                                Theme.of(context).textTheme.labelMedium?.color,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 8,
+                          ),
+                        ),
+                        SizedBox(width: 5),
+                        Text(
+                          '${fish.weight} ${SpotViewUtils.getUnitMeasure(fish.unitMeasure)}',
+                          style: TextStyle(
+                            color:
+                                Theme.of(context).textTheme.labelMedium?.color,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        )
+                      ],
+                    ),
+                    Text(
+                      fish.lures.join(', ').toTitleCase,
+                      softWrap: true,
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.labelMedium?.color,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 12,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Flexible(
+                flex: 1,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () => _handleRemoveFish(id),
+                      child: Icon(
+                        Icons.delete,
+                        color: Theme.of(context).textTheme.labelMedium?.color,
+                        size: 24,
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        );
+      },
+    );
   }
 
   _renderEmptyFishes(dynamic context) {

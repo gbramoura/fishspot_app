@@ -8,7 +8,6 @@ import 'package:fishspot_app/utils/geolocator_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +21,6 @@ class SpotLocationPage extends StatefulWidget {
 class _SpotLocationPageState extends State<SpotLocationPage> {
   final MapController _mapController = MapController();
 
-  Position? _position;
   LatLng? _latLng;
   bool _loading = false;
 
@@ -36,12 +34,22 @@ class _SpotLocationPageState extends State<SpotLocationPage> {
     setState(() {
       _loading = true;
     });
+    var addSpot = Provider.of<AddSpotRepository>(context, listen: false);
+    var pickedPosition = addSpot.getCoordinates();
+    var latLng = LatLng(0, 0);
 
-    var position = await GeolocatorUtils.getCurrentPosition();
+    if (pickedPosition.isNotEmpty) {
+      latLng = LatLng(
+        pickedPosition[0].toDouble(),
+        pickedPosition[1].toDouble(),
+      );
+    } else {
+      var position = await GeolocatorUtils.getCurrentPosition();
+      latLng = LatLng(position.latitude, position.longitude);
+    }
 
     setState(() {
-      _position = position;
-      _latLng = LatLng(position.latitude, position.longitude);
+      _latLng = latLng;
       _loading = false;
     });
   }
@@ -56,11 +64,11 @@ class _SpotLocationPageState extends State<SpotLocationPage> {
     var route = MaterialPageRoute(builder: (context) => SpotDescriptionPage());
     var addSpot = Provider.of<AddSpotRepository>(context, listen: false);
 
-    if (_position == null) {
+    if (_latLng == null) {
       return;
     }
 
-    addSpot.setCoordinates(_position?.latitude ?? 0, _position?.longitude ?? 0);
+    addSpot.setCoordinates(_latLng?.latitude ?? 0, _latLng?.longitude ?? 0);
     NavigationService.push(context, route);
   }
 
@@ -105,8 +113,8 @@ class _SpotLocationPageState extends State<SpotLocationPage> {
       options: MapOptions(
         initialZoom: 15,
         initialCenter: LatLng(
-          _position?.latitude ?? 0,
-          _position?.longitude ?? 0,
+          _latLng?.latitude ?? 0,
+          _latLng?.longitude ?? 0,
         ),
         onPositionChanged: _handleMapChange,
       ),

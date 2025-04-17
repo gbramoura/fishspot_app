@@ -28,28 +28,66 @@ class AddSpotRepository extends ChangeNotifier {
 
   void setCoordinates(double lat, double lng) {
     _coordinates.addAll([lat, lng]);
+    notifyListeners();
   }
 
   void setDifficulty(SpotDifficultyType rate, String obs) {
     _locationDifficulty = SpotLocationDifficulty(rate: rate, observation: obs);
+    notifyListeners();
   }
 
   void setRisk(SpotRiskType rate, String obs) {
     _locationRisk = SpotLocationRisk(rate: rate, observation: obs);
+    notifyListeners();
   }
 
   void setImages(List<File> images) {
     _images.addAll(images);
+    notifyListeners();
   }
 
   void setFishes(List<SpotFish> fishes) {
     _fishes.addAll(fishes);
+    notifyListeners();
   }
 
   void setDescription(String title, String obs, DateTime date) {
     _title = title;
     _observation = obs;
     _date = date;
+    notifyListeners();
+  }
+
+  List<num> getCoordinates() {
+    return _coordinates;
+  }
+
+  SpotLocationDifficulty getDifficulty() {
+    return _locationDifficulty;
+  }
+
+  SpotLocationRisk getRisk() {
+    return _locationRisk;
+  }
+
+  List<File> getImages() {
+    return _images;
+  }
+
+  List<SpotFish> getFishes() {
+    return _fishes;
+  }
+
+  String getTitle() {
+    return _title;
+  }
+
+  String getObservation() {
+    return _observation;
+  }
+
+  DateTime getDate() {
+    return _date;
   }
 
   Map<String, dynamic> toPayload() {

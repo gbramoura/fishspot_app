@@ -4,6 +4,7 @@ import 'package:fishspot_app/components/custom_alert_dialog.dart';
 import 'package:fishspot_app/components/custom_button.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
+import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/spot/spot_fish_page.dart';
 import 'package:fishspot_app/repositories/add_spot_repository.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
@@ -21,17 +22,28 @@ class SpotImagePage extends StatefulWidget {
 }
 
 class _SpotImagePageState extends State<SpotImagePage> {
-  final Map<Uuid, File> _images = {};
+  Map<Uuid, File> _images = {};
+  bool _loading = false;
 
   @override
   void initState() {
     super.initState();
-    _clearData();
+    _loadData();
   }
 
-  _clearData() {
+  _loadData() {
+    setState(() {
+      _loading = true;
+    });
+
     var addSpot = Provider.of<AddSpotRepository>(context, listen: false);
-    addSpot.setImages([]);
+    var images = addSpot.getImages();
+    var imagesMap = {for (var e in images) Uuid(): e};
+
+    setState(() {
+      _images = imagesMap;
+      _loading = false;
+    });
   }
 
   _handleNextButton(dynamic context) {
@@ -85,6 +97,10 @@ class _SpotImagePageState extends State<SpotImagePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_loading) {
+      return LoadingPage();
+    }
+
     return Scaffold(
       appBar: _renderAppBar(context),
       body: Center(
@@ -142,7 +158,7 @@ class _SpotImagePageState extends State<SpotImagePage> {
             borderRadius: BorderRadius.circular(5),
             image: DecorationImage(
               fit: BoxFit.cover,
-              image: AssetImage(e.value.path),
+              image: FileImage(e.value),
             ),
           ),
           child: Row(

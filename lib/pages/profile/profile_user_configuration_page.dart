@@ -78,6 +78,7 @@ class _ProfileUserConfigurationPageState
             CustomButton(
               label: 'Encerrar Sessão',
               onPressed: _handleLogout,
+              fixedSize: Size(160, 48),
             )
           ],
         ),

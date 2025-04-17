@@ -1,7 +1,9 @@
+import 'package:fishspot_app/enums/unit_measure_type.dart';
+
 class SpotFish {
   final String name;
-  final double weight;
-  final String unitMeasure;
+  final num weight;
+  final UnitMeasureType unitMeasure;
   final List<String> lures;
 
   SpotFish({
@@ -15,7 +17,9 @@ class SpotFish {
     return SpotFish(
       name: json['name'],
       weight: json['weight'].toDouble(),
-      unitMeasure: json['unitMeasure'],
+      unitMeasure: UnitMeasureType.values.firstWhere(
+        (e) => e.name == json['unitMeasure'],
+      ),
       lures: List<String>.from(json['lures']),
     );
   }

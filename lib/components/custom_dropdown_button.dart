@@ -6,12 +6,14 @@ class CustomDropdownButton extends StatelessWidget {
   final List<String> values;
   final void Function(String? value)? onChange;
   final String hintText;
+  final Icon? icon;
 
   const CustomDropdownButton({
     super.key,
     required this.values,
     required this.hintText,
     this.onChange,
+    this.icon,
   });
 
   @override
@@ -30,6 +32,7 @@ class CustomDropdownButton extends StatelessWidget {
       onChanged: onChange,
       dropdownColor: ColorsConstants.white50,
       decoration: InputDecoration(
+        prefixIcon: icon,
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(
             color: Theme.of(context).buttonTheme.colorScheme?.primary ??

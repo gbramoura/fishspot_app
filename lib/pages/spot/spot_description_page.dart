@@ -4,6 +4,7 @@ import 'package:fishspot_app/components/custom_text_form_field.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/enums/spot_difficulty_type.dart';
 import 'package:fishspot_app/enums/spot_risk_type.dart';
+import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/spot/spot_image_page.dart';
 import 'package:fishspot_app/repositories/add_spot_repository.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
@@ -25,17 +26,30 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
 
   SpotDifficultyType _difficulty = SpotDifficultyType.VeryEasy;
   SpotRiskType _risk = SpotRiskType.VeryLow;
+  bool _loading = false;
 
   @override
   void initState() {
     super.initState();
-    _clearData();
+    _loadData();
   }
 
-  _clearData() {
+  _loadData() {
+    setState(() {
+      _loading = true;
+    });
+
     var addSpot = Provider.of<AddSpotRepository>(context, listen: false);
-    addSpot.setDifficulty(SpotDifficultyType.VeryEasy, "");
-    addSpot.setRisk(SpotRiskType.VeryLow, "");
+    var difficulty = addSpot.getDifficulty();
+    var risk = addSpot.getRisk();
+
+    setState(() {
+      _riskObservationController.text = risk.observation;
+      _risk = risk.rate;
+      _difficultyObservationController.text = difficulty.observation;
+      _difficulty = difficulty.rate;
+      _loading = false;
+    });
   }
 
   String? _riskObservationValidator(String? value) {
@@ -56,14 +70,14 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
     if (value == null || value.isEmpty) {
       return;
     }
-    _difficulty = SpotDifficultyType.values.firstWhere((e) => e.name == value);
+    _difficulty = SpotViewUtils.getDifficultyFromText(value);
   }
 
   _handleChangeRisk(String? value) {
     if (value == null || value.isEmpty) {
       return;
     }
-    _risk = SpotRiskType.values.firstWhere((e) => e.name == value);
+    _risk = SpotViewUtils.getRiskFromText(value);
   }
 
   _handleNextButton() {
@@ -88,6 +102,10 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_loading) {
+      return LoadingPage();
+    }
+
     return Scaffold(
       appBar: _renderAppBar(context),
       body: Center(
