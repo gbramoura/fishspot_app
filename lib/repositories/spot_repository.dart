@@ -1,20 +1,19 @@
-import 'dart:io';
-
 import 'package:fishspot_app/enums/spot_difficulty_type.dart';
 import 'package:fishspot_app/enums/spot_risk_type.dart';
 import 'package:fishspot_app/models/spot.dart';
 import 'package:fishspot_app/models/spot_fish.dart';
+import 'package:fishspot_app/models/spot_image.dart';
 import 'package:fishspot_app/models/spot_location_difficulty.dart';
 import 'package:fishspot_app/models/spot_location_risk.dart';
 import 'package:fishspot_app/models/user.dart';
 import 'package:flutter/material.dart';
 
-class AddSpotRepository extends ChangeNotifier {
+class SpotRepository extends ChangeNotifier {
   String _title = '';
   String _observation = '';
   DateTime _date = DateTime(0, 0, 0);
   List<num> _coordinates = [];
-  List<File> _images = [];
+  List<SpotImage> _images = [];
   List<SpotFish> _fishes = [];
   User _user = User(name: '');
   SpotLocationDifficulty _locationDifficulty = SpotLocationDifficulty(
@@ -41,13 +40,13 @@ class AddSpotRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setImages(List<File> images) {
-    _images.addAll(images);
+  void setImages(List<SpotImage> images) {
+    _images = images;
     notifyListeners();
   }
 
   void setFishes(List<SpotFish> fishes) {
-    _fishes.addAll(fishes);
+    _fishes = fishes;
     notifyListeners();
   }
 
@@ -55,6 +54,16 @@ class AddSpotRepository extends ChangeNotifier {
     _title = title;
     _observation = obs;
     _date = date;
+    notifyListeners();
+  }
+
+  void addImages(List<SpotImage> images) {
+    _images.addAll(images);
+    notifyListeners();
+  }
+
+  void addFishes(List<SpotFish> fishes) {
+    _fishes.addAll(fishes);
     notifyListeners();
   }
 
@@ -70,7 +79,7 @@ class AddSpotRepository extends ChangeNotifier {
     return _locationRisk;
   }
 
-  List<File> getImages() {
+  List<SpotImage> getImages() {
     return _images;
   }
 
@@ -98,7 +107,7 @@ class AddSpotRepository extends ChangeNotifier {
       coordinates: _coordinates,
       locationDifficulty: _locationDifficulty,
       locationRisk: _locationRisk,
-      images: _images.map((e) => e.path).toList(),
+      images: [],
       fishes: _fishes,
       user: _user,
     );

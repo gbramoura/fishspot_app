@@ -4,9 +4,9 @@ import 'package:fishspot_app/components/custom_alert_dialog.dart';
 import 'package:fishspot_app/components/custom_button.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
-import 'package:fishspot_app/pages/commons/loading_page.dart';
+import 'package:fishspot_app/models/spot_image.dart';
 import 'package:fishspot_app/pages/spot/spot_fish_page.dart';
-import 'package:fishspot_app/repositories/add_spot_repository.dart';
+import 'package:fishspot_app/repositories/spot_repository.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -22,48 +22,22 @@ class SpotImagePage extends StatefulWidget {
 }
 
 class _SpotImagePageState extends State<SpotImagePage> {
-  Map<Uuid, File> _images = {};
-  bool _loading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadData();
-  }
-
-  _loadData() {
-    setState(() {
-      _loading = true;
-    });
-
-    var addSpot = Provider.of<AddSpotRepository>(context, listen: false);
-    var images = addSpot.getImages();
-    var imagesMap = {for (var e in images) Uuid(): e};
-
-    setState(() {
-      _images = imagesMap;
-      _loading = false;
-    });
-  }
-
-  _handleNextButton(dynamic context) {
-    var route = MaterialPageRoute(builder: (context) => SpotFishPage());
-    var addSpot = Provider.of<AddSpotRepository>(context, listen: false);
-
-    if (_images.isNotEmpty) {
-      addSpot.setImages(_images.entries.map((e) => e.value).toList());
-    }
-
-    NavigationService.push(context, route);
+  _handleNextButton(BuildContext context) {
+    NavigationService.push(
+      context,
+      MaterialPageRoute(builder: (context) => SpotFishPage()),
+    );
   }
 
   _handleAddImage() async {
     const int imagesLimit = 30;
     const List<String> imagesExtensions = [".png", ".jpg", ".jpeg"];
+    var repo = Provider.of<SpotRepository>(context, listen: false);
+    var images = repo.getImages();
 
     var picker = ImagePicker();
     var pickedFiles = await picker.pickMultiImage(
-      limit: imagesLimit - _images.length,
+      limit: imagesLimit - images.length,
     );
 
     if (pickedFiles.isEmpty) {
@@ -83,42 +57,44 @@ class _SpotImagePageState extends State<SpotImagePage> {
         continue;
       }
 
-      setState(() {
-        _images.addAll({id: file});
-      });
+      repo.addImages([
+        SpotImage(id: id, file: file),
+      ]);
     }
   }
 
-  _handleRemoveImage(Uuid id) {
-    setState(() {
-      _images.removeWhere((uuid, file) => uuid == id);
-    });
+  _handleRemoveImage(BuildContext context, Uuid id) {
+    var repo = context.read<SpotRepository>();
+    var images = repo.getImages();
+
+    var updatedImages = images.where((file) => file.id != id).toList();
+    repo.setImages(updatedImages);
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (_loading) {
-      return LoadingPage();
-    }
-
-    return Scaffold(
-      appBar: _renderAppBar(context),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 10),
-            Flexible(child: _renderImages(context), flex: 7),
-            Flexible(child: _renderNext(context), flex: 1),
-          ],
+  Widget build(BuildContext buildContext) {
+    return Consumer<SpotRepository>(builder: (context, value, widget) {
+      return Scaffold(
+        appBar: _renderAppBar(context),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 10),
+              Flexible(child: _renderImages(context, value), flex: 7),
+              Flexible(child: _renderNext(context, value), flex: 1),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
-  _renderImages(dynamic context) {
-    if (_images.isEmpty) {
+  _renderImages(BuildContext context, SpotRepository value) {
+    var images = value.getImages();
+
+    if (images.isEmpty) {
       return _renderEmptyImages(context);
     }
 
@@ -137,59 +113,63 @@ class _SpotImagePageState extends State<SpotImagePage> {
             ),
           ),
           SizedBox(height: 10),
-          Expanded(
-            child: _renderPickedImages(context),
-          )
+          Expanded(child: _renderPickedImages(context, value))
         ],
       ),
     );
   }
 
-  _renderPickedImages(dynamic context) {
-    return GridView.count(
-      primary: true,
-      shrinkWrap: true,
-      crossAxisCount: 2,
-      crossAxisSpacing: 10,
-      mainAxisSpacing: 10,
-      children: _images.entries.map((e) {
-        return Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: FileImage(e.value),
+  _renderPickedImages(BuildContext context, SpotRepository value) {
+    var images = value.getImages();
+
+    return GridView.builder(
+        primary: true,
+        shrinkWrap: true,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+        ),
+        itemCount: images.length,
+        itemBuilder: (BuildContext context, int index) {
+          var image = images[index];
+
+          return Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: FileImage(image.file),
+              ),
             ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              GestureDetector(
-                onTap: () => _handleRemoveImage(e.key),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadiusDirectional.only(
-                      bottomStart: Radius.circular(25),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onTap: () => _handleRemoveImage(context, image.id),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadiusDirectional.only(
+                        bottomStart: Radius.circular(25),
+                      ),
+                      color: ColorsConstants.white50,
                     ),
-                    color: ColorsConstants.white50,
+                    padding: EdgeInsets.fromLTRB(8, 5, 5, 8),
+                    child: Icon(
+                      Icons.close_rounded,
+                      size: 20,
+                      color: ColorsConstants.gray350,
+                    ),
                   ),
-                  padding: EdgeInsets.fromLTRB(8, 5, 5, 8),
-                  child: Icon(
-                    Icons.close_rounded,
-                    size: 20,
-                    color: ColorsConstants.gray350,
-                  ),
-                ),
-              )
-            ],
-          ),
-        );
-      }).toList(),
-    );
+                )
+              ],
+            ),
+          );
+        });
   }
 
-  _renderEmptyImages(dynamic context) {
+  _renderEmptyImages(BuildContext context) {
     return Center(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -220,14 +200,16 @@ class _SpotImagePageState extends State<SpotImagePage> {
     );
   }
 
-  _renderNext(dynamic context) {
+  _renderNext(BuildContext context, SpotRepository value) {
+    var images = value.getImages();
+
     return Padding(
       padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           CustomButton(
-            label: _images.isEmpty ? "Pular" : "Proximo",
+            label: images.isEmpty ? "Pular" : "Proximo",
             onPressed: () => _handleNextButton(context),
             fixedSize: Size(182, 48),
           ),
@@ -236,7 +218,7 @@ class _SpotImagePageState extends State<SpotImagePage> {
     );
   }
 
-  _renderAppBar(dynamic context) {
+  _renderAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: Theme.of(context).colorScheme.surface,
       surfaceTintColor: Theme.of(context).colorScheme.surface,
@@ -264,7 +246,7 @@ class _SpotImagePageState extends State<SpotImagePage> {
     );
   }
 
-  _renderDialog(dynamic context, String message) {
+  _renderDialog(BuildContext context, String message) {
     showDialog(
       context: context,
       builder: (BuildContext context) {

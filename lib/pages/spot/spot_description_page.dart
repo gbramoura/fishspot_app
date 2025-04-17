@@ -6,7 +6,7 @@ import 'package:fishspot_app/enums/spot_difficulty_type.dart';
 import 'package:fishspot_app/enums/spot_risk_type.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/spot/spot_image_page.dart';
-import 'package:fishspot_app/repositories/add_spot_repository.dart';
+import 'package:fishspot_app/repositories/spot_repository.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:fishspot_app/utils/spot_view_utils.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +39,7 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
       _loading = true;
     });
 
-    var addSpot = Provider.of<AddSpotRepository>(context, listen: false);
+    var addSpot = Provider.of<SpotRepository>(context, listen: false);
     var difficulty = addSpot.getDifficulty();
     var risk = addSpot.getRisk();
 
@@ -86,7 +86,7 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
     }
 
     var route = MaterialPageRoute(builder: (context) => SpotImagePage());
-    var addSpot = Provider.of<AddSpotRepository>(context, listen: false);
+    var addSpot = Provider.of<SpotRepository>(context, listen: false);
 
     addSpot.setDifficulty(
       _difficulty,

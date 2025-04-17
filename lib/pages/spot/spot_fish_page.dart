@@ -1,10 +1,8 @@
 import 'package:fishspot_app/components/custom_button.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/extensions/string_extension.dart';
-import 'package:fishspot_app/models/spot_fish.dart';
-import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/spot/spot_add_fish_page.dart';
-import 'package:fishspot_app/repositories/add_spot_repository.dart';
+import 'package:fishspot_app/repositories/spot_repository.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:fishspot_app/utils/spot_view_utils.dart';
 import 'package:flutter/material.dart';
@@ -19,30 +17,6 @@ class SpotFishPage extends StatefulWidget {
 }
 
 class _SpotFishPageState extends State<SpotFishPage> {
-  Map<Uuid, SpotFish> _fishes = {};
-  bool _loading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadData();
-  }
-
-  _loadData() {
-    setState(() {
-      _loading = true;
-    });
-
-    var addSpot = Provider.of<AddSpotRepository>(context, listen: false);
-    var fishes = addSpot.getFishes();
-    var fishesMap = {for (var e in fishes) Uuid(): e};
-
-    setState(() {
-      _fishes = fishesMap;
-      _loading = false;
-    });
-  }
-
   _handleNextButton(dynamic context) {
     // var route = MaterialPageRoute(builder: (context) => SpotFishPage());
     // var addSpot = Provider.of<AddSpotRepository>(context, listen: false);
@@ -57,35 +31,37 @@ class _SpotFishPageState extends State<SpotFishPage> {
   }
 
   _handleRemoveFish(Uuid id) {
-    setState(() {
-      _fishes.removeWhere((uuid, fish) => uuid == id);
-    });
+    var repo = Provider.of<SpotRepository>(context, listen: false);
+    var fishes = repo.getFishes();
+
+    var updatedFishes = fishes.where((file) => file.id != id).toList();
+    repo.setFishes(updatedFishes);
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (_loading) {
-      return LoadingPage();
-    }
-
-    return Scaffold(
-      appBar: _renderAppBar(context),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 10),
-            Flexible(child: _renderFishes(context), flex: 7),
-            Flexible(child: _renderNext(context), flex: 1),
-          ],
+  Widget build(BuildContext buildContext) {
+    return Consumer<SpotRepository>(builder: (context, value, widget) {
+      return Scaffold(
+        appBar: _renderAppBar(context),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 10),
+              Flexible(child: _renderFishes(context, value), flex: 7),
+              Flexible(child: _renderNext(context, value), flex: 1),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
-  _renderFishes(dynamic context) {
-    if (_fishes.isEmpty) {
+  _renderFishes(BuildContext context, SpotRepository value) {
+    var fishes = value.getFishes();
+
+    if (fishes.isEmpty) {
       return _renderEmptyFishes(context);
     }
 
@@ -105,22 +81,23 @@ class _SpotFishPageState extends State<SpotFishPage> {
           ),
           SizedBox(height: 10),
           Expanded(
-            child: _renderPickedFishes(context),
+            child: _renderPickedFishes(context, value),
           )
         ],
       ),
     );
   }
 
-  _renderPickedFishes(dynamic context) {
+  _renderPickedFishes(BuildContext context, SpotRepository value) {
+    var fishes = value.getFishes();
+
     return ListView.builder(
       scrollDirection: Axis.vertical,
       primary: false,
       shrinkWrap: true,
-      itemCount: _fishes.entries.length,
+      itemCount: fishes.length,
       itemBuilder: (context, index) {
-        final id = _fishes.entries.toList()[index].key;
-        final fish = _fishes.entries.toList()[index].value;
+        final fish = fishes[index];
 
         return Container(
           margin: const EdgeInsets.only(bottom: 10),
@@ -195,7 +172,7 @@ class _SpotFishPageState extends State<SpotFishPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     GestureDetector(
-                      onTap: () => _handleRemoveFish(id),
+                      onTap: () => _handleRemoveFish(fish.id),
                       child: Icon(
                         Icons.delete,
                         color: Theme.of(context).textTheme.labelMedium?.color,
@@ -212,7 +189,7 @@ class _SpotFishPageState extends State<SpotFishPage> {
     );
   }
 
-  _renderEmptyFishes(dynamic context) {
+  _renderEmptyFishes(BuildContext context) {
     return Center(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -243,7 +220,9 @@ class _SpotFishPageState extends State<SpotFishPage> {
     );
   }
 
-  _renderNext(dynamic context) {
+  _renderNext(BuildContext context, SpotRepository value) {
+    var fishes = value.getFishes();
+
     return Padding(
       padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
       child: Row(
@@ -251,7 +230,7 @@ class _SpotFishPageState extends State<SpotFishPage> {
         children: [
           CustomButton(
             label: "Proximo",
-            onPressed: _fishes.isEmpty ? null : _handleNextButton(context),
+            onPressed: fishes.isEmpty ? null : () => _handleNextButton(context),
             fixedSize: Size(182, 48),
           ),
         ],
@@ -259,7 +238,7 @@ class _SpotFishPageState extends State<SpotFishPage> {
     );
   }
 
-  _renderAppBar(dynamic context) {
+  _renderAppBar(BuildContext context) {
     return AppBar(
       shadowColor: ColorsConstants.gray350,
       title: Row(

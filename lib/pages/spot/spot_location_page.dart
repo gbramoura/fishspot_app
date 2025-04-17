@@ -2,7 +2,7 @@ import 'package:fishspot_app/components/custom_button.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/spot/spot_description_page.dart';
-import 'package:fishspot_app/repositories/add_spot_repository.dart';
+import 'package:fishspot_app/repositories/spot_repository.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:fishspot_app/utils/geolocator_utils.dart';
 import 'package:flutter/material.dart';
@@ -34,23 +34,24 @@ class _SpotLocationPageState extends State<SpotLocationPage> {
     setState(() {
       _loading = true;
     });
-    var addSpot = Provider.of<AddSpotRepository>(context, listen: false);
-    var pickedPosition = addSpot.getCoordinates();
-    var latLng = LatLng(0, 0);
 
-    if (pickedPosition.isNotEmpty) {
-      latLng = LatLng(
-        pickedPosition[0].toDouble(),
-        pickedPosition[1].toDouble(),
-      );
-    } else {
-      var position = await GeolocatorUtils.getCurrentPosition();
-      latLng = LatLng(position.latitude, position.longitude);
+    var addSpot = Provider.of<SpotRepository>(context, listen: false);
+    var coordinates = addSpot.getCoordinates();
+
+    if (coordinates.isNotEmpty) {
+      setState(() {
+        _loading = false;
+        _latLng = LatLng(
+          coordinates[0].toDouble(),
+          coordinates[1].toDouble(),
+        );
+      });
     }
 
+    var position = await GeolocatorUtils.getCurrentPosition();
     setState(() {
-      _latLng = latLng;
       _loading = false;
+      _latLng = LatLng(position.latitude, position.longitude);
     });
   }
 
@@ -62,7 +63,7 @@ class _SpotLocationPageState extends State<SpotLocationPage> {
 
   _handleConfirmButton() {
     var route = MaterialPageRoute(builder: (context) => SpotDescriptionPage());
-    var addSpot = Provider.of<AddSpotRepository>(context, listen: false);
+    var addSpot = Provider.of<SpotRepository>(context, listen: false);
 
     if (_latLng == null) {
       return;
@@ -176,7 +177,7 @@ class _SpotLocationPageState extends State<SpotLocationPage> {
           size: 32,
         ),
         onPressed: () {
-          Provider.of<AddSpotRepository>(context, listen: false).clear();
+          Provider.of<SpotRepository>(context, listen: false).clear();
           NavigationService.pop(context);
         },
       ),
