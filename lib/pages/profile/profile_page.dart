@@ -136,14 +136,6 @@ class _ProfilePageState extends State<ProfilePage> {
       return LoadingPage();
     }
 
-    final divider = Divider(
-      color: Theme.of(context).iconTheme.color,
-      thickness: 0.3,
-    );
-    final spotRegistered = _userLocations.isEmpty
-        ? _renderEmptySpotRegistered()
-        : _renderSpotRegistered(context);
-
     return Scaffold(
       appBar: _renderAppBar(context),
       body: RefreshIndicator(
@@ -157,8 +149,11 @@ class _ProfilePageState extends State<ProfilePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _renderUserDescription(context),
-                divider,
-                spotRegistered,
+                Divider(
+                  color: Theme.of(context).iconTheme.color,
+                  thickness: 0.3,
+                ),
+                _renderSpotImages(context),
               ],
             ),
           ),
@@ -259,6 +254,13 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  _renderSpotImages(dynamic context) {
+    if (_userLocations.isEmpty) {
+      return _renderEmptySpotRegistered();
+    }
+    return _renderSpotRegistered(context);
+  }
+
   _renderSpotRegistered(dynamic context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
@@ -277,6 +279,7 @@ class _ProfilePageState extends State<ProfilePage> {
           GridView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
+            primary: true,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               crossAxisSpacing: 2,

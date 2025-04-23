@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/extensions/string_extension.dart';
@@ -75,14 +74,16 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
 
     return Scaffold(
       appBar: _renderAppBar(context),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          _renderHeader(context),
-          _renderBodyImages(context),
-          _renderTabs(context)
-        ],
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _renderHeader(context),
+            _renderBody(context),
+            _renderTabs(context)
+          ],
+        ),
       ),
     );
   }
@@ -115,7 +116,7 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
                 ),
               ),
               Text(
-                DateFormat('yyyy/MM/dd - hh:mm').format(
+                DateFormat('dd/MM/yyyy').format(
                   _spot?.date ?? DateTime(0, 0, 0),
                 ),
                 style: TextStyle(
@@ -131,49 +132,82 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
     );
   }
 
-  _renderBodyImages(dynamic context) {
+  _renderBody(dynamic context) {
     if ((_spot?.images ?? []).isEmpty) {
-      return Padding(
-        padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 100),
-            Center(
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.no_photography,
-                    color: Theme.of(context).textTheme.headlineLarge?.color,
-                    size: 90,
-                  ),
-                  Text(
-                    'Nenhuma Imagem \n registrada',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Theme.of(context).textTheme.headlineLarge?.color,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  )
-                ],
-              ),
-            ),
-            SizedBox(height: 100),
-          ],
-        ),
-      );
+      return _renderEmptyImages();
     }
+    return _renderImages();
+  }
 
-    // TODO: View this after include more images in the database
-    return GridView.count(
-      primary: true,
-      shrinkWrap: true,
-      scrollDirection: Axis.horizontal,
-      crossAxisCount: 3,
-      crossAxisSpacing: 2,
-      mainAxisSpacing: 2,
-      children: _renderImages(),
+  _renderEmptyImages() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 120),
+          Center(
+            child: Column(
+              children: [
+                Icon(
+                  Icons.no_photography,
+                  color: Theme.of(context).textTheme.headlineLarge?.color,
+                  size: 90,
+                ),
+                Text(
+                  'Nenhuma Imagem \n registrada',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.headlineLarge?.color,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400,
+                  ),
+                )
+              ],
+            ),
+          ),
+          SizedBox(height: 120),
+        ],
+      ),
+    );
+  }
+
+  _renderImages() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+      child: SafeArea(
+        child: SizedBox(
+          height: 400,
+          width: double.infinity,
+          child: GridView.builder(
+            shrinkWrap: true,
+            primary: true,
+            scrollDirection: Axis.horizontal,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 10.0,
+              mainAxisSpacing: 10.0,
+              childAspectRatio: 1.0,
+            ),
+            itemCount: _spot?.images.length,
+            itemBuilder: (BuildContext context, int index) {
+              var image = _spot?.images[index];
+
+              return Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: NetworkImage(
+                      ImageUtils.getImagePath(image, context),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 
@@ -397,31 +431,6 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
         ),
       ),
     );
-  }
-
-  _renderImages() {
-    handle(dynamic ctx, String url, DownloadProgress download) {
-      return Container(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: ColorsConstants.gray75,
-        ),
-        child: Center(
-          child: CircularProgressIndicator(
-            color: ColorsConstants.gray350,
-          ),
-        ),
-      );
-    }
-
-    return _spot?.images.map((image) {
-      return CachedNetworkImage(
-        imageUrl: ImageUtils.getImagePath(image, context),
-        width: 100,
-        fit: BoxFit.cover,
-        progressIndicatorBuilder: handle,
-      );
-    }).toList();
   }
 
   _renderRiskText() {
