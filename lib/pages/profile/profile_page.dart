@@ -12,6 +12,7 @@ import 'package:fishspot_app/repositories/settings_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
+import 'package:fishspot_app/utils/image_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:provider/provider.dart';
@@ -244,8 +245,8 @@ class _ProfilePageState extends State<ProfilePage> {
       );
 
       final image = DecorationImage(
-        image: NetworkImage(entry.image!),
-        fit: BoxFit.fill,
+        image: NetworkImage(ImageUtils.getImagePath(entry.image, context)),
+        fit: BoxFit.cover,
       );
 
       return GestureDetector(
