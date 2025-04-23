@@ -25,6 +25,19 @@ class NavigationService {
     Navigator.pop(context);
   }
 
+  static void popUntil(dynamic context, List<String> pages) async {
+    if (!await AuthService.isUserAuthenticated(context)) {
+      AuthService.clearCredentials(context);
+      AuthService.showAuthDialog(context);
+    }
+
+    await AuthService.refreshCredentials(context);
+
+    Navigator.of(context).popUntil((route) {
+      return pages.contains(route.settings.name);
+    });
+  }
+
   static void push(dynamic context, Route route) async {
     if (!await AuthService.isUserAuthenticated(context)) {
       AuthService.clearCredentials(context);

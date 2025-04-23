@@ -48,7 +48,7 @@ class Spot {
     return {
       'title': title,
       'observation': observation,
-      'date': date,
+      'date': date.toIso8601String(),
       'coordinates': coordinates,
       'locationDifficulty': locationDifficulty.toJson(),
       'locationRisk': locationRisk.toJson(),

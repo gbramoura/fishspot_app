@@ -1,6 +1,7 @@
 import 'package:fishspot_app/components/custom_button.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/extensions/string_extension.dart';
+import 'package:fishspot_app/pages/spot/spot_about_page.dart';
 import 'package:fishspot_app/pages/spot/spot_add_fish_page.dart';
 import 'package:fishspot_app/repositories/spot_repository.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
@@ -18,9 +19,10 @@ class SpotFishPage extends StatefulWidget {
 
 class _SpotFishPageState extends State<SpotFishPage> {
   _handleNextButton(dynamic context) {
-    // var route = MaterialPageRoute(builder: (context) => SpotFishPage());
-    // var addSpot = Provider.of<AddSpotRepository>(context, listen: false);
-    // NavigationService.push(context, route);
+    NavigationService.push(
+      context,
+      MaterialPageRoute(builder: (context) => SpotAboutPage()),
+    );
   }
 
   _handleAddFish() async {

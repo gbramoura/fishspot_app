@@ -11,6 +11,7 @@ class CustomTextFormField extends StatelessWidget {
   final String? Function(String?)? validator;
   final bool expands;
   final int? maxLines;
+  final Function()? onTap;
 
   const CustomTextFormField({
     super.key,
@@ -23,6 +24,7 @@ class CustomTextFormField extends StatelessWidget {
     this.validator,
     this.expands = false,
     this.maxLines = 1,
+    this.onTap,
   });
 
   @override
@@ -36,6 +38,7 @@ class CustomTextFormField extends StatelessWidget {
         color: HexColor('#35383A'),
         fontSize: 14,
       ),
+      onTap: onTap,
       keyboardType: textInputType,
       expands: expands,
       maxLines: maxLines,

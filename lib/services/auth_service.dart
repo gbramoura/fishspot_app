@@ -4,6 +4,7 @@ import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/models/user_tokens.dart';
+import 'package:fishspot_app/repositories/location_repository.dart';
 import 'package:fishspot_app/repositories/settings_repository.dart';
 import 'package:fishspot_app/repositories/spot_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
@@ -53,6 +54,7 @@ class AuthService {
   static void clearCredentials(dynamic context) {
     Provider.of<SettingRepository>(context, listen: false).clear();
     Provider.of<SpotRepository>(context, listen: false).clear();
+    Provider.of<LocationRepository>(context, listen: false).clear();
   }
 
   static void showAuthDialog(dynamic context) {

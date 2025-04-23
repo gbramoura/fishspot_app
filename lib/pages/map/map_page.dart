@@ -1,10 +1,10 @@
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/models/spot_location.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
+import 'package:fishspot_app/repositories/location_repository.dart';
 import 'package:fishspot_app/repositories/settings_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
-import 'package:fishspot_app/utils/geolocator_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -39,6 +39,7 @@ class _MapPageState extends State<MapPage> {
     });
 
     var settings = Provider.of<SettingRepository>(context, listen: false);
+    var locationRepo = Provider.of<LocationRepository>(context, listen: false);
     var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
     try {
@@ -56,7 +57,7 @@ class _MapPageState extends State<MapPage> {
         );
       });
 
-      var position = await GeolocatorUtils.getCurrentPosition();
+      var position = await locationRepo.getPosition();
 
       setState(() {
         _markers.clear();

@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:fishspot_app/models/http_multipart_file.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'http_service.dart';
@@ -40,6 +39,21 @@ class ApiService {
     return await _httpService.get('spot', token: token);
   }
 
+  Future<dynamic> getSpot(String id, String token) async {
+    return await _httpService.get('spot/$id', token: token);
+  }
+
+  Future<dynamic> createSpot(
+    Map<String, dynamic> payload,
+    String token,
+  ) async {
+    return await _httpService.post('spot', body: payload, token: token);
+  }
+
+  Future<dynamic> deleteSpot(String id, String token) async {
+    return await _httpService.delete('spot/$id', token: token);
+  }
+
   Future<dynamic> getUserLocations(
     Map<String, String> query,
     String token,
@@ -47,7 +61,10 @@ class ApiService {
     return await _httpService.get('spot/by-user', token: token, query: query);
   }
 
-  Future<dynamic> attachUserImage(Map<String, File> files, String token) async {
+  Future<dynamic> attachUserImage(
+    List<HttpMultipartFile> files,
+    String token,
+  ) async {
     return await _httpService.uploadMultipart(
       'resources/attach-to-user',
       files: files,
@@ -55,11 +72,20 @@ class ApiService {
     );
   }
 
-  String getResource(String id, String token) {
-    return Uri.https(_url, '/resources/$id', {'token': token}).toString();
+  Future<dynamic> attachspotImage(
+    List<HttpMultipartFile> files,
+    Map<String, String> fields,
+    String token,
+  ) async {
+    return await _httpService.uploadMultipart(
+      'resources/attach-to-spot',
+      files: files,
+      token: token,
+      fields: fields,
+    );
   }
 
-  Future<dynamic> getSpot(String id, String token) async {
-    return await _httpService.get('spot/$id', token: token);
+  String getResource(String id, String token) {
+    return Uri.https(_url, '/resources/$id', {'token': token}).toString();
   }
 }

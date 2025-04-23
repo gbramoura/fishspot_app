@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:fishspot_app/constants/http_constants.dart';
 import 'package:fishspot_app/exceptions/http_response_exception.dart';
+import 'package:fishspot_app/models/http_multipart_file.dart';
 import 'package:fishspot_app/models/http_response.dart';
 import 'package:http/http.dart' as http;
 
@@ -52,10 +52,22 @@ class HttpService {
     return _handleResponse(response);
   }
 
+  Future<dynamic> delete(
+    String path, {
+    String? token,
+  }) async {
+    final url = Uri.https(baseUrl, '/$path');
+    final response = await http.put(
+      url,
+      headers: _getDefaultHeader(token, jsonContentType: true),
+    );
+    return _handleResponse(response);
+  }
+
   Future<HttpResponse> uploadMultipart(
     String path, {
     Map<String, String>? fields,
-    Map<String, File>? files,
+    List<HttpMultipartFile>? files,
     String? token,
   }) async {
     final url = Uri.https(baseUrl, '/$path');
@@ -67,9 +79,9 @@ class HttpService {
     });
 
     if (files != null) {
-      for (var entry in files.entries) {
+      for (var entry in files) {
         request.files.add(
-          await http.MultipartFile.fromPath(entry.key, entry.value.path),
+          await http.MultipartFile.fromPath(entry.path, entry.file.path),
         );
       }
     }

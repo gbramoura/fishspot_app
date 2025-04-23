@@ -8,6 +8,7 @@ import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/exceptions/http_response_exception.dart';
+import 'package:fishspot_app/models/http_multipart_file.dart';
 import 'package:fishspot_app/models/http_response.dart';
 import 'package:fishspot_app/models/user_profile.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
@@ -95,7 +96,9 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
       if (!mounted) return;
       var settings = Provider.of<SettingRepository>(context, listen: false);
       var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
-      var payload = {'file': File(pickedFile.path)};
+      var payload = [
+        HttpMultipartFile(path: 'file', file: File(pickedFile.path))
+      ];
 
       HttpResponse response = await _apiService.attachUserImage(payload, token);
 

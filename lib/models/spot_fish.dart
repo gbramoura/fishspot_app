@@ -32,7 +32,7 @@ class SpotFish {
     return {
       'name': name,
       'weight': weight,
-      'unitMeasure': unitMeasure,
+      'unitMeasure': unitMeasure.name,
       'lures': lures,
     };
   }
