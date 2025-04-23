@@ -27,8 +27,12 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final ApiService _apiService = ApiService();
   final List<SpotLocation> _userLocations = [];
+  final ScrollController _scrollController = ScrollController();
+
   UserProfile _userProfile = UserProfile(username: '', name: '', email: '');
   bool _loading = false;
+  bool _loadingMoreData = false;
+  num _pageNumber = 1;
 
   @override
   void initState() {
@@ -49,13 +53,15 @@ class _ProfilePageState extends State<ProfilePage> {
       HttpResponse userResponse = await _apiService.getUser(token);
       HttpResponse locationsResponse = await _apiService.getUserLocations({
         'PageSize': '12',
-        'PageNumber': '1',
+        'PageNumber': _pageNumber.toString(),
       }, token);
 
       _userProfile = UserProfile.fromJson(userResponse.response);
 
+      _pageNumber = 1;
       _userLocations.clear();
       _userLocations.addAll(_parseFishingSpots(locationsResponse.response));
+      _scrollController.addListener(_scrollListener);
     } catch (e) {
       if (mounted) {
         AuthService.clearCredentials(context);
@@ -68,18 +74,60 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  List<SpotLocation> _parseFishingSpots(List<dynamic> jsonList) {
-    return jsonList.map((json) => SpotLocation.fromJson(json)).toList();
-  }
+  _loadMoreData() async {
+    if (_loadingMoreData) {
+      return;
+    }
 
-  _getUserImagePath() {
+    setState(() {
+      _loadingMoreData = true;
+    });
+
     var settings = Provider.of<SettingRepository>(context, listen: false);
     var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
-    if (_userProfile.image != null) {
-      return _apiService.getResource(_userProfile.image!, token);
+    try {
+      AuthService.refreshCredentials(context);
+      HttpResponse locationsResponse = await _apiService.getUserLocations({
+        'PageSize': '12',
+        'PageNumber': (_pageNumber + 1).toString(),
+      }, token);
+
+      var fishes = _parseFishingSpots(locationsResponse.response);
+      if (fishes.isNotEmpty) {
+        _pageNumber += 1;
+        _userLocations.addAll(fishes);
+      }
+    } catch (e) {
+      if (mounted) {
+        AuthService.clearCredentials(context);
+        AuthService.showInternalErrorDialog(context);
+      }
     }
-    return '';
+
+    setState(() {
+      _loadingMoreData = false;
+    });
+  }
+
+  _scrollListener() {
+    var position = _scrollController.position;
+    if (position.pixels == position.maxScrollExtent) {
+      _loadMoreData();
+    }
+  }
+
+  _handleImageTap(String id) {
+    NavigationService.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProfileUserSpotViewPage(spotId: id),
+      ),
+    );
+  }
+
+  List<SpotLocation> _parseFishingSpots(List<dynamic> jsonList) {
+    return jsonList.map((json) => SpotLocation.fromJson(json)).toList();
   }
 
   @override
@@ -102,6 +150,7 @@ class _ProfilePageState extends State<ProfilePage> {
         color: Theme.of(context).textTheme.headlineLarge?.color,
         onRefresh: () => _loadUserData(),
         child: SingleChildScrollView(
+          controller: _scrollController,
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -129,7 +178,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 height: 100,
                 width: 100,
                 child: CustomCircleAvatar(
-                  imageUrl: _getUserImagePath(),
+                  imageUrl: ImageUtils.getImagePath(
+                    _userProfile.image ?? "",
+                    context,
+                  ),
                 ),
               ),
               SizedBox(width: 20),
@@ -148,7 +200,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     Text(
-                      _userProfile.description!,
+                      _userProfile.description ?? "",
                       textAlign: TextAlign.start,
                       softWrap: true,
                       style: TextStyle(
@@ -168,7 +220,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Expanded(
               child: Column(
                 children: [
-                  Text(_userProfile.spotDetails!.registries.toString()),
+                  Text(_userProfile.spotDetails?.registries.toString() ?? ""),
                   Text('Registros'),
                 ],
               ),
@@ -176,7 +228,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Expanded(
               child: Column(
                 children: [
-                  Text(_userProfile.spotDetails!.fishes.toString()),
+                  Text(_userProfile.spotDetails?.fishes.toString() ?? ""),
                   Text('Peixes'),
                 ],
               ),
@@ -184,7 +236,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Expanded(
               child: Column(
                 children: [
-                  Text(_userProfile.spotDetails!.lures.toString()),
+                  Text(_userProfile.spotDetails?.lures.toString() ?? ""),
                   Text('Iscas'),
                 ],
               ),
@@ -222,78 +274,73 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           SizedBox(height: 15),
-          GridView.count(
-            primary: true,
+          GridView.builder(
             shrinkWrap: true,
-            crossAxisCount: 3,
-            crossAxisSpacing: 2,
-            mainAxisSpacing: 2,
-            children: _renderSpotRegistteredItems(),
             physics: NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 2,
+              mainAxisSpacing: 2,
+            ),
+            itemCount: _userLocations.length,
+            itemBuilder: (BuildContext context, int index) {
+              var entry = _userLocations[index];
+              var isImageProvided = entry.image != null && entry.image != '';
+
+              final icon = DecorationImage(
+                image: Svg('assets/images/no-photography.svg'),
+                fit: BoxFit.none,
+              );
+
+              final image = DecorationImage(
+                fit: BoxFit.cover,
+                image: NetworkImage(
+                  ImageUtils.getImagePath(entry.image, context),
+                ),
+              );
+
+              return GestureDetector(
+                onTap: () => _handleImageTap(entry.id),
+                child: Container(
+                  color: ColorsConstants.gray75,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      image: isImageProvided ? image : icon,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.fromLTRB(3, 0, 3, 0),
+                            height: 32,
+                            color: Color.fromRGBO(0, 0, 0, 0.35),
+                            child: Center(
+                              child: Text(
+                                entry.title,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: ColorsConstants.gray50,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
     );
-  }
-
-  _renderSpotRegistteredItems() {
-    return _userLocations.map((entry) {
-      final isImageProvided = entry.image != null && entry.image != '';
-      final icon = DecorationImage(
-        image: Svg('assets/images/no-photography.svg'),
-        fit: BoxFit.none,
-      );
-
-      final image = DecorationImage(
-        image: NetworkImage(ImageUtils.getImagePath(entry.image, context)),
-        fit: BoxFit.cover,
-      );
-
-      return GestureDetector(
-        onTap: () {
-          NavigationService.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ProfileUserSpotViewPage(spotId: entry.id),
-            ),
-          );
-        },
-        child: Container(
-          color: ColorsConstants.gray75,
-          child: Container(
-            decoration: BoxDecoration(
-              image: isImageProvided ? image : icon,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.fromLTRB(3, 0, 3, 0),
-                    height: 32,
-                    color: Color.fromRGBO(0, 0, 0, 0.35),
-                    child: Center(
-                      child: Text(
-                        entry.title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: ColorsConstants.gray50,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }).toList();
   }
 
   _renderEmptySpotRegistered() {
