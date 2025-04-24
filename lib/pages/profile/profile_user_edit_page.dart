@@ -57,7 +57,7 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
       var settings = Provider.of<SettingRepository>(context, listen: false);
       var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
-      AuthService.refreshCredentials(context);
+      await AuthService.refreshCredentials(context);
       HttpResponse resp = await _apiService.getUser(token);
       UserProfile user = UserProfile.fromJson(resp.response);
 

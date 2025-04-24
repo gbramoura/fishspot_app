@@ -49,7 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
     var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
     try {
-      AuthService.refreshCredentials(context);
+      await AuthService.refreshCredentials(context);
       HttpResponse userResponse = await _apiService.getUser(token);
       HttpResponse locationsResponse = await _apiService.getUserLocations({
         'PageSize': '12',
@@ -87,7 +87,7 @@ class _ProfilePageState extends State<ProfilePage> {
     var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
     try {
-      AuthService.refreshCredentials(context);
+      await AuthService.refreshCredentials(context);
       HttpResponse locationsResponse = await _apiService.getUserLocations({
         'PageSize': '12',
         'PageNumber': (_pageNumber + 1).toString(),

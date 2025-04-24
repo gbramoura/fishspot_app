@@ -1,8 +1,8 @@
+import 'package:fishspot_app/components/custom_circle_avatar.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/extensions/string_extension.dart';
 import 'package:fishspot_app/models/spot.dart';
-import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/repositories/settings_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
@@ -12,30 +12,30 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class ProfileUserSpotViewPage extends StatefulWidget {
+class MapView extends StatefulWidget {
+  final BuildContext context;
+  final ScrollController scrollController;
   final String spotId;
+  final void Function() onClose;
 
-  const ProfileUserSpotViewPage({
+  const MapView({
     super.key,
+    required this.context,
+    required this.scrollController,
     required this.spotId,
+    required this.onClose,
   });
 
   @override
-  State<ProfileUserSpotViewPage> createState() =>
-      _ProfileUserSpotViewPageState();
+  State<MapView> createState() => _MapViewState();
 }
 
-class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
+class _MapViewState extends State<MapView> {
   final ApiService _apiService = ApiService();
 
   Spot? _spot;
+  String _spotId = "";
   bool _loading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUserSpot();
-  }
 
   _loadUserSpot() async {
     setState(() {
@@ -43,15 +43,16 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
     });
 
     try {
-      await AuthService.refreshCredentials(context);
-
       var settings = Provider.of<SettingRepository>(context, listen: false);
       var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
+
+      await AuthService.refreshCredentials(context);
 
       var resp = await _apiService.getSpot(widget.spotId, token);
       var spot = Spot.fromJson(resp.response);
 
       setState(() {
+        _spotId = widget.spotId;
         _spot = spot;
       });
     } catch (e) {
@@ -72,61 +73,83 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) {
-      return LoadingPage();
+    if (widget.spotId != _spotId) {
+      _loadUserSpot();
     }
 
-    return Scaffold(
-      appBar: _renderAppBar(context),
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Flexible(flex: 1, child: _renderHeader(context)),
-            Flexible(flex: 6, child: _renderBody(context)),
-            Flexible(flex: 5, child: _renderTabs(context)),
-          ],
+    return Container(
+      padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
         ),
+      ),
+      child: CustomScrollView(
+        controller: widget.scrollController,
+        slivers: _render(),
       ),
     );
   }
 
-  _renderHeader(dynamic context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
+  List<Widget> _render() {
+    return [
+      _renderGrabSliver(),
+      _renderHeaderSliver(),
+      _renderBodySliver(),
+      _renderTabsSliver(),
+    ];
+  }
+
+  _renderGrabSliver() {
+    return SliverToBoxAdapter(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            _spot?.title ?? '',
-            softWrap: true,
-            style: TextStyle(
-              color: Theme.of(context).textTheme.titleLarge?.color,
-              fontWeight: FontWeight.w600,
-              fontSize: 18,
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Container(
+              height: 6,
+              width: 180,
+              decoration: BoxDecoration(
+                color: ColorsConstants.gray100,
+                borderRadius: BorderRadius.circular(50),
+              ),
             ),
+          )
+        ],
+      ),
+    );
+  }
+
+  _renderUser() {
+    return SliverToBoxAdapter(
+      child: Row(
+        children: [
+          CustomCircleAvatar(
+            imageUrl: '',
+            size: 0.4,
           ),
-          SizedBox(height: 5),
-          Row(
+          SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Dia da Pesca: ',
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.titleLarge?.color,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                ),
-              ),
-              Text(
-                DateFormat('dd/MM/yyyy').format(
-                  _spot?.date ?? DateTime(0, 0, 0),
-                ),
+                _spot?.user.name ?? '',
                 style: TextStyle(
                   color: Theme.of(context).textTheme.titleLarge?.color,
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
+                ),
+              ),
+              Text(
+                '@user12183',
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.titleLarge?.color,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 12,
                 ),
               )
             ],
@@ -134,120 +157,184 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
         ],
       ),
     );
+    ;
   }
 
-  _renderBody(dynamic context) {
-    if ((_spot?.images ?? []).isEmpty) {
-      return _renderEmptyImages();
-    }
-    return _renderImages();
-  }
-
-  _renderEmptyImages() {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-      child: Column(
+  _renderHeaderSliver() {
+    return SliverToBoxAdapter(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 120),
-          Center(
+          Flexible(
+            flex: 8,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.no_photography,
-                  color: Theme.of(context).textTheme.headlineLarge?.color,
-                  size: 90,
-                ),
+                SizedBox(height: 5),
                 Text(
-                  'Nenhuma Imagem \n registrada',
-                  textAlign: TextAlign.center,
+                  _spot?.title ?? '',
+                  softWrap: true,
                   style: TextStyle(
-                    color: Theme.of(context).textTheme.headlineLarge?.color,
+                    color: Theme.of(context).textTheme.titleLarge?.color,
+                    fontWeight: FontWeight.w600,
                     fontSize: 18,
-                    fontWeight: FontWeight.w400,
                   ),
+                ),
+                SizedBox(height: 5),
+                Row(
+                  children: [
+                    Text(
+                      'Dia da Pesca: ',
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.titleLarge?.color,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
+                      ),
+                    ),
+                    Text(
+                      DateFormat('dd/MM/yyyy').format(
+                        _spot?.date ?? DateTime(0, 0, 0),
+                      ),
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.titleLarge?.color,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    )
+                  ],
                 )
               ],
             ),
           ),
-          SizedBox(height: 120),
-        ],
-      ),
-    );
-  }
-
-  _renderImages() {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
-      child: GridView.builder(
-        shrinkWrap: true,
-        primary: true,
-        scrollDirection: Axis.horizontal,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: _gridAxisCount(_spot?.images.length ?? 0),
-          crossAxisSpacing: 10.0,
-          mainAxisSpacing: 10.0,
-          childAspectRatio: 1.0,
-        ),
-        itemCount: _spot?.images.length,
-        itemBuilder: (BuildContext context, int index) {
-          var image = _spot?.images[index];
-
-          return Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: NetworkImage(
-                  ImageUtils.getImagePath(image, context),
-                ),
+          Flexible(
+            flex: 1,
+            child: IconButton(
+              onPressed: widget.onClose,
+              icon: Icon(
+                size: 32,
+                Icons.close,
+                color: Theme.of(context).textTheme.headlineLarge?.color,
               ),
             ),
-          );
-        },
+          )
+        ],
       ),
     );
   }
 
-  _renderTabs(dynamic context) {
-    return DefaultTabController(
-      length: 3,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          TabBar(
-            dividerColor: Colors.transparent,
-            indicatorColor: Theme.of(context).textTheme.titleLarge?.color,
-            labelColor: Theme.of(context).textTheme.titleLarge?.color,
-            labelStyle: TextStyle(
-              color: Theme.of(context).textTheme.titleLarge?.color,
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
+  _renderBodySliver() {
+    if ((_spot?.images ?? []).isEmpty) {
+      return _renderEmptyImagesSliver();
+    }
+    return _renderImagesSliver();
+  }
+
+  _renderEmptyImagesSliver() {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 60),
+            Center(
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.no_photography,
+                    color: Theme.of(context).textTheme.headlineLarge?.color,
+                    size: 90,
+                  ),
+                  Text(
+                    'Nenhuma Imagem \n registrada',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.headlineLarge?.color,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  )
+                ],
+              ),
             ),
-            overlayColor: WidgetStateProperty.all<Color>(
-              Theme.of(context)
-                      .textTheme
-                      .headlineLarge!
-                      .color
-                      ?.withValues(alpha: 0.1) ??
-                  ColorsConstants.gray50,
-            ),
-            tabs: [
-              Tab(text: 'Espécies'),
-              Tab(text: 'Dificuldade'),
-              Tab(text: 'Riscos'),
-            ],
-          ),
-          Expanded(
-            child: TabBarView(
-              children: [
-                _renderFishesTab(),
-                _renderLocationTab(),
-                _renderRiskTab(),
+            const SizedBox(height: 80),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _renderImagesSliver() {
+    return SliverPadding(
+      padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+      sliver: SliverGrid(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: _gridAxisCount(_spot?.images.length ?? 0),
+          crossAxisSpacing: 5.0,
+          mainAxisSpacing: 5.0,
+          childAspectRatio: 1.0,
+        ),
+        delegate: SliverChildBuilderDelegate(
+          (BuildContext context, int index) {
+            final image = _spot?.images[index];
+
+            if (image == null) {
+              return const SizedBox.shrink();
+            }
+
+            return Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: NetworkImage(
+                    ImageUtils.getImagePath(image, context),
+                  ),
+                ),
+              ),
+            );
+          },
+          childCount: _spot?.images.length ?? 0,
+        ),
+      ),
+    );
+  }
+
+  _renderTabsSliver() {
+    return SliverToBoxAdapter(
+      child: DefaultTabController(
+        length: 3,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TabBar(
+              dividerColor: Colors.transparent,
+              indicatorColor: Theme.of(context).textTheme.titleLarge?.color,
+              labelColor: Theme.of(context).textTheme.titleLarge?.color,
+              labelStyle: TextStyle(
+                color: Theme.of(context).textTheme.titleLarge?.color,
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+              tabs: [
+                Tab(text: 'Espécies'),
+                Tab(text: 'Dificuldade'),
+                Tab(text: 'Riscos'),
               ],
             ),
-          ),
-        ],
+            SizedBox(
+              height: 400,
+              child: TabBarView(
+                children: [
+                  _renderFishesTab(),
+                  _renderLocationTab(),
+                  _renderRiskTab(),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -332,7 +419,9 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
   }
 
   _renderLocationTab() {
+    // TODO: Risk description
     var obs = 'Nenhuma observação foi incluida';
+
     if (_spot != null && _spot!.locationDifficulty.observation.isNotEmpty) {
       obs = _spot!.locationDifficulty.observation;
     }
@@ -381,7 +470,10 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
   }
 
   _renderRiskTab() {
+    // TODO: Risk description
+
     var obs = 'Nenhuma observação foi incluida';
+
     if (_spot != null && _spot!.locationRisk.observation.isNotEmpty) {
       obs = _spot!.locationRisk.observation;
     }
@@ -475,33 +567,6 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
             fontSize: 14,
           ),
         )
-      ],
-    );
-  }
-
-  _renderAppBar(dynamic context) {
-    return AppBar(
-      backgroundColor: Colors.transparent,
-      title: Row(
-        children: [
-          Text(
-            'Registro de Pesca',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              color: Theme.of(context).textTheme.headlineLarge?.color,
-              fontSize: 18,
-            ),
-          ),
-        ],
-      ),
-      actions: [
-        IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.more_horiz),
-          color: Theme.of(context).textTheme.headlineLarge?.color,
-          iconSize: 32,
-        ),
-        SizedBox(width: 10)
       ],
     );
   }
