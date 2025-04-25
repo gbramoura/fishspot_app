@@ -7,6 +7,7 @@ import 'package:fishspot_app/models/user_tokens.dart';
 import 'package:fishspot_app/repositories/location_repository.dart';
 import 'package:fishspot_app/repositories/settings_repository.dart';
 import 'package:fishspot_app/repositories/spot_repository.dart';
+import 'package:fishspot_app/repositories/widget_control.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -55,6 +56,7 @@ class AuthService {
     Provider.of<SettingRepository>(context, listen: false).clear();
     Provider.of<SpotRepository>(context, listen: false).clear();
     Provider.of<LocationRepository>(context, listen: false).clear();
+    Provider.of<WidgetControlRepository>(context, listen: false).clear();
   }
 
   static void showAuthDialog(dynamic context) {

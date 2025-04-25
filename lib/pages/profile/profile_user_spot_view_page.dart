@@ -77,7 +77,7 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
     }
 
     return Scaffold(
-      appBar: _renderAppBar(context),
+      appBar: _renderAppBar(),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -178,7 +178,7 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
 
   _renderImages() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
+      padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
       child: GridView.builder(
         shrinkWrap: true,
         primary: true,
@@ -479,7 +479,7 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
     );
   }
 
-  _renderAppBar(dynamic context) {
+  _renderAppBar() {
     return AppBar(
       backgroundColor: Colors.transparent,
       title: Row(

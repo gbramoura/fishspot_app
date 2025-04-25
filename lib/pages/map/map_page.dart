@@ -4,6 +4,7 @@ import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/map/map_view.dart';
 import 'package:fishspot_app/repositories/location_repository.dart';
 import 'package:fishspot_app/repositories/settings_repository.dart';
+import 'package:fishspot_app/repositories/widget_control.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -89,25 +90,38 @@ class _MapPageState extends State<MapPage> {
   }
 
   _handleMarkerTap(String id) {
-    // TODO: when open hides the bottom navigation
+    Provider.of<WidgetControlRepository>(
+      context,
+      listen: false,
+    ).setVisible(false);
+
     setState(() {
       _selectedSpotId = id;
     });
   }
 
   _close() {
-    // TODO: when closes show the bottom navigation again
     _hide();
+
+    var repo = Provider.of<WidgetControlRepository>(context, listen: false);
+
+    repo.setVisible(true);
+    repo.setAppBarVisible(true);
     setState(() {
       _selectedSpotId = null;
     });
   }
 
   void _onChanged() {
+    // TODO: sheet not scrool to down
+    var repo = Provider.of<WidgetControlRepository>(context, listen: false);
+
     if (_controller.size <= 0.05) {
       _hide();
     }
-    // TODO: if reach the top, hide the app bar
+    if (_controller.size >= 0.90) {
+      repo.setAppBarVisible(false);
+    }
   }
 
   void _hide() => _animateSheet(sheet.minChildSize);
@@ -132,16 +146,17 @@ class _MapPageState extends State<MapPage> {
     if (_loading) {
       return const LoadingPage();
     }
-
-    return Scaffold(
-      appBar: _renderAppBar(context),
-      body: Stack(
-        children: [
-          _renderMap(),
-          _renderSheet(),
-        ],
-      ),
-    );
+    return Consumer<WidgetControlRepository>(builder: (context, value, widget) {
+      return Scaffold(
+        appBar: value.isAppBarVisible() ? _renderAppBar() : null,
+        body: Stack(
+          children: [
+            _renderMap(),
+            _renderSheet(),
+          ],
+        ),
+      );
+    });
   }
 
   _renderMap() {
@@ -172,11 +187,11 @@ class _MapPageState extends State<MapPage> {
     return DraggableScrollableSheet(
       key: _sheet,
       initialChildSize: 0.5,
-      maxChildSize: 1,
-      minChildSize: 0.25,
+      maxChildSize: 0.95,
+      minChildSize: 0.20,
       expand: true,
       snap: true,
-      snapSizes: [0.30, 0.5],
+      snapSizes: [0.20, 0.5],
       controller: _controller,
       builder: (BuildContext context, ScrollController scrollController) {
         return MapView(
@@ -189,7 +204,7 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  _renderAppBar(dynamic context) {
+  _renderAppBar() {
     return AppBar(
       automaticallyImplyLeading: false,
       backgroundColor: Colors.transparent,
