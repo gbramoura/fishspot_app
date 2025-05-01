@@ -103,29 +103,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
     }
 
     if (_loading) {
-      return Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(16),
-            topRight: Radius.circular(16),
-          ),
-        ),
-        child: CustomScrollView(
-          controller: widget.scrollController,
-          slivers: [
-            _renderGrabSliver(),
-            SliverToBoxAdapter(child: SizedBox(height: 80)),
-            SliverToBoxAdapter(
-              child: Center(
-                child: CircularProgressIndicator(
-                  color: Theme.of(context).textTheme.headlineLarge?.color,
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
+      return _renderLoadingSpinner();
     }
 
     return Container(
@@ -167,7 +145,13 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
         minExtent: 38.0,
         maxExtent: 38.0,
         child: Container(
-          color: Colors.transparent,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16),
+              topRight: Radius.circular(16),
+            ),
+          ),
           child: Column(
             children: [
               Row(
@@ -553,6 +537,32 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
   _renderDivider() {
     return SliverToBoxAdapter(
       child: Divider(color: Theme.of(context).iconTheme.color!.withAlpha(250)),
+    );
+  }
+
+  _renderLoadingSpinner() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
+      ),
+      child: CustomScrollView(
+        controller: widget.scrollController,
+        slivers: [
+          _renderGrabSliver(),
+          SliverToBoxAdapter(child: SizedBox(height: 80)),
+          SliverToBoxAdapter(
+            child: Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).textTheme.headlineLarge?.color,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -90,10 +90,10 @@ class _MapPageState extends State<MapPage> {
   }
 
   _handleMarkerTap(String id) {
-    Provider.of<WidgetControlRepository>(
-      context,
-      listen: false,
-    ).setVisible(false);
+    var repo = Provider.of<WidgetControlRepository>(context, listen: false);
+
+    repo.setVisible(false);
+    repo.setAppBarVisible(false);
 
     setState(() {
       _selectedSpotId = id;
@@ -101,26 +101,21 @@ class _MapPageState extends State<MapPage> {
   }
 
   _close() {
-    _hide();
-
     var repo = Provider.of<WidgetControlRepository>(context, listen: false);
+
+    _hide();
 
     repo.setVisible(true);
     repo.setAppBarVisible(true);
+
     setState(() {
       _selectedSpotId = null;
     });
   }
 
   void _onChanged() {
-    // TODO: sheet not scrool to down
-    var repo = Provider.of<WidgetControlRepository>(context, listen: false);
-
     if (_controller.size <= 0.05) {
       _hide();
-    }
-    if (_controller.size >= 0.90) {
-      repo.setAppBarVisible(false);
     }
   }
 
@@ -129,7 +124,7 @@ class _MapPageState extends State<MapPage> {
   void _animateSheet(double size) {
     _controller.animateTo(
       size,
-      duration: const Duration(milliseconds: 50),
+      duration: Duration(milliseconds: 50),
       curve: Curves.easeInOut,
     );
   }
@@ -143,20 +138,21 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
+    var repo = Provider.of<WidgetControlRepository>(context);
+
     if (_loading) {
       return const LoadingPage();
     }
-    return Consumer<WidgetControlRepository>(builder: (context, value, widget) {
-      return Scaffold(
-        appBar: value.isAppBarVisible() ? _renderAppBar() : null,
-        body: Stack(
-          children: [
-            _renderMap(),
-            _renderSheet(),
-          ],
-        ),
-      );
-    });
+
+    return Scaffold(
+      appBar: repo.isAppBarVisible() ? _renderAppBar() : null,
+      body: Stack(
+        children: [
+          _renderMap(),
+          _renderSheet(),
+        ],
+      ),
+    );
   }
 
   _renderMap() {
@@ -187,11 +183,9 @@ class _MapPageState extends State<MapPage> {
     return DraggableScrollableSheet(
       key: _sheet,
       initialChildSize: 0.5,
-      maxChildSize: 0.95,
+      maxChildSize: 0.97,
       minChildSize: 0.20,
       expand: true,
-      snap: true,
-      snapSizes: [0.20, 0.5],
       controller: _controller,
       builder: (BuildContext context, ScrollController scrollController) {
         return MapView(
@@ -207,7 +201,9 @@ class _MapPageState extends State<MapPage> {
   _renderAppBar() {
     return AppBar(
       automaticallyImplyLeading: false,
-      backgroundColor: Colors.transparent,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      foregroundColor: Theme.of(context).colorScheme.surface,
+      surfaceTintColor: Theme.of(context).colorScheme.surface,
       title: Row(
         children: [
           Text(
