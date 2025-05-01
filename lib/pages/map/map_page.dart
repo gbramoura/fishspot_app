@@ -4,7 +4,7 @@ import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/map/map_view.dart';
 import 'package:fishspot_app/repositories/location_repository.dart';
 import 'package:fishspot_app/repositories/settings_repository.dart';
-import 'package:fishspot_app/repositories/widget_control.dart';
+import 'package:fishspot_app/repositories/widget_control_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
 import 'package:flutter/material.dart';

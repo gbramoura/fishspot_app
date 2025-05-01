@@ -5,46 +5,54 @@ import 'package:fishspot_app/components/custom_text_form_field.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/exceptions/http_response_exception.dart';
+import 'package:fishspot_app/models/http_response.dart';
+import 'package:fishspot_app/models/validate_token.dart';
+import 'package:fishspot_app/pages/password/change_password_page.dart';
 import 'package:fishspot_app/repositories/recover_password_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ChangePasswordPage extends StatefulWidget {
-  const ChangePasswordPage({super.key});
+class ValidateTokenPage extends StatefulWidget {
+  const ValidateTokenPage({super.key});
 
   @override
-  State<ChangePasswordPage> createState() => _ChangePasswordPageState();
+  State<ValidateTokenPage> createState() => _ValidateTokenPageState();
 }
 
-class _ChangePasswordPageState extends State<ChangePasswordPage> {
+class _ValidateTokenPageState extends State<ValidateTokenPage> {
   final _api = ApiService();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
+  final _tokenController = TextEditingController();
   final _formGlobalKey = GlobalKey<FormState>();
-
-  bool _passwordObscureText = true;
-  bool _confirmPasswordObscureText = true;
 
   _handleSend() async {
     var repo = Provider.of<RecoverPasswordRepository>(context, listen: false);
+    var route = MaterialPageRoute(builder: (context) => ChangePasswordPage());
 
     if (!_formGlobalKey.currentState!.validate()) {
       return;
     }
 
     try {
-      await _api.validateRecoverToken({
+      repo.setToken(_tokenController.text);
+
+      HttpResponse response = await _api.validateRecoverToken({
         'email': repo.getEmail(),
         'token': repo.getToken(),
-        'newPassword': _passwordController.text,
       });
 
-      _renderDialog(
-        title: "Senha Alterada",
-        message: "A senha foi alterada com sucesso",
-        type: CustomDialogAlertType.success,
-      );
+      ValidateToken parsedResponse = ValidateToken.fromJson(response.response);
+
+      if (!mounted) return;
+      if (parsedResponse.isValid) {
+        _renderDialog(
+          title: "Token Invalido",
+          message: "O token informado se encontra invalido",
+          type: CustomDialogAlertType.warn,
+        );
+      }
+
+      Navigator.push(context, route);
     } on HttpResponseException catch (e) {
       _renderDialog(message: e.data.message);
     } catch (e) {
@@ -59,39 +67,11 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     });
   }
 
-  String? _passwordValidator(String? value) {
+  String? _tokenValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Senha é obrigatória';
-    }
-    if (value.length < 8) {
-      return 'A senha deve ter mais que 8 caracteres';
+      return 'Token não pode ser vazio';
     }
     return null;
-  }
-
-  String? _confirmPasswordValidator(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Confirmação de senha é obrigatória';
-    }
-    if (value.length < 8) {
-      return 'A confirmação deve ter mais que 8 caracteres';
-    }
-    if (_passwordController.text != _confirmPasswordController.text) {
-      return 'As senhas não se coincidem';
-    }
-    return null;
-  }
-
-  _handlePressedPasswordObscureText() {
-    setState(() {
-      _passwordObscureText = !_passwordObscureText;
-    });
-  }
-
-  _handlePressedConfirmPasswordObscureText() {
-    setState(() {
-      _confirmPasswordObscureText = !_confirmPasswordObscureText;
-    });
   }
 
   @override
@@ -126,14 +106,14 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         ),
       ),
       Text(
-        'Redefinir Senha',
+        'Recuperar Senha',
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.headlineLarge,
       ),
       Padding(
-        padding: EdgeInsets.fromLTRB(20, 10, 20, 45),
+        padding: EdgeInsets.fromLTRB(15, 10, 15, 45),
         child: Text(
-          "Informe a nova senha e a confirmação da propria",
+          "Um token de acesso foi enviado para o e-mail informado",
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.headlineMedium,
         ),
@@ -148,37 +128,21 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CustomTextFormField(
-            validator: _passwordValidator,
-            controller: _passwordController,
-            hintText: 'Senha',
+            maxLength: 5,
+            validator: _tokenValidator,
+            controller: _tokenController,
+            textInputType: TextInputType.number,
+            hintText: 'Token',
             icon: Icon(
-              Icons.lock,
+              Icons.numbers,
               color: Theme.of(context).iconTheme.color,
-            ),
-            actionIcon: IconButton(
-              onPressed: _handlePressedPasswordObscureText,
-              icon: _renderVisibleIcon(_passwordObscureText),
-            ),
-          ),
-          SizedBox(height: 15),
-          CustomTextFormField(
-            validator: _confirmPasswordValidator,
-            controller: _confirmPasswordController,
-            hintText: 'Confirmar senha',
-            icon: Icon(
-              Icons.lock,
-              color: Theme.of(context).iconTheme.color,
-            ),
-            actionIcon: IconButton(
-              onPressed: _handlePressedConfirmPasswordObscureText,
-              icon: _renderVisibleIcon(_confirmPasswordObscureText),
             ),
           ),
           SizedBox(height: 45),
           CustomButton(
             onPressed: _handleSend,
             fixedSize: Size(286, 48),
-            label: 'Redefinir Senha',
+            label: 'Confirmar Token',
           ),
           SizedBox(height: 15),
           Row(
@@ -225,13 +189,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           ),
         );
       },
-    );
-  }
-
-  _renderVisibleIcon(bool isVisible) {
-    return Icon(
-      isVisible ? Icons.visibility : Icons.visibility_off,
-      color: Theme.of(context).iconTheme.color,
     );
   }
 }

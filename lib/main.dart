@@ -9,9 +9,10 @@ import 'package:fishspot_app/pages/profile/profile_user_edit_page.dart';
 import 'package:fishspot_app/pages/register_page.dart';
 import 'package:fishspot_app/pages/spot/spot_location_page.dart';
 import 'package:fishspot_app/repositories/location_repository.dart';
+import 'package:fishspot_app/repositories/recover_password_repository.dart';
 import 'package:fishspot_app/repositories/settings_repository.dart';
 import 'package:fishspot_app/repositories/spot_repository.dart';
-import 'package:fishspot_app/repositories/widget_control.dart';
+import 'package:fishspot_app/repositories/widget_control_repository.dart';
 import 'package:fishspot_app/theme/dark_theme.dart';
 import 'package:fishspot_app/theme/light_theme.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +49,9 @@ void main() async {
       ),
       ChangeNotifierProvider(
         create: (context) => WidgetControlRepository(),
+      ),
+      ChangeNotifierProvider(
+        create: (context) => RecoverPasswordRepository(),
       ),
     ],
     child: const App(),

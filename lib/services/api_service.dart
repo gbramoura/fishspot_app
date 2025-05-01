@@ -23,6 +23,21 @@ class ApiService {
     return await _httpService.post('auth/is-auth', body: {}, token: token);
   }
 
+  Future<dynamic> recoverPassword(Map<String, String> payload) async {
+    return await _httpService.post('auth/recover-password', body: payload);
+  }
+
+  Future<dynamic> validateRecoverToken(Map<String, String> payload) async {
+    return await _httpService.post(
+      'auth/validate-recover-token',
+      body: payload,
+    );
+  }
+
+  Future<dynamic> changePassword(Map<String, String> payload) async {
+    return await _httpService.post('auth/change-password', body: payload);
+  }
+
   Future<dynamic> getUser(String token) async {
     return await _httpService.get('user', token: token);
   }

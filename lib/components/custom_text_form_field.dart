@@ -11,6 +11,7 @@ class CustomTextFormField extends StatelessWidget {
   final String? Function(String?)? validator;
   final bool expands;
   final int? maxLines;
+  final int? maxLength;
   final Function()? onTap;
 
   const CustomTextFormField({
@@ -25,11 +26,13 @@ class CustomTextFormField extends StatelessWidget {
     this.expands = false,
     this.maxLines = 1,
     this.onTap,
+    this.maxLength,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      maxLength: maxLength,
       validator: validator,
       cursorColor: HexColor('#35383A'),
       controller: controller,
