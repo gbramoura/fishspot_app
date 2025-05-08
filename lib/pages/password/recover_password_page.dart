@@ -22,11 +22,20 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
   final _mailController = TextEditingController();
   final _formGlobalKey = GlobalKey<FormState>();
 
+  bool _loading = false;
+
   _handleSend() async {
+    setState(() {
+      _loading = true;
+    });
+
     var repo = Provider.of<RecoverPasswordRepository>(context, listen: false);
     var route = MaterialPageRoute(builder: (context) => ValidateTokenPage());
 
     if (!_formGlobalKey.currentState!.validate()) {
+      setState(() {
+        _loading = false;
+      });
       return;
     }
 
@@ -43,6 +52,10 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
     } catch (e) {
       _renderDialog(null, null);
     }
+
+    setState(() {
+      _loading = false;
+    });
   }
 
   _handleCancel() {
@@ -59,6 +72,9 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
+    var header = _renderHeader(context);
+    var form = _renderForm(context);
+
     return Scaffold(
       extendBody: true,
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -67,8 +83,8 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
           padding: EdgeInsets.all(32),
           child: Column(
             children: [
-              _renderHeader(context),
-              _renderForm(context),
+              ...header,
+              form,
             ],
           ),
         ),
@@ -123,6 +139,7 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
           CustomButton(
             onPressed: _handleSend,
             fixedSize: Size(286, 48),
+            loading: _loading,
             label: 'Enviar',
           ),
           SizedBox(height: 15),

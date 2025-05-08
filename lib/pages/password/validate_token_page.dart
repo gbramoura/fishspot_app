@@ -25,11 +25,20 @@ class _ValidateTokenPageState extends State<ValidateTokenPage> {
   final _tokenController = TextEditingController();
   final _formGlobalKey = GlobalKey<FormState>();
 
+  bool _loading = false;
+
   _handleSend() async {
+    setState(() {
+      _loading = true;
+    });
+
     var repo = Provider.of<RecoverPasswordRepository>(context, listen: false);
     var route = MaterialPageRoute(builder: (context) => ChangePasswordPage());
 
     if (!_formGlobalKey.currentState!.validate()) {
+      setState(() {
+        _loading = false;
+      });
       return;
     }
 
@@ -44,12 +53,14 @@ class _ValidateTokenPageState extends State<ValidateTokenPage> {
       ValidateToken parsedResponse = ValidateToken.fromJson(response.response);
 
       if (!mounted) return;
-      if (parsedResponse.isValid) {
+
+      if (!parsedResponse.isValid) {
         _renderDialog(
           title: "Token Invalido",
           message: "O token informado se encontra invalido",
           type: CustomDialogAlertType.warn,
         );
+        return;
       }
 
       Navigator.push(context, route);
@@ -58,6 +69,10 @@ class _ValidateTokenPageState extends State<ValidateTokenPage> {
     } catch (e) {
       _renderDialog();
     }
+
+    setState(() {
+      _loading = true;
+    });
   }
 
   _handleCancel() {
@@ -76,6 +91,9 @@ class _ValidateTokenPageState extends State<ValidateTokenPage> {
 
   @override
   Widget build(BuildContext context) {
+    var header = _renderHeader(context);
+    var form = _renderForm(context);
+
     return Scaffold(
       extendBody: true,
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -84,8 +102,8 @@ class _ValidateTokenPageState extends State<ValidateTokenPage> {
           padding: EdgeInsets.all(32),
           child: Column(
             children: [
-              _renderHeader(context),
-              _renderForm(context),
+              ...header,
+              form,
             ],
           ),
         ),
@@ -143,6 +161,7 @@ class _ValidateTokenPageState extends State<ValidateTokenPage> {
             onPressed: _handleSend,
             fixedSize: Size(286, 48),
             label: 'Confirmar Token',
+            loading: _loading,
           ),
           SizedBox(height: 15),
           Row(
@@ -185,7 +204,9 @@ class _ValidateTokenPageState extends State<ValidateTokenPage> {
           button: CustomButton(
             label: "Ok",
             fixedSize: Size(double.infinity, 48),
-            onPressed: _handleCancel,
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
           ),
         );
       },

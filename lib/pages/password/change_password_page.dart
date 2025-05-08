@@ -25,16 +25,24 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   bool _passwordObscureText = true;
   bool _confirmPasswordObscureText = true;
+  bool _loading = false;
 
   _handleSend() async {
+    setState(() {
+      _loading = true;
+    });
+
     var repo = Provider.of<RecoverPasswordRepository>(context, listen: false);
 
     if (!_formGlobalKey.currentState!.validate()) {
+      setState(() {
+        _loading = false;
+      });
       return;
     }
 
     try {
-      await _api.validateRecoverToken({
+      await _api.changePassword({
         'email': repo.getEmail(),
         'token': repo.getToken(),
         'newPassword': _passwordController.text,
@@ -50,6 +58,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     } catch (e) {
       _renderDialog();
     }
+
+    setState(() {
+      _loading = false;
+    });
   }
 
   _handleCancel() {
@@ -96,6 +108,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   @override
   Widget build(BuildContext context) {
+    var header = _renderHeader(context);
+    var form = _renderForm(context);
+
     return Scaffold(
       extendBody: true,
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -104,8 +119,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           padding: EdgeInsets.all(32),
           child: Column(
             children: [
-              _renderHeader(context),
-              _renderForm(context),
+              ...header,
+              form,
             ],
           ),
         ),
@@ -151,6 +166,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             validator: _passwordValidator,
             controller: _passwordController,
             hintText: 'Senha',
+            obscureText: _passwordObscureText,
             icon: Icon(
               Icons.lock,
               color: Theme.of(context).iconTheme.color,
@@ -165,6 +181,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             validator: _confirmPasswordValidator,
             controller: _confirmPasswordController,
             hintText: 'Confirmar senha',
+            obscureText: _confirmPasswordObscureText,
             icon: Icon(
               Icons.lock,
               color: Theme.of(context).iconTheme.color,
@@ -178,6 +195,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           CustomButton(
             onPressed: _handleSend,
             fixedSize: Size(286, 48),
+            loading: _loading,
             label: 'Redefinir Senha',
           ),
           SizedBox(height: 15),
