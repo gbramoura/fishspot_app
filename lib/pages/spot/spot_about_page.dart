@@ -49,6 +49,13 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
     return null;
   }
 
+  String? _dateValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Data não pode ser vazio';
+    }
+    return null;
+  }
+
   _handleNextButton() async {
     if (!_formGlobalKey.currentState!.validate()) {
       return;
@@ -140,8 +147,9 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             SizedBox(height: 10),
-            Flexible(child: _renderForm(), flex: 7),
-            Flexible(child: _renderNext(context), flex: 1),
+            _renderForm(),
+            _renderNext(context),
+            SizedBox(height: 30),
           ],
         ),
       ),
@@ -188,6 +196,7 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
             SizedBox(height: 20),
             CustomTextFormField(
               controller: _dateController,
+              validator: _dateValidator,
               hintText: 'Data do registro da pesca',
               textInputType: TextInputType.datetime,
               icon: Icon(

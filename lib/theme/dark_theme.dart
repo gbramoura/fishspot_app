@@ -8,6 +8,11 @@ ThemeData darkMode = ThemeData(
   colorScheme: ColorScheme.dark(
     surface: ColorsConstants.darkBackground,
   ),
+  textSelectionTheme: TextSelectionThemeData(
+    selectionColor: ColorsConstants.green250.withAlpha(50),
+    cursorColor: ColorsConstants.green250,
+    selectionHandleColor: ColorsConstants.green250,
+  ),
   iconTheme: IconThemeData(color: ColorsConstants.gray150),
   textTheme: TextTheme(
     headlineLarge: TextStyle(

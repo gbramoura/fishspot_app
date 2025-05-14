@@ -51,8 +51,9 @@ class _SpotFishPageState extends State<SpotFishPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 10),
-              Flexible(child: _renderFishes(context, value), flex: 7),
+              Flexible(child: _renderFishes(context, value), flex: 9),
               Flexible(child: _renderNext(context, value), flex: 1),
+              SizedBox(height: 30),
             ],
           ),
         ),

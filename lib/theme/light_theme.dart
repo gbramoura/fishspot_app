@@ -8,6 +8,11 @@ ThemeData lighMode = ThemeData(
   colorScheme: ColorScheme.light(
     surface: ColorsConstants.lightBackground,
   ),
+  textSelectionTheme: TextSelectionThemeData(
+    selectionColor: ColorsConstants.blue750.withAlpha(50),
+    cursorColor: ColorsConstants.blue750,
+    selectionHandleColor: ColorsConstants.blue750,
+  ),
   iconTheme: IconThemeData(color: ColorsConstants.gray150),
   textTheme: TextTheme(
     headlineLarge: TextStyle(
@@ -51,6 +56,9 @@ ThemeData lighMode = ThemeData(
       fontSize: 14,
     ),
   ),
+  datePickerTheme: DatePickerThemeData(
+      // TODO: make it works
+      ),
   buttonTheme: ButtonThemeData(
     colorScheme: ColorScheme(
       brightness: Brightness.dark,

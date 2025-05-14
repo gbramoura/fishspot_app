@@ -388,7 +388,7 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 40),
               ],
             )
           ],

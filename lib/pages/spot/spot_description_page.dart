@@ -108,14 +108,17 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
 
     return Scaffold(
       appBar: _renderAppBar(context),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SizedBox(height: 10),
-            Flexible(child: _renderForm(), flex: 7),
-            Flexible(child: _renderNext(context), flex: 1),
-          ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(height: 10),
+              _renderForm(),
+              _renderNext(context),
+              SizedBox(height: 30),
+            ],
+          ),
         ),
       ),
     );
@@ -233,6 +236,9 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
   _renderAppBar(dynamic context) {
     return AppBar(
       shadowColor: ColorsConstants.gray350,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      foregroundColor: Theme.of(context).colorScheme.surface,
+      surfaceTintColor: Theme.of(context).colorScheme.surface,
       title: Row(
         children: [
           Text(
