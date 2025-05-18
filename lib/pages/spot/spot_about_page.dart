@@ -121,6 +121,9 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
 
   _handleDatePicker() async {
     DateTime? date = await showDatePicker(
+      builder: (context, child) {
+        return _datePickerTheme(context, child);
+      },
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
@@ -142,7 +145,7 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
 
     return Scaffold(
       appBar: _renderAppBar(context),
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -197,6 +200,7 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
             CustomTextFormField(
               controller: _dateController,
               validator: _dateValidator,
+              readonly: true,
               hintText: 'Data do registro da pesca',
               textInputType: TextInputType.datetime,
               icon: Icon(
@@ -274,6 +278,21 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _datePickerTheme(BuildContext context, Widget? child) {
+    return Theme(
+      data: Theme.of(context).copyWith(
+        colorScheme: ColorScheme.light(
+          primary: Theme.of(context).colorScheme.primary,
+          onPrimary:
+              Theme.of(context).textTheme.labelMedium?.color ?? Colors.black,
+          onSurface:
+              Theme.of(context).textTheme.headlineLarge?.color ?? Colors.black,
+        ),
+      ),
+      child: child!,
     );
   }
 

@@ -76,17 +76,13 @@ class _SpotImagePageState extends State<SpotImagePage> {
     return Consumer<SpotRepository>(builder: (context, value, widget) {
       return Scaffold(
         appBar: _renderAppBar(context),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 10),
-              Flexible(child: _renderImages(context, value), flex: 9),
-              Flexible(child: _renderNext(context, value), flex: 1),
-              SizedBox(height: 30),
-            ],
-          ),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Flexible(child: _renderImages(context, value), flex: 9),
+            Flexible(child: _renderNext(context, value), flex: 1),
+            SizedBox(height: 30),
+          ],
         ),
       );
     });
@@ -124,80 +120,73 @@ class _SpotImagePageState extends State<SpotImagePage> {
     var images = value.getImages();
 
     return GridView.builder(
-        primary: true,
-        shrinkWrap: true,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-        ),
-        itemCount: images.length,
-        itemBuilder: (BuildContext context, int index) {
-          var image = images[index];
+      primary: true,
+      shrinkWrap: true,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+      ),
+      itemCount: images.length,
+      itemBuilder: (BuildContext context, int index) {
+        var image = images[index];
 
-          return Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: FileImage(image.file),
-              ),
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: FileImage(image.file),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                GestureDetector(
-                  onTap: () => _handleRemoveImage(context, image.id),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadiusDirectional.only(
-                        bottomStart: Radius.circular(25),
-                      ),
-                      color: ColorsConstants.white50,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              GestureDetector(
+                onTap: () => _handleRemoveImage(context, image.id),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadiusDirectional.only(
+                      bottomStart: Radius.circular(25),
                     ),
-                    padding: EdgeInsets.fromLTRB(8, 5, 5, 8),
-                    child: Icon(
-                      Icons.close_rounded,
-                      size: 20,
-                      color: ColorsConstants.gray350,
-                    ),
+                    color: ColorsConstants.white50,
                   ),
-                )
-              ],
-            ),
-          );
-        });
+                  padding: EdgeInsets.fromLTRB(8, 5, 5, 8),
+                  child: Icon(
+                    Icons.close_rounded,
+                    size: 20,
+                    color: ColorsConstants.gray350,
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      },
+    );
   }
 
   _renderEmptyImages(BuildContext context) {
-    return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Center(
-            child: Column(
-              children: [
-                Icon(
-                  Icons.no_photography,
-                  color: Theme.of(context).textTheme.headlineLarge?.color,
-                  size: 90,
-                ),
-                Text(
-                  'Nenhuma Imagem \n registrada',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.headlineLarge?.color,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w400,
-                  ),
-                )
-              ],
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.no_photography,
+          color: Theme.of(context).textTheme.headlineLarge?.color,
+          size: 90,
+        ),
+        Text(
+          'Nenhuma Imagem \n registrada',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Theme.of(context).textTheme.headlineLarge?.color,
+            fontSize: 18,
+            fontWeight: FontWeight.w400,
           ),
-        ],
-      ),
+        )
+      ],
     );
   }
 

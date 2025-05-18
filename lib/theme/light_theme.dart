@@ -7,6 +7,7 @@ ThemeData lighMode = ThemeData(
   brightness: Brightness.light,
   colorScheme: ColorScheme.light(
     surface: ColorsConstants.lightBackground,
+    primary: ColorsConstants.blue750,
   ),
   textSelectionTheme: TextSelectionThemeData(
     selectionColor: ColorsConstants.blue750.withAlpha(50),
@@ -56,9 +57,6 @@ ThemeData lighMode = ThemeData(
       fontSize: 14,
     ),
   ),
-  datePickerTheme: DatePickerThemeData(
-      // TODO: make it works
-      ),
   buttonTheme: ButtonThemeData(
     colorScheme: ColorScheme(
       brightness: Brightness.dark,
@@ -87,5 +85,8 @@ ThemeData lighMode = ThemeData(
     errorStyle: TextStyle(
       color: ColorsConstants.red250,
     ),
+  ),
+  datePickerTheme: DatePickerThemeData(
+    backgroundColor: ColorsConstants.lightBackground,
   ),
 );

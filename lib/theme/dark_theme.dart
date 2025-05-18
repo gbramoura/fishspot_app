@@ -7,6 +7,7 @@ ThemeData darkMode = ThemeData(
   brightness: Brightness.dark,
   colorScheme: ColorScheme.dark(
     surface: ColorsConstants.darkBackground,
+    primary: ColorsConstants.green250,
   ),
   textSelectionTheme: TextSelectionThemeData(
     selectionColor: ColorsConstants.green250.withAlpha(50),
@@ -84,5 +85,8 @@ ThemeData darkMode = ThemeData(
     errorStyle: TextStyle(
       color: ColorsConstants.red250,
     ),
+  ),
+  datePickerTheme: DatePickerThemeData(
+    backgroundColor: ColorsConstants.darkBackground,
   ),
 );

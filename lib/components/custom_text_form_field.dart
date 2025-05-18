@@ -12,6 +12,7 @@ class CustomTextFormField extends StatelessWidget {
   final bool expands;
   final int? maxLines;
   final int? maxLength;
+  final bool readonly;
   final Function()? onTap;
 
   const CustomTextFormField({
@@ -27,6 +28,7 @@ class CustomTextFormField extends StatelessWidget {
     this.maxLines = 1,
     this.onTap,
     this.maxLength,
+    this.readonly = false,
   });
 
   @override
@@ -41,6 +43,7 @@ class CustomTextFormField extends StatelessWidget {
         color: HexColor('#35383A'),
         fontSize: 14,
       ),
+      readOnly: readonly,
       onTap: onTap,
       keyboardType: textInputType,
       expands: expands,
