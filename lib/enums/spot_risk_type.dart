@@ -1,7 +1,7 @@
 enum SpotRiskType {
-  VeryLow,
-  Low,
-  Medium,
-  High,
-  VeryHigh,
+  veryLow,
+  low,
+  medium,
+  high,
+  veryHigh,
 }

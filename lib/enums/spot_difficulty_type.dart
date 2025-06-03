@@ -1,7 +1,7 @@
 enum SpotDifficultyType {
-  VeryEasy,
-  Easy,
-  Medium,
-  Hard,
-  VeryHard,
+  veryEasy,
+  easy,
+  medium,
+  hard,
+  veryHard,
 }

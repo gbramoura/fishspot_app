@@ -24,8 +24,8 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
   final _riskObservationController = TextEditingController();
   final _difficultyObservationController = TextEditingController();
 
-  SpotDifficultyType _difficulty = SpotDifficultyType.VeryEasy;
-  SpotRiskType _risk = SpotRiskType.VeryLow;
+  SpotDifficultyType _difficulty = SpotDifficultyType.veryEasy;
+  SpotRiskType _risk = SpotRiskType.veryLow;
   bool _loading = false;
 
   @override

@@ -1,5 +1,5 @@
 enum UnitMeasureType {
-  Grams,
-  Kilograms,
-  Ton,
+  grams,
+  kilograms,
+  ton,
 }

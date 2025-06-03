@@ -24,7 +24,7 @@ class _SpotAddFishPageState extends State<SpotAddFishPage> {
   final _weightController = TextEditingController();
   final _lureController = TextEditingController();
 
-  UnitMeasureType _measure = UnitMeasureType.Grams;
+  UnitMeasureType _measure = UnitMeasureType.grams;
 
   String? _nameValidator(String? value) {
     if (value == null || value.isEmpty) {

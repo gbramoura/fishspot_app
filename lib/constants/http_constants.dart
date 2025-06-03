@@ -1,5 +1,5 @@
 class HTTP {
-  static int Ok = 200;
-  static int Created = 201;
-  static int Unauthorized = 401;
+  static int ok = 200;
+  static int created = 201;
+  static int unauthorized = 401;
 }

@@ -17,11 +17,11 @@ class SpotDataProvider extends ChangeNotifier {
   List<SpotFish> _fishes = [];
   User _user = User(name: '');
   SpotLocationDifficulty _locationDifficulty = SpotLocationDifficulty(
-    rate: SpotDifficultyType.Easy,
+    rate: SpotDifficultyType.easy,
     observation: '',
   );
   SpotLocationRisk _locationRisk = SpotLocationRisk(
-    rate: SpotRiskType.Low,
+    rate: SpotRiskType.low,
     observation: '',
   );
 
@@ -108,9 +108,9 @@ class SpotDataProvider extends ChangeNotifier {
     _fishes = [];
     _user = User(name: '');
     _locationDifficulty = SpotLocationDifficulty(
-      rate: SpotDifficultyType.Easy,
+      rate: SpotDifficultyType.easy,
       observation: '',
     );
-    _locationRisk = SpotLocationRisk(rate: SpotRiskType.Low, observation: '');
+    _locationRisk = SpotLocationRisk(rate: SpotRiskType.low, observation: '');
   }
 }
