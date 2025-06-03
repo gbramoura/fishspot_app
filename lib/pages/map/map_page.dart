@@ -4,7 +4,7 @@ import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/map/map_view.dart';
 import 'package:fishspot_app/providers/location_provider.dart';
 import 'package:fishspot_app/providers/settings_provider.dart';
-import 'package:fishspot_app/providers/widget_control_repository.dart';
+import 'package:fishspot_app/providers/visible_control_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -93,10 +93,10 @@ class _MapPageState extends State<MapPage> {
   }
 
   _handleMarkerTap(String id) {
-    var repo = Provider.of<WidgetControlRepository>(context, listen: false);
+    var provider = Provider.of<VisibleControlProvider>(context, listen: false);
 
-    repo.setVisible(false);
-    repo.setAppBarVisible(false);
+    provider.setVisible(false);
+    provider.setAppBarVisible(false);
 
     setState(() {
       _selectedSpotId = id;
@@ -104,12 +104,12 @@ class _MapPageState extends State<MapPage> {
   }
 
   _close() {
-    var repo = Provider.of<WidgetControlRepository>(context, listen: false);
+    var provider = Provider.of<VisibleControlProvider>(context, listen: false);
 
     _hide();
 
-    repo.setVisible(true);
-    repo.setAppBarVisible(true);
+    provider.setVisible(true);
+    provider.setAppBarVisible(true);
 
     setState(() {
       _selectedSpotId = null;
@@ -141,14 +141,14 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    var repo = Provider.of<WidgetControlRepository>(context);
+    var provider = Provider.of<VisibleControlProvider>(context);
 
     if (_loading) {
       return const LoadingPage();
     }
 
     return Scaffold(
-      appBar: repo.isAppBarVisible() ? _renderAppBar() : null,
+      appBar: provider.isAppBarVisible() ? _renderAppBar() : null,
       body: Stack(
         children: [
           _renderMap(),

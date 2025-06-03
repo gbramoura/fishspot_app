@@ -12,7 +12,7 @@ import 'package:fishspot_app/providers/location_provider.dart';
 import 'package:fishspot_app/providers/recover_password_provider.dart';
 import 'package:fishspot_app/providers/settings_provider.dart';
 import 'package:fishspot_app/providers/spot_data_provider.dart';
-import 'package:fishspot_app/providers/widget_control_repository.dart';
+import 'package:fishspot_app/providers/visible_control_provider.dart';
 import 'package:fishspot_app/theme/dark_theme.dart';
 import 'package:fishspot_app/theme/light_theme.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +41,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (ctx) => SpotDataProvider()),
         ChangeNotifierProvider(create: (ctx) => LocationProvider()),
-        ChangeNotifierProvider(create: (ctx) => WidgetControlRepository()),
+        ChangeNotifierProvider(create: (ctx) => VisibleControlProvider()),
         ChangeNotifierProvider(create: (ctx) => RecoverPasswordProvider()),
         ChangeNotifierProvider(
           create: (ctx) => SettingProvider(prefs: prefs),

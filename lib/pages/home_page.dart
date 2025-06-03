@@ -4,7 +4,7 @@ import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/map/map_page.dart';
 import 'package:fishspot_app/pages/profile/profile_page.dart';
 import 'package:fishspot_app/pages/spot/spot_location_page.dart';
-import 'package:fishspot_app/providers/widget_control_repository.dart';
+import 'package:fishspot_app/providers/visible_control_provider.dart';
 import 'package:fishspot_app/services/auth_service.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
@@ -55,19 +55,21 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext buildContext) {
-    return Consumer<WidgetControlRepository>(builder: (context, value, widget) {
-      return Scaffold(
-        extendBody: true,
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        body: _loading ? LoadingPage() : _body[_currentIndex],
-        bottomNavigationBar: SizedBox(
-          height: value.isBottomNavigationVisible() ? 100 : 0,
-          child: CustomBottomNavigationBar(
-            onTap: _handleNavigatePage,
-            currentIndex: _currentIndex,
+    return Consumer<VisibleControlProvider>(
+      builder: (context, value, widget) {
+        return Scaffold(
+          extendBody: true,
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          body: _loading ? LoadingPage() : _body[_currentIndex],
+          bottomNavigationBar: SizedBox(
+            height: value.isBottomNavigationVisible() ? 100 : 0,
+            child: CustomBottomNavigationBar(
+              onTap: _handleNavigatePage,
+              currentIndex: _currentIndex,
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
   }
 }

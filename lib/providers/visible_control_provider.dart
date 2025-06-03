@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class WidgetControlRepository extends ChangeNotifier {
+class VisibleControlProvider extends ChangeNotifier {
   bool _isBotttomNavigationVisible = true;
   bool _isAppBarVisible = true;
 

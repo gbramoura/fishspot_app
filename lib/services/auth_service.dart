@@ -4,10 +4,12 @@ import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/models/user_tokens.dart';
+import 'package:fishspot_app/pages/password/recover_password_page.dart';
 import 'package:fishspot_app/providers/location_provider.dart';
+import 'package:fishspot_app/providers/recover_password_provider.dart';
 import 'package:fishspot_app/providers/settings_provider.dart';
 import 'package:fishspot_app/providers/spot_data_provider.dart';
-import 'package:fishspot_app/providers/widget_control_repository.dart';
+import 'package:fishspot_app/providers/visible_control_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -56,8 +58,8 @@ class AuthService {
     Provider.of<SettingProvider>(context, listen: false).clear();
     Provider.of<SpotDataProvider>(context, listen: false).clear();
     Provider.of<LocationProvider>(context, listen: false).clear();
-    Provider.of<WidgetControlRepository>(context, listen: false).clear();
-    Provider.of<WidgetControlRepository>(context, listen: false).clear();
+    Provider.of<VisibleControlProvider>(context, listen: false).clear();
+    Provider.of<RecoverPasswordProvider>(context, listen: false).clear();
   }
 
   static void showAuthDialog(dynamic context) {
