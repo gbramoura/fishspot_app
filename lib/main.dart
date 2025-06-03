@@ -10,7 +10,7 @@ import 'package:fishspot_app/pages/register_page.dart';
 import 'package:fishspot_app/pages/spot/spot_location_page.dart';
 import 'package:fishspot_app/providers/location_provider.dart';
 import 'package:fishspot_app/providers/recover_password_provider.dart';
-import 'package:fishspot_app/providers/settings_repository.dart';
+import 'package:fishspot_app/providers/settings_provider.dart';
 import 'package:fishspot_app/providers/spot_repository.dart';
 import 'package:fishspot_app/providers/widget_control_repository.dart';
 import 'package:fishspot_app/theme/dark_theme.dart';
@@ -30,7 +30,7 @@ void main() async {
   ]);
 
   runApp(ChangeNotifierProvider(
-    create: (context) => SettingRepository(prefs: prefs),
+    create: (context) => SettingProvider(prefs: prefs),
     child: const BuildingApp(),
   ));
 
@@ -44,7 +44,7 @@ void main() async {
         ChangeNotifierProvider(create: (ctx) => WidgetControlRepository()),
         ChangeNotifierProvider(create: (ctx) => RecoverPasswordProvider()),
         ChangeNotifierProvider(
-          create: (ctx) => SettingRepository(prefs: prefs),
+          create: (ctx) => SettingProvider(prefs: prefs),
         ),
       ],
       child: const App(),

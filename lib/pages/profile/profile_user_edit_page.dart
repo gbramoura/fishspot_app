@@ -12,7 +12,7 @@ import 'package:fishspot_app/models/http_multipart_file.dart';
 import 'package:fishspot_app/models/http_response.dart';
 import 'package:fishspot_app/models/user_profile.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
-import 'package:fishspot_app/providers/settings_repository.dart';
+import 'package:fishspot_app/providers/settings_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
@@ -54,7 +54,7 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
     });
 
     try {
-      var settings = Provider.of<SettingRepository>(context, listen: false);
+      var settings = Provider.of<SettingProvider>(context, listen: false);
       var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
       await AuthService.refreshCredentials(context);
@@ -94,7 +94,7 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
 
     try {
       if (!mounted) return;
-      var settings = Provider.of<SettingRepository>(context, listen: false);
+      var settings = Provider.of<SettingProvider>(context, listen: false);
       var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
       var payload = [
         HttpMultipartFile(path: 'file', file: File(pickedFile.path))
@@ -117,7 +117,7 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
     }
 
     try {
-      var settings = Provider.of<SettingRepository>(context, listen: false);
+      var settings = Provider.of<SettingProvider>(context, listen: false);
       var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
       var strNumber = _numberController.text;

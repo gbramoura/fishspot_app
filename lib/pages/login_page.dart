@@ -7,7 +7,7 @@ import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/exceptions/http_response_exception.dart';
 import 'package:fishspot_app/models/http_response.dart';
-import 'package:fishspot_app/providers/settings_repository.dart';
+import 'package:fishspot_app/providers/settings_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
       });
 
       if (!mounted) return;
-      var settings = Provider.of<SettingRepository>(context, listen: false);
+      var settings = Provider.of<SettingProvider>(context, listen: false);
 
       settings.setString(
         SharedPreferencesConstants.jwtToken,

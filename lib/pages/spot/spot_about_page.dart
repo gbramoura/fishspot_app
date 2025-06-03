@@ -7,7 +7,7 @@ import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/models/http_multipart_file.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
-import 'package:fishspot_app/providers/settings_repository.dart';
+import 'package:fishspot_app/providers/settings_provider.dart';
 import 'package:fishspot_app/providers/spot_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
@@ -66,7 +66,7 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
       _loadingMessage = "A gravação dos dados \n pode levar tempo";
     });
 
-    var settings = Provider.of<SettingRepository>(context, listen: false);
+    var settings = Provider.of<SettingProvider>(context, listen: false);
     var spotRepo = Provider.of<SpotRepository>(context, listen: false);
     var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
     var spotId = "";

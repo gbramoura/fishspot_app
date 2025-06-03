@@ -1,6 +1,6 @@
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
-import 'package:fishspot_app/providers/settings_repository.dart';
+import 'package:fishspot_app/providers/settings_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +22,7 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   Future<void> _validate() async {
-    var settings = Provider.of<SettingRepository>(context, listen: false);
+    var settings = Provider.of<SettingProvider>(context, listen: false);
 
     try {
       String? token = settings.getString(SharedPreferencesConstants.jwtToken);

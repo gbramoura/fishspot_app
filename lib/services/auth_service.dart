@@ -5,7 +5,7 @@ import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/models/user_tokens.dart';
 import 'package:fishspot_app/providers/location_provider.dart';
-import 'package:fishspot_app/providers/settings_repository.dart';
+import 'package:fishspot_app/providers/settings_provider.dart';
 import 'package:fishspot_app/providers/spot_repository.dart';
 import 'package:fishspot_app/providers/widget_control_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
@@ -14,7 +14,7 @@ import 'package:provider/provider.dart';
 
 class AuthService {
   static Future<bool> isUserAuthenticated(dynamic context) async {
-    var settings = Provider.of<SettingRepository>(context, listen: false);
+    var settings = Provider.of<SettingProvider>(context, listen: false);
     var apiService = ApiService();
 
     var token = settings.getString(SharedPreferencesConstants.jwtToken);
@@ -32,7 +32,7 @@ class AuthService {
   }
 
   static Future<void> refreshCredentials(dynamic context) async {
-    var settings = Provider.of<SettingRepository>(context, listen: false);
+    var settings = Provider.of<SettingProvider>(context, listen: false);
     var apiService = ApiService();
 
     var token = settings.getString(SharedPreferencesConstants.jwtToken);
@@ -53,7 +53,7 @@ class AuthService {
   }
 
   static void clearCredentials(dynamic context) {
-    Provider.of<SettingRepository>(context, listen: false).clear();
+    Provider.of<SettingProvider>(context, listen: false).clear();
     Provider.of<SpotRepository>(context, listen: false).clear();
     Provider.of<LocationProvider>(context, listen: false).clear();
     Provider.of<WidgetControlRepository>(context, listen: false).clear();
