@@ -12,7 +12,7 @@ import 'package:fishspot_app/models/http_multipart_file.dart';
 import 'package:fishspot_app/models/http_response.dart';
 import 'package:fishspot_app/models/user_profile.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
-import 'package:fishspot_app/repositories/settings_repository.dart';
+import 'package:fishspot_app/providers/settings_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
 import 'package:fishspot_app/services/navigation_service.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
-class LocationRepository extends ChangeNotifier {
+class LocationProvider extends ChangeNotifier {
   late bool _isPermissionChecked = false;
   late Position _position;
 

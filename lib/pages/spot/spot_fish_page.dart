@@ -3,7 +3,7 @@ import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/extensions/string_extension.dart';
 import 'package:fishspot_app/pages/spot/spot_about_page.dart';
 import 'package:fishspot_app/pages/spot/spot_add_fish_page.dart';
-import 'package:fishspot_app/repositories/spot_repository.dart';
+import 'package:fishspot_app/providers/spot_repository.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:fishspot_app/utils/spot_view_utils.dart';
 import 'package:flutter/material.dart';

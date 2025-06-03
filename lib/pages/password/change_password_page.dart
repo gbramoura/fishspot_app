@@ -5,7 +5,7 @@ import 'package:fishspot_app/components/custom_text_form_field.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/exceptions/http_response_exception.dart';
-import 'package:fishspot_app/repositories/recover_password_repository.dart';
+import 'package:fishspot_app/providers/recover_password_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

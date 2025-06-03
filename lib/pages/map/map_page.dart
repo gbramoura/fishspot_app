@@ -2,9 +2,9 @@ import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/models/spot_location.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/map/map_view.dart';
-import 'package:fishspot_app/repositories/location_repository.dart';
-import 'package:fishspot_app/repositories/settings_repository.dart';
-import 'package:fishspot_app/repositories/widget_control_repository.dart';
+import 'package:fishspot_app/providers/location_provider.dart';
+import 'package:fishspot_app/providers/settings_repository.dart';
+import 'package:fishspot_app/providers/widget_control_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -45,8 +45,11 @@ class _MapPageState extends State<MapPage> {
     });
 
     var settings = Provider.of<SettingRepository>(context, listen: false);
-    var locationRepo = Provider.of<LocationRepository>(context, listen: false);
     var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
+    var locationProvider = Provider.of<LocationProvider>(
+      context,
+      listen: false,
+    );
 
     try {
       var locationsResponse = await _apiService.getLocations(token);
@@ -70,7 +73,7 @@ class _MapPageState extends State<MapPage> {
         );
       });
 
-      var position = await locationRepo.getPosition();
+      var position = await locationProvider.getPosition();
 
       setState(() {
         _markers.clear();

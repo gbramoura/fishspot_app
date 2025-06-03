@@ -8,7 +8,7 @@ import 'package:fishspot_app/exceptions/http_response_exception.dart';
 import 'package:fishspot_app/models/http_response.dart';
 import 'package:fishspot_app/models/validate_token.dart';
 import 'package:fishspot_app/pages/password/change_password_page.dart';
-import 'package:fishspot_app/repositories/recover_password_repository.dart';
+import 'package:fishspot_app/providers/recover_password_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

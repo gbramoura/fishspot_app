@@ -6,7 +6,7 @@ import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/models/spot_image.dart';
 import 'package:fishspot_app/pages/spot/spot_fish_page.dart';
-import 'package:fishspot_app/repositories/spot_repository.dart';
+import 'package:fishspot_app/providers/spot_repository.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';

@@ -6,7 +6,7 @@ import 'package:fishspot_app/enums/spot_difficulty_type.dart';
 import 'package:fishspot_app/enums/spot_risk_type.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/spot/spot_image_page.dart';
-import 'package:fishspot_app/repositories/spot_repository.dart';
+import 'package:fishspot_app/providers/spot_repository.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:fishspot_app/utils/spot_view_utils.dart';
 import 'package:flutter/material.dart';

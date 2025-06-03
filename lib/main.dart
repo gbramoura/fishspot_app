@@ -8,11 +8,11 @@ import 'package:fishspot_app/pages/profile/profile_user_configuration_page.dart'
 import 'package:fishspot_app/pages/profile/profile_user_edit_page.dart';
 import 'package:fishspot_app/pages/register_page.dart';
 import 'package:fishspot_app/pages/spot/spot_location_page.dart';
-import 'package:fishspot_app/repositories/location_repository.dart';
-import 'package:fishspot_app/repositories/recover_password_repository.dart';
-import 'package:fishspot_app/repositories/settings_repository.dart';
-import 'package:fishspot_app/repositories/spot_repository.dart';
-import 'package:fishspot_app/repositories/widget_control_repository.dart';
+import 'package:fishspot_app/providers/location_provider.dart';
+import 'package:fishspot_app/providers/recover_password_repository.dart';
+import 'package:fishspot_app/providers/settings_repository.dart';
+import 'package:fishspot_app/providers/spot_repository.dart';
+import 'package:fishspot_app/providers/widget_control_repository.dart';
 import 'package:fishspot_app/theme/dark_theme.dart';
 import 'package:fishspot_app/theme/light_theme.dart';
 import 'package:flutter/material.dart';
@@ -36,26 +36,20 @@ void main() async {
 
   await dotenv.load(fileName: '.env');
 
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(
-        create: (context) => SettingRepository(prefs: prefs),
-      ),
-      ChangeNotifierProvider(
-        create: (context) => SpotRepository(),
-      ),
-      ChangeNotifierProvider(
-        create: (context) => LocationRepository(),
-      ),
-      ChangeNotifierProvider(
-        create: (context) => WidgetControlRepository(),
-      ),
-      ChangeNotifierProvider(
-        create: (context) => RecoverPasswordRepository(),
-      ),
-    ],
-    child: const App(),
-  ));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (ctx) => SpotRepository()),
+        ChangeNotifierProvider(create: (ctx) => LocationProvider()),
+        ChangeNotifierProvider(create: (ctx) => WidgetControlRepository()),
+        ChangeNotifierProvider(create: (ctx) => RecoverPasswordRepository()),
+        ChangeNotifierProvider(
+          create: (ctx) => SettingRepository(prefs: prefs),
+        ),
+      ],
+      child: const App(),
+    ),
+  );
 }
 
 class BuildingApp extends StatelessWidget {

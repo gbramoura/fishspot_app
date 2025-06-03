@@ -1,5 +1,5 @@
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
-import 'package:fishspot_app/repositories/settings_repository.dart';
+import 'package:fishspot_app/providers/settings_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:provider/provider.dart';
 

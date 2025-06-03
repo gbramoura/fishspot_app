@@ -3,7 +3,7 @@ import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/extensions/string_extension.dart';
 import 'package:fishspot_app/models/spot.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
-import 'package:fishspot_app/repositories/settings_repository.dart';
+import 'package:fishspot_app/providers/settings_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
 import 'package:fishspot_app/utils/image_utils.dart';

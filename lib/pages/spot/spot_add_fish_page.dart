@@ -4,7 +4,7 @@ import 'package:fishspot_app/components/custom_text_form_field.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/enums/unit_measure_type.dart';
 import 'package:fishspot_app/models/spot_fish.dart';
-import 'package:fishspot_app/repositories/spot_repository.dart';
+import 'package:fishspot_app/providers/spot_repository.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:fishspot_app/utils/spot_view_utils.dart';
 import 'package:flutter/material.dart';
