@@ -6,7 +6,7 @@ import 'package:fishspot_app/enums/unit_measure_type.dart';
 import 'package:fishspot_app/models/spot_fish.dart';
 import 'package:fishspot_app/providers/spot_data_provider.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
-import 'package:fishspot_app/utils/spot_view_utils.dart';
+import 'package:fishspot_app/services/spot_display_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -57,7 +57,7 @@ class _SpotAddFishPageState extends State<SpotAddFishPage> {
     if (value == null || value.isEmpty) {
       return;
     }
-    _measure = SpotViewUtils.getUnitMeasureFromText(value);
+    _measure = SpotDisplayService.getUnitMeasureFromText(value);
   }
 
   _handleNextButton() {
@@ -149,7 +149,7 @@ class _SpotAddFishPageState extends State<SpotAddFishPage> {
                   child: CustomDropdownButton(
                     hintText: 'Escolha',
                     values: UnitMeasureType.values
-                        .map((e) => SpotViewUtils.getUnitMeasureText(e))
+                        .map((e) => SpotDisplayService.getUnitMeasureText(e))
                         .toList(),
                     onChange: _handleChangeMeasure,
                   ),

@@ -6,8 +6,8 @@ import 'package:fishspot_app/models/spot.dart';
 import 'package:fishspot_app/providers/settings_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
-import 'package:fishspot_app/utils/image_utils.dart';
-import 'package:fishspot_app/utils/spot_view_utils.dart';
+import 'package:fishspot_app/services/image_service.dart';
+import 'package:fishspot_app/services/spot_display_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -32,6 +32,7 @@ class MapView extends StatefulWidget {
 
 class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
   final ApiService _apiService = ApiService();
+  final ImageService _imageService = ImageService();
   final List<String> _tabTitles = ['Espécies', 'Dificuldade', 'Riscos'];
 
   late TabController _tabController;
@@ -310,7 +311,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image: NetworkImage(
-                    ImageUtils.getImagePath(image, context),
+                    _imageService.getImagePath(context, image),
                   ),
                 ),
               ),
@@ -379,7 +380,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                       ),
                       SizedBox(width: 5),
                       Text(
-                        '${fish.weight} ${SpotViewUtils.getUnitMeasure(fish.unitMeasure)}',
+                        '${fish.weight} ${SpotDisplayService.getUnitMeasure(fish.unitMeasure)}',
                         style: TextStyle(
                           color: Theme.of(context).textTheme.labelMedium?.color,
                           fontWeight: FontWeight.w600,
@@ -452,11 +453,11 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
               children: <TextSpan>[
                 TextSpan(text: ' '),
                 TextSpan(
-                  text: SpotViewUtils.getDifficultyText(
+                  text: SpotDisplayService.getDifficultyText(
                     _spot?.locationDifficulty.rate,
                   ),
                   style: TextStyle(
-                    color: SpotViewUtils.getDifficultyColor(
+                    color: SpotDisplayService.getDifficultyColor(
                       _spot?.locationDifficulty.rate,
                       context,
                     ),
@@ -516,9 +517,10 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
               children: <TextSpan>[
                 TextSpan(text: ' '),
                 TextSpan(
-                  text: SpotViewUtils.getRiskText(_spot?.locationRisk.rate),
+                  text:
+                      SpotDisplayService.getRiskText(_spot?.locationRisk.rate),
                   style: TextStyle(
-                    color: SpotViewUtils.getRiskColor(
+                    color: SpotDisplayService.getRiskColor(
                       _spot?.locationRisk.rate,
                       context,
                     ),

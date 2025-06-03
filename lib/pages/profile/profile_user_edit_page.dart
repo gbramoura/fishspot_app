@@ -15,8 +15,8 @@ import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/providers/settings_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
+import 'package:fishspot_app/services/image_service.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
-import 'package:fishspot_app/utils/image_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +30,8 @@ class ProfileUserEditPage extends StatefulWidget {
 
 class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
   final ApiService _apiService = ApiService();
+  final ImageService _imageService = ImageService();
+
   final _formGlobalKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _usernameController = TextEditingController();
@@ -233,7 +235,7 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
           height: 100,
           width: 100,
           child: CustomCircleAvatar(
-            imageUrl: ImageUtils.getImagePath(_imageId, context),
+            imageUrl: _imageService.getImagePath(context, _imageId),
           ),
         ),
         SizedBox(height: 10),

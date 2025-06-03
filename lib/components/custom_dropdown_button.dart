@@ -1,5 +1,5 @@
 import 'package:fishspot_app/constants/colors_constants.dart';
-import 'package:fishspot_app/utils/hex_color_utils.dart';
+import 'package:fishspot_app/services/color_converter_service.dart';
 import 'package:flutter/material.dart';
 
 class CustomDropdownButton extends StatelessWidget {
@@ -26,7 +26,7 @@ class CustomDropdownButton extends StatelessWidget {
       ),
       elevation: 16,
       style: TextStyle(
-        color: HexColor('#35383A'),
+        color: ColorConverterService.hexToColor('#35383A'),
         fontSize: 14,
       ),
       onChanged: onChange,
@@ -36,11 +36,12 @@ class CustomDropdownButton extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(
             color: Theme.of(context).buttonTheme.colorScheme?.primary ??
-                HexColor('#00D389'),
+                ColorConverterService.hexToColor('#00D389'),
           ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: HexColor('#E2E2E2')),
+          borderSide:
+              BorderSide(color: ColorConverterService.hexToColor('#E2E2E2')),
         ),
         hintText: hintText,
         filled: true,
@@ -50,7 +51,7 @@ class CustomDropdownButton extends StatelessWidget {
         errorStyle: Theme.of(context).inputDecorationTheme.errorStyle,
         fillColor: ColorsConstants.white50,
         hintStyle: TextStyle(
-          color: HexColor('#9B959F'),
+          color: ColorConverterService.hexToColor('#9B959F'),
         ),
       ),
       items: values.map<DropdownMenuItem<String>>((String value) {

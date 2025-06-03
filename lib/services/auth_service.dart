@@ -4,7 +4,6 @@ import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/models/user_tokens.dart';
-import 'package:fishspot_app/pages/password/recover_password_page.dart';
 import 'package:fishspot_app/providers/location_provider.dart';
 import 'package:fishspot_app/providers/recover_password_provider.dart';
 import 'package:fishspot_app/providers/settings_provider.dart';

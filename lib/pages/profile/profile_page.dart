@@ -11,8 +11,8 @@ import 'package:fishspot_app/pages/profile/profile_user_spot_view_page.dart';
 import 'package:fishspot_app/providers/settings_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
+import 'package:fishspot_app/services/image_service.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
-import 'package:fishspot_app/utils/image_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +26,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final ApiService _apiService = ApiService();
+  final ImageService _imageService = ImageService();
   final List<SpotLocation> _userLocations = [];
   final ScrollController _scrollController = ScrollController();
 
@@ -173,9 +174,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 height: 100,
                 width: 100,
                 child: CustomCircleAvatar(
-                  imageUrl: ImageUtils.getImagePath(
-                    _userProfile.image ?? "",
+                  imageUrl: _imageService.getImagePath(
                     context,
+                    _userProfile.image ?? "",
                   ),
                 ),
               ),
@@ -298,7 +299,7 @@ class _ProfilePageState extends State<ProfilePage> {
               final image = DecorationImage(
                 fit: BoxFit.cover,
                 image: NetworkImage(
-                  ImageUtils.getImagePath(entry.image, context),
+                  _imageService.getImagePath(context, entry.image),
                 ),
               );
 

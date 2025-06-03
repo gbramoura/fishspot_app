@@ -1,5 +1,5 @@
 import 'package:fishspot_app/constants/colors_constants.dart';
-import 'package:fishspot_app/utils/hex_color_utils.dart';
+import 'package:fishspot_app/services/color_converter_service.dart';
 import 'package:flutter/material.dart';
 
 ThemeData lighMode = ThemeData(
@@ -78,7 +78,7 @@ ThemeData lighMode = ThemeData(
     ),
     focusedErrorBorder: OutlineInputBorder(
       borderSide: BorderSide(
-        color: HexColor('#ee2b2b'),
+        color: ColorConverterService.hexToColor('#ee2b2b'),
         width: 1.5,
       ),
     ),

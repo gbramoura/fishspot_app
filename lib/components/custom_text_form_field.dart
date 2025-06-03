@@ -1,4 +1,4 @@
-import 'package:fishspot_app/utils/hex_color_utils.dart';
+import 'package:fishspot_app/services/color_converter_service.dart';
 import 'package:flutter/material.dart';
 
 class CustomTextFormField extends StatelessWidget {
@@ -36,11 +36,11 @@ class CustomTextFormField extends StatelessWidget {
     return TextFormField(
       maxLength: maxLength,
       validator: validator,
-      cursorColor: HexColor('#35383A'),
+      cursorColor: ColorConverterService.hexToColor('#35383A'),
       controller: controller,
       obscureText: obscureText,
       style: TextStyle(
-        color: HexColor('#35383A'),
+        color: ColorConverterService.hexToColor('#35383A'),
         fontSize: 14,
       ),
       readOnly: readonly,
@@ -56,12 +56,12 @@ class CustomTextFormField extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(
             color: Theme.of(context).buttonTheme.colorScheme?.primary ??
-                HexColor('#00D389'),
+                ColorConverterService.hexToColor('#00D389'),
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(
-            color: HexColor('#E2E2E2'),
+            color: ColorConverterService.hexToColor('#E2E2E2'),
           ),
         ),
         hintText: hintText,
@@ -70,9 +70,9 @@ class CustomTextFormField extends StatelessWidget {
         focusedErrorBorder:
             Theme.of(context).inputDecorationTheme.focusedErrorBorder,
         errorStyle: Theme.of(context).inputDecorationTheme.errorStyle,
-        fillColor: HexColor('#FFFFFF'),
+        fillColor: ColorConverterService.hexToColor('#FFFFFF'),
         hintStyle: TextStyle(
-          color: HexColor('#9B959F'),
+          color: ColorConverterService.hexToColor('#9B959F'),
         ),
       ),
     );

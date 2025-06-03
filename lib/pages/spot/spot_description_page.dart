@@ -8,7 +8,7 @@ import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/spot/spot_image_page.dart';
 import 'package:fishspot_app/providers/spot_data_provider.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
-import 'package:fishspot_app/utils/spot_view_utils.dart';
+import 'package:fishspot_app/services/spot_display_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -70,14 +70,14 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
     if (value == null || value.isEmpty) {
       return;
     }
-    _difficulty = SpotViewUtils.getDifficultyFromText(value);
+    _difficulty = SpotDisplayService.getDifficultyFromText(value);
   }
 
   _handleChangeRisk(String? value) {
     if (value == null || value.isEmpty) {
       return;
     }
-    _risk = SpotViewUtils.getRiskFromText(value);
+    _risk = SpotDisplayService.getRiskFromText(value);
   }
 
   _handleNextButton() {
@@ -154,7 +154,7 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
             CustomDropdownButton(
               hintText: 'Escolha',
               values: SpotDifficultyType.values
-                  .map((e) => SpotViewUtils.getDifficultyText(e))
+                  .map((e) => SpotDisplayService.getDifficultyText(e))
                   .toList(),
               onChange: _handleChangeDifficulty,
             ),
@@ -193,7 +193,7 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
             CustomDropdownButton(
               hintText: 'Escolha',
               values: SpotRiskType.values
-                  .map((e) => SpotViewUtils.getRiskText(e))
+                  .map((e) => SpotDisplayService.getRiskText(e))
                   .toList(),
               onChange: _handleChangeRisk,
             ),

@@ -5,7 +5,7 @@ import 'package:fishspot_app/pages/spot/spot_about_page.dart';
 import 'package:fishspot_app/pages/spot/spot_add_fish_page.dart';
 import 'package:fishspot_app/providers/spot_data_provider.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
-import 'package:fishspot_app/utils/spot_view_utils.dart';
+import 'package:fishspot_app/services/spot_display_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -146,7 +146,7 @@ class _SpotFishPageState extends State<SpotFishPage> {
                         ),
                         SizedBox(width: 5),
                         Text(
-                          '${fish.weight} ${SpotViewUtils.getUnitMeasure(fish.unitMeasure)}',
+                          '${fish.weight} ${SpotDisplayService.getUnitMeasure(fish.unitMeasure)}',
                           style: TextStyle(
                             color:
                                 Theme.of(context).textTheme.labelMedium?.color,

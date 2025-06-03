@@ -4,8 +4,17 @@ import 'package:fishspot_app/enums/spot_risk_type.dart';
 import 'package:fishspot_app/enums/unit_measure_type.dart';
 import 'package:flutter/material.dart';
 
-class SpotViewUtils {
-  static getRiskColor(SpotRiskType? rate, dynamic context) => switch (rate) {
+/// Provides utility methods for displaying and converting spot-related data.
+///
+/// This service helps with mapping risk levels, difficulty levels, and unit
+/// measures to their corresponding colors, display text, and enum values.
+class SpotDisplayService {
+  /// Gets the color for a given [SpotRiskType].
+  ///
+  /// Uses predefined colors from `ColorsConstants`. Falls back to the
+  /// theme's title large color if the type is unknown.
+  static Color? getRiskColor(SpotRiskType? rate, BuildContext context) =>
+      switch (rate) {
         SpotRiskType.VeryLow => ColorsConstants.green50,
         SpotRiskType.Low => ColorsConstants.green100,
         SpotRiskType.Medium => ColorsConstants.yellow50,
@@ -14,6 +23,9 @@ class SpotViewUtils {
         _ => Theme.of(context).textTheme.titleLarge?.color,
       };
 
+  /// Gets the display text for a given [SpotRiskType].
+  ///
+  /// Returns "Nenhum" (None) if the type is unknown.
   static String getRiskText(SpotRiskType? rate) => switch (rate) {
         SpotRiskType.VeryLow => "Muito Baixo",
         SpotRiskType.Low => "Baixo",
@@ -23,6 +35,9 @@ class SpotViewUtils {
         _ => "Nenhum",
       };
 
+  /// Converts a risk text [String] back to a [SpotRiskType].
+  ///
+  /// Returns [SpotRiskType.VeryLow] if the text is unknown.
   static SpotRiskType getRiskFromText(String? rate) => switch (rate) {
         "Muito Baixo" => SpotRiskType.VeryLow,
         "Baixo" => SpotRiskType.Low,
@@ -32,7 +47,12 @@ class SpotViewUtils {
         _ => SpotRiskType.VeryLow,
       };
 
-  static getDifficultyColor(SpotDifficultyType? rate, dynamic context) =>
+  /// Gets the color for a given [SpotDifficultyType].
+  ///
+  /// Uses predefined colors from `ColorsConstants`. Falls back to the
+  /// theme's title large color if the type is unknown.
+  static Color? getDifficultyColor(
+          SpotDifficultyType? rate, BuildContext context) =>
       switch (rate) {
         SpotDifficultyType.VeryEasy => ColorsConstants.green50,
         SpotDifficultyType.Easy => ColorsConstants.green100,
@@ -42,6 +62,9 @@ class SpotViewUtils {
         _ => Theme.of(context).textTheme.titleLarge?.color,
       };
 
+  /// Gets the display text for a given [SpotDifficultyType].
+  ///
+  /// Returns "Nenhum(a)" (None) if the type is unknown.
   static String getDifficultyText(SpotDifficultyType? rate) => switch (rate) {
         SpotDifficultyType.VeryEasy => "Muito Facil",
         SpotDifficultyType.Easy => "Facil",
@@ -51,6 +74,9 @@ class SpotViewUtils {
         _ => "Nenhum(a)",
       };
 
+  /// Converts a difficulty text [String] back to a [SpotDifficultyType].
+  ///
+  /// Returns [SpotDifficultyType.VeryEasy] if the text is unknown.
   static SpotDifficultyType getDifficultyFromText(String? rate) =>
       switch (rate) {
         "Muito Facil" => SpotDifficultyType.VeryEasy,
@@ -61,6 +87,9 @@ class SpotViewUtils {
         _ => SpotDifficultyType.VeryEasy,
       };
 
+  /// Gets the short unit symbol for a given [UnitMeasureType].
+  ///
+  /// Returns an empty string if the type is unknown.
   static String getUnitMeasure(UnitMeasureType? unit) => switch (unit) {
         UnitMeasureType.Grams => 'g',
         UnitMeasureType.Kilograms => 'Kg',
@@ -68,6 +97,9 @@ class SpotViewUtils {
         _ => '',
       };
 
+  /// Gets the full display text for a given [UnitMeasureType].
+  ///
+  /// Returns an empty string if the type is unknown.
   static String getUnitMeasureText(UnitMeasureType? unit) => switch (unit) {
         UnitMeasureType.Grams => 'Grama(s)',
         UnitMeasureType.Kilograms => 'Quilograma(s)',
@@ -75,6 +107,9 @@ class SpotViewUtils {
         _ => '',
       };
 
+  /// Converts a unit measure text [String] back to a [UnitMeasureType].
+  ///
+  /// Returns [UnitMeasureType.Grams] if the text is unknown.
   static UnitMeasureType getUnitMeasureFromText(String? unit) => switch (unit) {
         'Grama(s)' => UnitMeasureType.Grams,
         'Quilograma(s)' => UnitMeasureType.Kilograms,
