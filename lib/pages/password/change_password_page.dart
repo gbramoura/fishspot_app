@@ -5,7 +5,7 @@ import 'package:fishspot_app/components/custom_text_form_field.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/exceptions/http_response_exception.dart';
-import 'package:fishspot_app/providers/recover_password_repository.dart';
+import 'package:fishspot_app/providers/recover_password_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +32,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       _loading = true;
     });
 
-    var repo = Provider.of<RecoverPasswordRepository>(context, listen: false);
+    var provider = Provider.of<RecoverPasswordProvider>(context, listen: false);
 
     if (!_formGlobalKey.currentState!.validate()) {
       setState(() {
@@ -43,8 +43,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
     try {
       await _api.changePassword({
-        'email': repo.getEmail(),
-        'token': repo.getToken(),
+        'email': provider.getEmail(),
+        'token': provider.getToken(),
         'newPassword': _passwordController.text,
       });
 
@@ -65,7 +65,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   }
 
   _handleCancel() {
-    Provider.of<RecoverPasswordRepository>(context, listen: false).clear();
+    Provider.of<RecoverPasswordProvider>(context, listen: false).clear();
     Navigator.of(context).popUntil((route) {
       return route.settings.name == RouteConstants.login;
     });

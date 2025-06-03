@@ -9,7 +9,7 @@ import 'package:fishspot_app/pages/profile/profile_user_edit_page.dart';
 import 'package:fishspot_app/pages/register_page.dart';
 import 'package:fishspot_app/pages/spot/spot_location_page.dart';
 import 'package:fishspot_app/providers/location_provider.dart';
-import 'package:fishspot_app/providers/recover_password_repository.dart';
+import 'package:fishspot_app/providers/recover_password_provider.dart';
 import 'package:fishspot_app/providers/settings_repository.dart';
 import 'package:fishspot_app/providers/spot_repository.dart';
 import 'package:fishspot_app/providers/widget_control_repository.dart';
@@ -42,7 +42,7 @@ void main() async {
         ChangeNotifierProvider(create: (ctx) => SpotRepository()),
         ChangeNotifierProvider(create: (ctx) => LocationProvider()),
         ChangeNotifierProvider(create: (ctx) => WidgetControlRepository()),
-        ChangeNotifierProvider(create: (ctx) => RecoverPasswordRepository()),
+        ChangeNotifierProvider(create: (ctx) => RecoverPasswordProvider()),
         ChangeNotifierProvider(
           create: (ctx) => SettingRepository(prefs: prefs),
         ),

@@ -8,7 +8,7 @@ import 'package:fishspot_app/exceptions/http_response_exception.dart';
 import 'package:fishspot_app/models/http_response.dart';
 import 'package:fishspot_app/models/validate_token.dart';
 import 'package:fishspot_app/pages/password/change_password_page.dart';
-import 'package:fishspot_app/providers/recover_password_repository.dart';
+import 'package:fishspot_app/providers/recover_password_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +32,7 @@ class _ValidateTokenPageState extends State<ValidateTokenPage> {
       _loading = true;
     });
 
-    var repo = Provider.of<RecoverPasswordRepository>(context, listen: false);
+    var provider = Provider.of<RecoverPasswordProvider>(context, listen: false);
     var route = MaterialPageRoute(builder: (context) => ChangePasswordPage());
 
     if (!_formGlobalKey.currentState!.validate()) {
@@ -43,11 +43,11 @@ class _ValidateTokenPageState extends State<ValidateTokenPage> {
     }
 
     try {
-      repo.setToken(_tokenController.text);
+      provider.setToken(_tokenController.text);
 
       HttpResponse response = await _api.validateRecoverToken({
-        'email': repo.getEmail(),
-        'token': repo.getToken(),
+        'email': provider.getEmail(),
+        'token': provider.getToken(),
       });
 
       ValidateToken parsedResponse = ValidateToken.fromJson(response.response);
@@ -76,7 +76,7 @@ class _ValidateTokenPageState extends State<ValidateTokenPage> {
   }
 
   _handleCancel() {
-    Provider.of<RecoverPasswordRepository>(context, listen: false).clear();
+    Provider.of<RecoverPasswordProvider>(context, listen: false).clear();
     Navigator.of(context).popUntil((route) {
       return route.settings.name == RouteConstants.login;
     });
