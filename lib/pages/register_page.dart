@@ -173,7 +173,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Image(
                     height: 250,
                     width: 250,
-                    image: AssetImage('assets/images/fish-spot-icon.png'),
+                    image: AssetImage('assets/fish-spot-icon.png'),
                   ),
                 ),
               ),

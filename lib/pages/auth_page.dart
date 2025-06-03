@@ -59,7 +59,7 @@ class _AuthPageState extends State<AuthPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/images/fish-spot-icon.png',
+                'assets/fish-spot-icon.png',
                 width: 175,
                 height: 175,
               ),

@@ -292,7 +292,7 @@ class _ProfilePageState extends State<ProfilePage> {
               var isImageProvided = entry.image != null && entry.image != '';
 
               final icon = DecorationImage(
-                image: Svg('assets/images/no-photography.svg'),
+                image: Svg('assets/no-photography.svg'),
                 fit: BoxFit.none,
               );
 

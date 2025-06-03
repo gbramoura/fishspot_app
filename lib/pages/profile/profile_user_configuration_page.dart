@@ -56,7 +56,7 @@ class _ProfileUserConfigurationPageState
             Image(
               height: 150,
               width: 150,
-              image: AssetImage('assets/images/fish-spot-icon.png'),
+              image: AssetImage('assets/fish-spot-icon.png'),
             ),
             Text(
               'Aplicação FishSpot',

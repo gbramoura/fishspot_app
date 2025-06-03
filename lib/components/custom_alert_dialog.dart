@@ -18,11 +18,11 @@ class CustomAlertDialog extends StatelessWidget {
   renderDialogImage() {
     switch (type) {
       case CustomDialogAlertType.success:
-        return AssetImage('assets/images/icons-success-150.png');
+        return AssetImage('assets/icons-success-150.png');
       case CustomDialogAlertType.error:
-        return AssetImage('assets/images/icons-error-150.png');
+        return AssetImage('assets/icons-error-150.png');
       case CustomDialogAlertType.warn:
-        return AssetImage('assets/images/icons-warn-100.png');
+        return AssetImage('assets/icons-warn-100.png');
     }
   }
 
