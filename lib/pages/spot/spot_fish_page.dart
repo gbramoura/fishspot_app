@@ -3,7 +3,7 @@ import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/extensions/string_extension.dart';
 import 'package:fishspot_app/pages/spot/spot_about_page.dart';
 import 'package:fishspot_app/pages/spot/spot_add_fish_page.dart';
-import 'package:fishspot_app/providers/spot_repository.dart';
+import 'package:fishspot_app/providers/spot_data_provider.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:fishspot_app/utils/spot_view_utils.dart';
 import 'package:flutter/material.dart';
@@ -33,16 +33,16 @@ class _SpotFishPageState extends State<SpotFishPage> {
   }
 
   _handleRemoveFish(Uuid id) {
-    var repo = Provider.of<SpotRepository>(context, listen: false);
-    var fishes = repo.getFishes();
+    var spotProvider = Provider.of<SpotDataProvider>(context, listen: false);
+    var fishes = spotProvider.getFishes();
 
     var updatedFishes = fishes.where((file) => file.id != id).toList();
-    repo.setFishes(updatedFishes);
+    spotProvider.setFishes(updatedFishes);
   }
 
   @override
   Widget build(BuildContext buildContext) {
-    return Consumer<SpotRepository>(builder: (context, value, widget) {
+    return Consumer<SpotDataProvider>(builder: (context, value, widget) {
       return Scaffold(
         appBar: _renderAppBar(context),
         body: Center(
@@ -61,7 +61,7 @@ class _SpotFishPageState extends State<SpotFishPage> {
     });
   }
 
-  _renderFishes(BuildContext context, SpotRepository value) {
+  _renderFishes(BuildContext context, SpotDataProvider value) {
     var fishes = value.getFishes();
 
     if (fishes.isEmpty) {
@@ -91,7 +91,7 @@ class _SpotFishPageState extends State<SpotFishPage> {
     );
   }
 
-  _renderPickedFishes(BuildContext context, SpotRepository value) {
+  _renderPickedFishes(BuildContext context, SpotDataProvider value) {
     var fishes = value.getFishes();
 
     return ListView.builder(
@@ -223,7 +223,7 @@ class _SpotFishPageState extends State<SpotFishPage> {
     );
   }
 
-  _renderNext(BuildContext context, SpotRepository value) {
+  _renderNext(BuildContext context, SpotDataProvider value) {
     var fishes = value.getFishes();
 
     return Padding(

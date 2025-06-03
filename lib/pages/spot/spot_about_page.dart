@@ -8,7 +8,7 @@ import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/models/http_multipart_file.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/providers/settings_provider.dart';
-import 'package:fishspot_app/providers/spot_repository.dart';
+import 'package:fishspot_app/providers/spot_data_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
@@ -67,28 +67,28 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
     });
 
     var settings = Provider.of<SettingProvider>(context, listen: false);
-    var spotRepo = Provider.of<SpotRepository>(context, listen: false);
+    var spotProvider = Provider.of<SpotDataProvider>(context, listen: false);
     var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
     var spotId = "";
 
     try {
-      spotRepo.setDescription(
+      spotProvider.setDescription(
         _titleController.text,
         _observationController.text,
         DateFormat("dd/MM/yyyy").parse(_dateController.text),
       );
 
       var createSpotResponse = await _apiService.createSpot(
-        spotRepo.toPayload(),
+        spotProvider.toPayload(),
         token,
       );
 
       spotId = createSpotResponse.response["id"];
 
       // Atach image
-      if (spotRepo.getImages().isNotEmpty) {
+      if (spotProvider.getImages().isNotEmpty) {
         var fields = {"spotId": spotId};
-        var files = spotRepo
+        var files = spotProvider
             .getImages()
             .map((e) => HttpMultipartFile(file: e.file, path: 'files'))
             .toList();
@@ -312,7 +312,7 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
             label: 'Ok',
             fixedSize: Size(double.infinity, 48),
             onPressed: () {
-              Provider.of<SpotRepository>(context, listen: false).clear();
+              Provider.of<SpotDataProvider>(context, listen: false).clear();
               NavigationService.popUntil(context, [RouteConstants.home]);
             },
           ),

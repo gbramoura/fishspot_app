@@ -6,7 +6,7 @@ import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/models/user_tokens.dart';
 import 'package:fishspot_app/providers/location_provider.dart';
 import 'package:fishspot_app/providers/settings_provider.dart';
-import 'package:fishspot_app/providers/spot_repository.dart';
+import 'package:fishspot_app/providers/spot_data_provider.dart';
 import 'package:fishspot_app/providers/widget_control_repository.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +54,7 @@ class AuthService {
 
   static void clearCredentials(dynamic context) {
     Provider.of<SettingProvider>(context, listen: false).clear();
-    Provider.of<SpotRepository>(context, listen: false).clear();
+    Provider.of<SpotDataProvider>(context, listen: false).clear();
     Provider.of<LocationProvider>(context, listen: false).clear();
     Provider.of<WidgetControlRepository>(context, listen: false).clear();
     Provider.of<WidgetControlRepository>(context, listen: false).clear();

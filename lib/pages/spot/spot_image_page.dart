@@ -6,7 +6,7 @@ import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/models/spot_image.dart';
 import 'package:fishspot_app/pages/spot/spot_fish_page.dart';
-import 'package:fishspot_app/providers/spot_repository.dart';
+import 'package:fishspot_app/providers/spot_data_provider.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -32,8 +32,8 @@ class _SpotImagePageState extends State<SpotImagePage> {
   _handleAddImage() async {
     const int imagesLimit = 30;
     const List<String> imagesExtensions = [".png", ".jpg", ".jpeg"];
-    var repo = Provider.of<SpotRepository>(context, listen: false);
-    var images = repo.getImages();
+    var spotProvider = Provider.of<SpotDataProvider>(context, listen: false);
+    var images = spotProvider.getImages();
 
     var picker = ImagePicker();
     var pickedFiles = await picker.pickMultiImage(
@@ -57,23 +57,23 @@ class _SpotImagePageState extends State<SpotImagePage> {
         continue;
       }
 
-      repo.addImages([
+      spotProvider.addImages([
         SpotImage(id: id, file: file),
       ]);
     }
   }
 
   _handleRemoveImage(BuildContext context, Uuid id) {
-    var repo = context.read<SpotRepository>();
-    var images = repo.getImages();
+    var spotProvider = context.read<SpotDataProvider>();
+    var images = spotProvider.getImages();
 
     var updatedImages = images.where((file) => file.id != id).toList();
-    repo.setImages(updatedImages);
+    spotProvider.setImages(updatedImages);
   }
 
   @override
   Widget build(BuildContext buildContext) {
-    return Consumer<SpotRepository>(builder: (context, value, widget) {
+    return Consumer<SpotDataProvider>(builder: (context, value, widget) {
       return Scaffold(
         appBar: _renderAppBar(context),
         body: Column(
@@ -88,7 +88,7 @@ class _SpotImagePageState extends State<SpotImagePage> {
     });
   }
 
-  _renderImages(BuildContext context, SpotRepository value) {
+  _renderImages(BuildContext context, SpotDataProvider value) {
     var images = value.getImages();
 
     if (images.isEmpty) {
@@ -116,7 +116,7 @@ class _SpotImagePageState extends State<SpotImagePage> {
     );
   }
 
-  _renderPickedImages(BuildContext context, SpotRepository value) {
+  _renderPickedImages(BuildContext context, SpotDataProvider value) {
     var images = value.getImages();
 
     return GridView.builder(
@@ -190,7 +190,7 @@ class _SpotImagePageState extends State<SpotImagePage> {
     );
   }
 
-  _renderNext(BuildContext context, SpotRepository value) {
+  _renderNext(BuildContext context, SpotDataProvider value) {
     var images = value.getImages();
 
     return Padding(

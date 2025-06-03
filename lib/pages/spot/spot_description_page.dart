@@ -6,7 +6,7 @@ import 'package:fishspot_app/enums/spot_difficulty_type.dart';
 import 'package:fishspot_app/enums/spot_risk_type.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/spot/spot_image_page.dart';
-import 'package:fishspot_app/providers/spot_repository.dart';
+import 'package:fishspot_app/providers/spot_data_provider.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:fishspot_app/utils/spot_view_utils.dart';
 import 'package:flutter/material.dart';
@@ -39,9 +39,9 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
       _loading = true;
     });
 
-    var addSpot = Provider.of<SpotRepository>(context, listen: false);
-    var difficulty = addSpot.getDifficulty();
-    var risk = addSpot.getRisk();
+    var spotProvider = Provider.of<SpotDataProvider>(context, listen: false);
+    var difficulty = spotProvider.getDifficulty();
+    var risk = spotProvider.getRisk();
 
     setState(() {
       _riskObservationController.text = risk.observation;
@@ -86,13 +86,13 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
     }
 
     var route = MaterialPageRoute(builder: (context) => SpotImagePage());
-    var addSpot = Provider.of<SpotRepository>(context, listen: false);
+    var spotProvider = Provider.of<SpotDataProvider>(context, listen: false);
 
-    addSpot.setDifficulty(
+    spotProvider.setDifficulty(
       _difficulty,
       _difficultyObservationController.text,
     );
-    addSpot.setRisk(
+    spotProvider.setRisk(
       _risk,
       _riskObservationController.text,
     );

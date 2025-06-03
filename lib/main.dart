@@ -11,7 +11,7 @@ import 'package:fishspot_app/pages/spot/spot_location_page.dart';
 import 'package:fishspot_app/providers/location_provider.dart';
 import 'package:fishspot_app/providers/recover_password_provider.dart';
 import 'package:fishspot_app/providers/settings_provider.dart';
-import 'package:fishspot_app/providers/spot_repository.dart';
+import 'package:fishspot_app/providers/spot_data_provider.dart';
 import 'package:fishspot_app/providers/widget_control_repository.dart';
 import 'package:fishspot_app/theme/dark_theme.dart';
 import 'package:fishspot_app/theme/light_theme.dart';
@@ -39,7 +39,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (ctx) => SpotRepository()),
+        ChangeNotifierProvider(create: (ctx) => SpotDataProvider()),
         ChangeNotifierProvider(create: (ctx) => LocationProvider()),
         ChangeNotifierProvider(create: (ctx) => WidgetControlRepository()),
         ChangeNotifierProvider(create: (ctx) => RecoverPasswordProvider()),
