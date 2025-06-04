@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
+import 'package:fishspot_app/widgets/alert_modal.dart';
 import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
@@ -22,8 +22,10 @@ class SpotImagePage extends StatefulWidget {
 }
 
 class _SpotImagePageState extends State<SpotImagePage> {
+  final NavigationService _navigationService = NavigationService();
+
   _handleNextButton(BuildContext context) {
-    NavigationService.push(
+    _navigationService.push(
       context,
       MaterialPageRoute(builder: (context) => SpotFishPage()),
     );
@@ -240,7 +242,7 @@ class _SpotImagePageState extends State<SpotImagePage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomAlertDialog(
+        return AlertModal(
           type: CustomDialogAlertType.warn,
           title: 'Imagens com Problemas',
           message: message,
@@ -248,7 +250,7 @@ class _SpotImagePageState extends State<SpotImagePage> {
             label: 'Ok',
             fixedSize: Size(double.infinity, 48),
             onPressed: () {
-              NavigationService.pop(context);
+              _navigationService.pop(context);
             },
           ),
         );

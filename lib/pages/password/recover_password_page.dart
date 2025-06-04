@@ -1,4 +1,4 @@
-import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
+import 'package:fishspot_app/widgets/alert_modal.dart';
 import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/widgets/ink_button.dart';
 import 'package:fishspot_app/widgets/text_input.dart';
@@ -171,7 +171,7 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomAlertDialog(
+        return AlertModal(
           type: CustomDialogAlertType.error,
           title: title ?? "Erro ao tentar alterar senha",
           message: message ??

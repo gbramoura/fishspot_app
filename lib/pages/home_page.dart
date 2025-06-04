@@ -18,6 +18,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final NavigationService _navigationService = NavigationService();
+  final AuthService _authService = AuthService();
+
   int _currentIndex = 0;
   bool _loading = false;
 
@@ -29,22 +32,22 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _handleNavigatePage(int index) async {
     if (index == 1) {
-      return NavigationService.pushNamed(context, RouteConstants.addSpot);
+      return _navigationService.pushNamed(context, RouteConstants.addSpot);
     }
 
     setState(() {
       _loading = true;
     });
 
-    if (!await AuthService.isUserAuthenticated(context)) {
+    if (!await _authService.isUserAuthenticated(context)) {
       if (mounted) {
-        AuthService.clearCredentials(context);
-        AuthService.showAuthDialog(context);
+        _authService.clearCredentials(context);
+        _authService.showAuthDialog(context);
       }
     }
 
     if (mounted) {
-      await AuthService.refreshCredentials(context);
+      await _authService.refreshCredentials(context);
     }
 
     setState(() {

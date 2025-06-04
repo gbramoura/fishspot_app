@@ -20,6 +20,7 @@ class SpotLocationPage extends StatefulWidget {
 
 class _SpotLocationPageState extends State<SpotLocationPage> {
   final MapController _mapController = MapController();
+  final NavigationService _navigationService = NavigationService();
 
   LatLng? _latLng;
   bool _loading = false;
@@ -71,8 +72,10 @@ class _SpotLocationPageState extends State<SpotLocationPage> {
     }
 
     spotProvider.setCoordinates(
-        _latLng?.latitude ?? 0, _latLng?.longitude ?? 0);
-    NavigationService.push(context, route);
+      _latLng?.latitude ?? 0,
+      _latLng?.longitude ?? 0,
+    );
+    _navigationService.push(context, route);
   }
 
   @override
@@ -180,7 +183,7 @@ class _SpotLocationPageState extends State<SpotLocationPage> {
         ),
         onPressed: () {
           Provider.of<SpotDataProvider>(context, listen: false).clear();
-          NavigationService.pop(context);
+          _navigationService.pop(context);
         },
       ),
       title: Row(

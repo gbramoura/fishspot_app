@@ -23,6 +23,8 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   final ApiService _apiService = ApiService();
+  final AuthService _authService = AuthService();
+
   final List<Marker> _markers = [];
   final MapController _mapController = MapController();
   final _sheet = GlobalKey();
@@ -82,8 +84,8 @@ class _MapPageState extends State<MapPage> {
       });
     } catch (e) {
       if (mounted) {
-        AuthService.clearCredentials(context);
-        AuthService.showInternalErrorDialog(context);
+        _authService.clearCredentials(context);
+        _authService.showInternalErrorDialog(context);
       }
     }
 

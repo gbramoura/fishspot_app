@@ -1,13 +1,13 @@
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:flutter/material.dart';
 
-class CustomAlertDialog extends StatelessWidget {
+class AlertModal extends StatelessWidget {
   final Widget button;
   final CustomDialogAlertType type;
   final String title;
   final String message;
 
-  const CustomAlertDialog({
+  const AlertModal({
     super.key,
     required this.button,
     required this.type,
@@ -15,7 +15,7 @@ class CustomAlertDialog extends StatelessWidget {
     required this.message,
   });
 
-  renderDialogImage() {
+  _image() {
     switch (type) {
       case CustomDialogAlertType.success:
         return AssetImage('assets/icons-success-150.png');
@@ -38,7 +38,7 @@ class CustomAlertDialog extends StatelessWidget {
               Image(
                 height: 150,
                 width: 150,
-                image: renderDialogImage(),
+                image: _image(),
               ),
               SizedBox(
                 height: 20,

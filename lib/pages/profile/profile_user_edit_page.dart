@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
+import 'package:fishspot_app/widgets/alert_modal.dart';
 import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/widgets/profile_circle_avatar.dart';
 import 'package:fishspot_app/widgets/text_input.dart';
@@ -31,6 +31,8 @@ class ProfileUserEditPage extends StatefulWidget {
 class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
   final ApiService _apiService = ApiService();
   final ImageService _imageService = ImageService();
+  final NavigationService _navigationService = NavigationService();
+  final AuthService _authService = AuthService();
 
   final _formGlobalKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
@@ -59,7 +61,7 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
       var settings = Provider.of<SettingProvider>(context, listen: false);
       var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
-      await AuthService.refreshCredentials(context);
+      await _authService.refreshCredentials(context);
       HttpResponse resp = await _apiService.getUser(token);
       UserProfile user = UserProfile.fromJson(resp.response);
 
@@ -76,8 +78,8 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
       }
     } catch (e) {
       if (mounted) {
-        AuthService.clearCredentials(context);
-        AuthService.showInternalErrorDialog(context);
+        _authService.clearCredentials(context);
+        _authService.showInternalErrorDialog(context);
       }
     }
 
@@ -138,7 +140,8 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
       await _apiService.updateUser(payload, token);
 
       if (!mounted) return;
-      NavigationService.pop(context);
+
+      _navigationService.pop(context);
     } on HttpResponseException catch (e) {
       _renderDialog(e.data.code, e.data.message);
     } catch (e) {
@@ -408,7 +411,7 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomAlertDialog(
+        return AlertModal(
           type: CustomDialogAlertType.error,
           title: 'Error ao Alterar Foto de Perfil',
           message: '',
@@ -436,7 +439,7 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomAlertDialog(
+        return AlertModal(
           type: code == 400
               ? CustomDialogAlertType.warn
               : CustomDialogAlertType.error,

@@ -33,6 +33,8 @@ class MapView extends StatefulWidget {
 class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
   final ApiService _apiService = ApiService();
   final ImageService _imageService = ImageService();
+  final AuthService _authService = AuthService();
+
   final List<String> _tabTitles = ['Espécies', 'Dificuldade', 'Riscos'];
 
   late TabController _tabController;
@@ -59,10 +61,10 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
     });
 
     try {
-      if (!await AuthService.isUserAuthenticated(context)) {
+      if (!await _authService.isUserAuthenticated(context)) {
         if (mounted) {
-          AuthService.clearCredentials(context);
-          AuthService.showAuthDialog(context);
+          _authService.clearCredentials(context);
+          _authService.showAuthDialog(context);
         }
         return;
       }
@@ -72,7 +74,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
       var settings = Provider.of<SettingProvider>(context, listen: false);
       var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
-      await AuthService.refreshCredentials(context);
+      await _authService.refreshCredentials(context);
 
       var resp = await _apiService.getSpot(widget.spotId, token);
       var spot = Spot.fromJson(resp.response);
@@ -83,8 +85,8 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
       });
     } catch (e) {
       if (mounted) {
-        AuthService.clearCredentials(context);
-        AuthService.showInternalErrorDialog(context);
+        _authService.clearCredentials(context);
+        _authService.showInternalErrorDialog(context);
       }
     }
 

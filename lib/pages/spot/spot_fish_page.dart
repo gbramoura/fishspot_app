@@ -18,15 +18,17 @@ class SpotFishPage extends StatefulWidget {
 }
 
 class _SpotFishPageState extends State<SpotFishPage> {
+  final NavigationService _navigationService = NavigationService();
+
   _handleNextButton(dynamic context) {
-    NavigationService.push(
+    _navigationService.push(
       context,
       MaterialPageRoute(builder: (context) => SpotAboutPage()),
     );
   }
 
   _handleAddFish() async {
-    NavigationService.push(
+    _navigationService.push(
       context,
       MaterialPageRoute(builder: (context) => SpotAddFishPage()),
     );

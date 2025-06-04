@@ -20,6 +20,8 @@ class SpotDescriptionPage extends StatefulWidget {
 }
 
 class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
+  final NavigationService _navigationService = NavigationService();
+
   final _formGlobalKey = GlobalKey<FormState>();
   final _riskObservationController = TextEditingController();
   final _difficultyObservationController = TextEditingController();
@@ -97,7 +99,7 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
       _riskObservationController.text,
     );
 
-    NavigationService.push(context, route);
+    _navigationService.push(context, route);
   }
 
   @override

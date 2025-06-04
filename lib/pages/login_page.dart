@@ -1,4 +1,4 @@
-import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
+import 'package:fishspot_app/widgets/alert_modal.dart';
 import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/widgets/ink_button.dart';
 import 'package:fishspot_app/widgets/text_input.dart';
@@ -87,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomAlertDialog(
+        return AlertModal(
           type: code == 400
               ? CustomDialogAlertType.warn
               : CustomDialogAlertType.error,
@@ -106,8 +106,16 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   String? _handleEmailValidator(String? value) {
+    var emailRegExp = RegExp(
+      r'^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$',
+    );
+
     if (value == null || value.isEmpty) {
       return 'E-mail é obrigatória';
+    }
+
+    if (!emailRegExp.hasMatch(value)) {
+      return 'Endereço de e-mail invalido';
     }
     return null;
   }

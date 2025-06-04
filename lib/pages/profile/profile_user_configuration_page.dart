@@ -14,6 +14,8 @@ class ProfileUserConfigurationPage extends StatefulWidget {
 
 class _ProfileUserConfigurationPageState
     extends State<ProfileUserConfigurationPage> {
+  final NavigationService _navigationService = NavigationService();
+
   bool _loading = false;
   String _version = '0.0.0';
 
@@ -37,7 +39,7 @@ class _ProfileUserConfigurationPageState
   }
 
   _handleLogout() {
-    NavigationService.logout(context);
+    _navigationService.logout(context);
   }
 
   @override

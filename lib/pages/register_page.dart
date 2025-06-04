@@ -1,4 +1,4 @@
-import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
+import 'package:fishspot_app/widgets/alert_modal.dart';
 import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/widgets/ink_button.dart';
 import 'package:fishspot_app/widgets/text_input.dart';
@@ -95,7 +95,7 @@ class _RegisterPageState extends State<RegisterPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomAlertDialog(
+        return AlertModal(
           type: CustomDialogAlertType.success,
           title: 'Registrado com Sucesso',
           message:
@@ -124,7 +124,7 @@ class _RegisterPageState extends State<RegisterPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomAlertDialog(
+        return AlertModal(
           type: code == 400
               ? CustomDialogAlertType.warn
               : CustomDialogAlertType.error,

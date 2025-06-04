@@ -1,4 +1,4 @@
-import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
+import 'package:fishspot_app/widgets/alert_modal.dart';
 import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/widgets/date_input.dart';
 import 'package:fishspot_app/widgets/text_input.dart';
@@ -24,7 +24,9 @@ class SpotAboutPage extends StatefulWidget {
 }
 
 class _SpotAboutPageState extends State<SpotAboutPage> {
-  final _apiService = ApiService();
+  final ApiService _apiService = ApiService();
+  final NavigationService _navigationService = NavigationService();
+
   final _formGlobalKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _dateController = TextEditingController();
@@ -261,7 +263,7 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomAlertDialog(
+        return AlertModal(
           type: type,
           title: title,
           message: message ?? "",
@@ -270,7 +272,7 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
             fixedSize: Size(double.infinity, 48),
             onPressed: () {
               Provider.of<SpotDataProvider>(context, listen: false).clear();
-              NavigationService.popUntil(context, [RouteConstants.home]);
+              _navigationService.popUntil(context, [RouteConstants.home]);
             },
           ),
         );

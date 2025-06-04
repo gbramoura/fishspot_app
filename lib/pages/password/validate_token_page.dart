@@ -1,4 +1,4 @@
-import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
+import 'package:fishspot_app/widgets/alert_modal.dart';
 import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/widgets/ink_button.dart';
 import 'package:fishspot_app/widgets/text_input.dart';
@@ -192,7 +192,7 @@ class _ValidateTokenPageState extends State<ValidateTokenPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomAlertDialog(
+        return AlertModal(
           type: type ?? CustomDialogAlertType.error,
           title: title ?? "Erro ao tentar alterar senha",
           message: message ??

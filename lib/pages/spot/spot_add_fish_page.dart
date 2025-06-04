@@ -19,6 +19,8 @@ class SpotAddFishPage extends StatefulWidget {
 }
 
 class _SpotAddFishPageState extends State<SpotAddFishPage> {
+  final NavigationService _navigationService = NavigationService();
+
   final _formFishKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _weightController = TextEditingController();
@@ -76,8 +78,7 @@ class _SpotAddFishPageState extends State<SpotAddFishPage> {
     );
 
     spotProvider.addFishes([fish]);
-
-    NavigationService.pop(context);
+    _navigationService.pop(context);
   }
 
   @override

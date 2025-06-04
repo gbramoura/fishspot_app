@@ -28,6 +28,7 @@ class ProfileUserSpotViewPage extends StatefulWidget {
 class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
   final ApiService _apiService = ApiService();
   final ImageService _imageService = ImageService();
+  final AuthService _authService = AuthService();
 
   Spot? _spot;
   bool _loading = false;
@@ -44,7 +45,9 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
     });
 
     try {
-      await AuthService.refreshCredentials(context);
+      await _authService.refreshCredentials(context);
+
+      if (!mounted) return;
 
       var settings = Provider.of<SettingProvider>(context, listen: false);
       var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
@@ -57,8 +60,8 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
       });
     } catch (e) {
       if (mounted) {
-        AuthService.clearCredentials(context);
-        AuthService.showInternalErrorDialog(context);
+        _authService.clearCredentials(context);
+        _authService.showInternalErrorDialog(context);
       }
     }
 

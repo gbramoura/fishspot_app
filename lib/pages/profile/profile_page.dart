@@ -27,6 +27,9 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final ApiService _apiService = ApiService();
   final ImageService _imageService = ImageService();
+  final NavigationService _navigationService = NavigationService();
+  final AuthService _authService = AuthService();
+
   final List<SpotLocation> _userLocations = [];
   final ScrollController _scrollController = ScrollController();
 
@@ -50,7 +53,7 @@ class _ProfilePageState extends State<ProfilePage> {
     var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
     try {
-      await AuthService.refreshCredentials(context);
+      await _authService.refreshCredentials(context);
       HttpResponse userResponse = await _apiService.getUser(token);
       HttpResponse locationsResponse = await _apiService.getUserLocations({
         'PageSize': '12',
@@ -65,8 +68,8 @@ class _ProfilePageState extends State<ProfilePage> {
       _scrollController.addListener(_scrollListener);
     } catch (e) {
       if (mounted) {
-        AuthService.clearCredentials(context);
-        AuthService.showInternalErrorDialog(context);
+        _authService.clearCredentials(context);
+        _authService.showInternalErrorDialog(context);
       }
     }
 
@@ -88,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage> {
     var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
     try {
-      await AuthService.refreshCredentials(context);
+      await _authService.refreshCredentials(context);
       HttpResponse locationsResponse = await _apiService.getUserLocations({
         'PageSize': '12',
         'PageNumber': (_pageNumber + 1).toString(),
@@ -101,8 +104,8 @@ class _ProfilePageState extends State<ProfilePage> {
       }
     } catch (e) {
       if (mounted) {
-        AuthService.clearCredentials(context);
-        AuthService.showInternalErrorDialog(context);
+        _authService.clearCredentials(context);
+        _authService.showInternalErrorDialog(context);
       }
     }
 
@@ -119,7 +122,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   _handleImageTap(String id) {
-    NavigationService.push(
+    _navigationService.push(
       context,
       MaterialPageRoute(
         builder: (context) => ProfileUserSpotViewPage(spotId: id),
@@ -246,7 +249,7 @@ class _ProfilePageState extends State<ProfilePage> {
             label: 'Editar Perfil',
             fixedSize: Size(double.maxFinite, 38),
             onPressed: () {
-              NavigationService.pushNamed(context, RouteConstants.editUser);
+              _navigationService.pushNamed(context, RouteConstants.editUser);
             },
           ),
         ),
@@ -410,7 +413,7 @@ class _ProfilePageState extends State<ProfilePage> {
       actions: [
         IconButton(
           onPressed: () {
-            NavigationService.pushNamed(context, RouteConstants.configuration);
+            _navigationService.pushNamed(context, RouteConstants.configuration);
           },
           icon: Icon(Icons.menu),
           color: Theme.of(context).textTheme.headlineLarge?.color,
