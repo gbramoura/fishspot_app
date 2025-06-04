@@ -1,12 +1,12 @@
-import 'package:fishspot_app/components/custom_button.dart';
-import 'package:fishspot_app/components/custom_dropdown_button.dart';
-import 'package:fishspot_app/components/custom_text_form_field.dart';
+import 'package:fishspot_app/widgets/button.dart';
+import 'package:fishspot_app/widgets/select_input.dart';
+import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/enums/unit_measure_type.dart';
 import 'package:fishspot_app/models/spot_fish.dart';
-import 'package:fishspot_app/repositories/spot_repository.dart';
+import 'package:fishspot_app/providers/spot_data_provider.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
-import 'package:fishspot_app/utils/spot_view_utils.dart';
+import 'package:fishspot_app/services/spot_display_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -19,12 +19,14 @@ class SpotAddFishPage extends StatefulWidget {
 }
 
 class _SpotAddFishPageState extends State<SpotAddFishPage> {
+  final NavigationService _navigationService = NavigationService();
+
   final _formFishKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _weightController = TextEditingController();
   final _lureController = TextEditingController();
 
-  UnitMeasureType _measure = UnitMeasureType.Grams;
+  UnitMeasureType _measure = UnitMeasureType.grams;
 
   String? _nameValidator(String? value) {
     if (value == null || value.isEmpty) {
@@ -57,7 +59,7 @@ class _SpotAddFishPageState extends State<SpotAddFishPage> {
     if (value == null || value.isEmpty) {
       return;
     }
-    _measure = SpotViewUtils.getUnitMeasureFromText(value);
+    _measure = SpotDisplayService.getUnitMeasureFromText(value);
   }
 
   _handleNextButton() {
@@ -65,7 +67,7 @@ class _SpotAddFishPageState extends State<SpotAddFishPage> {
       return;
     }
 
-    var addSpot = Provider.of<SpotRepository>(context, listen: false);
+    var spotProvider = Provider.of<SpotDataProvider>(context, listen: false);
     var weight = _weightController.text.isEmpty ? "0" : _weightController.text;
     var fish = SpotFish(
       id: Uuid(),
@@ -75,9 +77,8 @@ class _SpotAddFishPageState extends State<SpotAddFishPage> {
       lures: [_lureController.text],
     );
 
-    addSpot.addFishes([fish]);
-
-    NavigationService.pop(context);
+    spotProvider.addFishes([fish]);
+    _navigationService.pop(context);
   }
 
   @override
@@ -117,14 +118,11 @@ class _SpotAddFishPageState extends State<SpotAddFishPage> {
               ),
             ),
             SizedBox(height: 10),
-            CustomTextFormField(
+            TextInput(
+              label: 'Especie',
               validator: _nameValidator,
               controller: _nameController,
-              hintText: 'Especie',
-              icon: Icon(
-                Icons.alternate_email,
-                color: Theme.of(context).iconTheme.color,
-              ),
+              icon: Icons.alternate_email,
             ),
             SizedBox(height: 20),
             Row(
@@ -132,24 +130,21 @@ class _SpotAddFishPageState extends State<SpotAddFishPage> {
               children: [
                 Flexible(
                   flex: 3,
-                  child: CustomTextFormField(
+                  child: TextInput(
+                    label: 'Peso',
                     validator: _weightValidator,
                     controller: _weightController,
                     textInputType: TextInputType.number,
-                    hintText: 'Peso',
-                    icon: Icon(
-                      Icons.fitness_center,
-                      color: Theme.of(context).iconTheme.color,
-                    ),
+                    icon: Icons.fitness_center,
                   ),
                 ),
                 SizedBox(width: 15),
                 Flexible(
                   flex: 3,
-                  child: CustomDropdownButton(
+                  child: SelectInput(
                     hintText: 'Escolha',
                     values: UnitMeasureType.values
-                        .map((e) => SpotViewUtils.getUnitMeasureText(e))
+                        .map((e) => SpotDisplayService.getUnitMeasureText(e))
                         .toList(),
                     onChange: _handleChangeMeasure,
                   ),
@@ -175,10 +170,10 @@ class _SpotAddFishPageState extends State<SpotAddFishPage> {
               ),
             ),
             SizedBox(height: 10),
-            CustomTextFormField(
+            TextInput(
+              label: 'Isca',
               controller: _lureController,
               validator: _lureValidator,
-              hintText: 'Isca',
             ),
             SizedBox(height: 25),
           ],
@@ -193,7 +188,7 @@ class _SpotAddFishPageState extends State<SpotAddFishPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          CustomButton(
+          Button(
             label: "Confirmar",
             onPressed: _handleNextButton,
             fixedSize: Size(182, 48),

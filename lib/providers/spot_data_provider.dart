@@ -8,7 +8,7 @@ import 'package:fishspot_app/models/spot_location_risk.dart';
 import 'package:fishspot_app/models/user.dart';
 import 'package:flutter/material.dart';
 
-class SpotRepository extends ChangeNotifier {
+class SpotDataProvider extends ChangeNotifier {
   String _title = '';
   String _observation = '';
   DateTime _date = DateTime(0, 0, 0);
@@ -17,11 +17,11 @@ class SpotRepository extends ChangeNotifier {
   List<SpotFish> _fishes = [];
   User _user = User(name: '');
   SpotLocationDifficulty _locationDifficulty = SpotLocationDifficulty(
-    rate: SpotDifficultyType.Easy,
+    rate: SpotDifficultyType.easy,
     observation: '',
   );
   SpotLocationRisk _locationRisk = SpotLocationRisk(
-    rate: SpotRiskType.Low,
+    rate: SpotRiskType.low,
     observation: '',
   );
 
@@ -67,37 +67,21 @@ class SpotRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<num> getCoordinates() {
-    return _coordinates;
-  }
+  List<num> getCoordinates() => _coordinates;
 
-  SpotLocationDifficulty getDifficulty() {
-    return _locationDifficulty;
-  }
+  SpotLocationDifficulty getDifficulty() => _locationDifficulty;
 
-  SpotLocationRisk getRisk() {
-    return _locationRisk;
-  }
+  SpotLocationRisk getRisk() => _locationRisk;
 
-  List<SpotImage> getImages() {
-    return _images;
-  }
+  List<SpotImage> getImages() => _images;
 
-  List<SpotFish> getFishes() {
-    return _fishes;
-  }
+  List<SpotFish> getFishes() => _fishes;
 
-  String getTitle() {
-    return _title;
-  }
+  String getTitle() => _title;
 
-  String getObservation() {
-    return _observation;
-  }
+  String getObservation() => _observation;
 
-  DateTime getDate() {
-    return _date;
-  }
+  DateTime getDate() => _date;
 
   Map<String, dynamic> toPayload() {
     var spot = Spot(
@@ -124,9 +108,9 @@ class SpotRepository extends ChangeNotifier {
     _fishes = [];
     _user = User(name: '');
     _locationDifficulty = SpotLocationDifficulty(
-      rate: SpotDifficultyType.Easy,
+      rate: SpotDifficultyType.easy,
       observation: '',
     );
-    _locationRisk = SpotLocationRisk(rate: SpotRiskType.Low, observation: '');
+    _locationRisk = SpotLocationRisk(rate: SpotRiskType.low, observation: '');
   }
 }

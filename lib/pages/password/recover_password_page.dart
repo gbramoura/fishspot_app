@@ -1,11 +1,11 @@
-import 'package:fishspot_app/components/custom_alert_dialog.dart';
-import 'package:fishspot_app/components/custom_button.dart';
-import 'package:fishspot_app/components/custom_text_button.dart';
-import 'package:fishspot_app/components/custom_text_form_field.dart';
+import 'package:fishspot_app/widgets/alert_modal.dart';
+import 'package:fishspot_app/widgets/button.dart';
+import 'package:fishspot_app/widgets/ink_button.dart';
+import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/exceptions/http_response_exception.dart';
 import 'package:fishspot_app/pages/password/validate_token_page.dart';
-import 'package:fishspot_app/repositories/recover_password_repository.dart';
+import 'package:fishspot_app/providers/recover_password_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +29,7 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
       _loading = true;
     });
 
-    var repo = Provider.of<RecoverPasswordRepository>(context, listen: false);
+    var provider = Provider.of<RecoverPasswordProvider>(context, listen: false);
     var route = MaterialPageRoute(builder: (context) => ValidateTokenPage());
 
     if (!_formGlobalKey.currentState!.validate()) {
@@ -40,7 +40,7 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
     }
 
     try {
-      repo.setEmail(_mailController.text);
+      provider.setEmail(_mailController.text);
 
       await _api.recoverPassword({'email': _mailController.text});
 
@@ -59,7 +59,7 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
   }
 
   _handleCancel() {
-    Provider.of<RecoverPasswordRepository>(context, listen: false).clear();
+    Provider.of<RecoverPasswordProvider>(context, listen: false).clear();
     Navigator.pop(context);
   }
 
@@ -100,7 +100,7 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
           child: Image(
             height: 250,
             width: 250,
-            image: AssetImage('assets/images/fish-spot-icon.png'),
+            image: AssetImage('assets/fish-spot-icon.png'),
           ),
         ),
       ),
@@ -126,34 +126,30 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CustomTextFormField(
+          TextInput(
+            label: 'E-mail',
             validator: _mailValidator,
             controller: _mailController,
-            hintText: 'E-mail',
-            icon: Icon(
-              Icons.mail,
-              color: Theme.of(context).iconTheme.color,
-            ),
+            icon: Icons.mail,
           ),
           SizedBox(height: 45),
-          CustomButton(
+          Button(
             onPressed: _handleSend,
             fixedSize: Size(286, 48),
             loading: _loading,
             label: 'Enviar',
           ),
           SizedBox(height: 15),
-          Row(
+          Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              RichText(
-                text: TextSpan(
-                  text: 'Deseja cancelar a recuperação de senha?',
-                  style: Theme.of(context).textTheme.displayMedium,
-                ),
+              Text(
+                'Deseja cancelar a recuperação de senha?',
+                softWrap: true,
+                style: Theme.of(context).textTheme.displayMedium,
               ),
-              SizedBox(width: 5),
-              CustomTextButton(
+              SizedBox(height: 5),
+              InkButton(
                 label: 'Cancelar',
                 onTap: _handleCancel,
                 style: TextStyle(
@@ -175,12 +171,12 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomAlertDialog(
+        return AlertModal(
           type: CustomDialogAlertType.error,
           title: title ?? "Erro ao tentar alterar senha",
           message: message ??
               "Não foi possivel alterar sua senha devido a um erro não indetificado",
-          button: CustomButton(
+          button: Button(
             label: "Ok",
             fixedSize: Size(double.infinity, 48),
             onPressed: _handleCancel,

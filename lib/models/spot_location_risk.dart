@@ -11,7 +11,9 @@ class SpotLocationRisk {
 
   factory SpotLocationRisk.fromJson(Map<String, dynamic> json) {
     return SpotLocationRisk(
-      rate: SpotRiskType.values.firstWhere((e) => e.name == json['rate']),
+      rate: SpotRiskType.values.firstWhere(
+        (e) => e.name.toLowerCase() == json['rate'].toString().toLowerCase(),
+      ),
       observation: json['observation'],
     );
   }

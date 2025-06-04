@@ -1,13 +1,13 @@
-import 'package:fishspot_app/components/custom_alert_dialog.dart';
-import 'package:fishspot_app/components/custom_button.dart';
-import 'package:fishspot_app/components/custom_text_button.dart';
-import 'package:fishspot_app/components/custom_text_form_field.dart';
+import 'package:fishspot_app/widgets/alert_modal.dart';
+import 'package:fishspot_app/widgets/button.dart';
+import 'package:fishspot_app/widgets/ink_button.dart';
+import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/exceptions/http_response_exception.dart';
 import 'package:fishspot_app/models/http_response.dart';
-import 'package:fishspot_app/repositories/settings_repository.dart';
+import 'package:fishspot_app/providers/settings_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +26,6 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
   final _formGlobalKey = GlobalKey<FormState>();
 
-  bool _passwordObscureText = true;
   bool _loadingHttpRequest = false;
 
   void _handleLogin() async {
@@ -45,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
       });
 
       if (!mounted) return;
-      var settings = Provider.of<SettingRepository>(context, listen: false);
+      var settings = Provider.of<SettingProvider>(context, listen: false);
 
       settings.setString(
         SharedPreferencesConstants.jwtToken,
@@ -68,12 +67,6 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void _handlePressedPasswordObscureText() {
-    setState(() {
-      _passwordObscureText = !_passwordObscureText;
-    });
-  }
-
   void _handleForgetPassword() {
     Navigator.pushNamed(context, RouteConstants.recoverPassword);
   }
@@ -94,13 +87,13 @@ class _LoginPageState extends State<LoginPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomAlertDialog(
+        return AlertModal(
           type: code == 400
               ? CustomDialogAlertType.warn
               : CustomDialogAlertType.error,
           title: code == 400 ? warnTitle : errorTitle,
           message: code == 400 ? warnMessage : errorMessage,
-          button: CustomButton(
+          button: Button(
             label: code == 400 ? 'Ok' : errorButtonLabel,
             fixedSize: Size(double.infinity, 48),
             onPressed: () {
@@ -113,8 +106,16 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   String? _handleEmailValidator(String? value) {
+    var emailRegExp = RegExp(
+      r'^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$',
+    );
+
     if (value == null || value.isEmpty) {
       return 'E-mail é obrigatória';
+    }
+
+    if (!emailRegExp.hasMatch(value)) {
+      return 'Endereço de e-mail invalido';
     }
     return null;
   }
@@ -148,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: Image(
                       height: 250,
                       width: 250,
-                      image: AssetImage('assets/images/fish-spot-icon.png'),
+                      image: AssetImage('assets/fish-spot-icon.png'),
                     ),
                   ),
                 ),
@@ -172,29 +173,20 @@ class _LoginPageState extends State<LoginPage> {
                       Column(
                         children: [
                           SizedBox(height: 10),
-                          CustomTextFormField(
+                          TextInput(
+                            label: 'E-mail',
                             controller: _emailController,
                             validator: _handleEmailValidator,
-                            hintText: 'E-mail',
-                            icon: Icon(
-                              Icons.email,
-                              color: Theme.of(context).iconTheme.color,
-                            ),
+                            icon: Icons.email,
                           ),
                           SizedBox(height: 25),
-                          CustomTextFormField(
+                          TextInput(
+                            label: 'Senha',
                             controller: _passwordController,
-                            hintText: 'Senha',
                             validator: _handlePasswordValidator,
-                            obscureText: _passwordObscureText,
-                            icon: Icon(
-                              Icons.lock,
-                              color: Theme.of(context).iconTheme.color,
-                            ),
-                            actionIcon: IconButton(
-                              onPressed: _handlePressedPasswordObscureText,
-                              icon: _renderVisibleIcon(_passwordObscureText),
-                            ),
+                            icon: Icons.lock,
+                            obscureText: true,
+                            obscureTextAction: true,
                           ),
                         ],
                       ),
@@ -204,7 +196,7 @@ class _LoginPageState extends State<LoginPage> {
                         children: [
                           Padding(
                             padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-                            child: CustomTextButton(
+                            child: InkButton(
                               label: 'Esqueceu sua senha?',
                               onTap: () => _handleForgetPassword(),
                               style: Theme.of(context).textTheme.displayMedium,
@@ -213,7 +205,7 @@ class _LoginPageState extends State<LoginPage> {
                         ],
                       ),
                       SizedBox(height: 55),
-                      CustomButton(
+                      Button(
                         loading: _loadingHttpRequest,
                         onPressed: () => _handleLogin(),
                         fixedSize: Size(286, 48),
@@ -233,7 +225,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     SizedBox(width: 5),
-                    CustomTextButton(
+                    InkButton(
                       label: 'Registre-se',
                       style: TextStyle(
                         color: Theme.of(context).textTheme.labelSmall?.color,
@@ -252,13 +244,6 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _renderVisibleIcon(bool isVisible) {
-    return Icon(
-      isVisible ? Icons.visibility : Icons.visibility_off,
-      color: Theme.of(context).iconTheme.color,
     );
   }
 }

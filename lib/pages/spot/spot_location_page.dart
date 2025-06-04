@@ -1,9 +1,9 @@
-import 'package:fishspot_app/components/custom_button.dart';
+import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/spot/spot_description_page.dart';
-import 'package:fishspot_app/repositories/location_repository.dart';
-import 'package:fishspot_app/repositories/spot_repository.dart';
+import 'package:fishspot_app/providers/location_provider.dart';
+import 'package:fishspot_app/providers/spot_data_provider.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -20,6 +20,7 @@ class SpotLocationPage extends StatefulWidget {
 
 class _SpotLocationPageState extends State<SpotLocationPage> {
   final MapController _mapController = MapController();
+  final NavigationService _navigationService = NavigationService();
 
   LatLng? _latLng;
   bool _loading = false;
@@ -35,9 +36,9 @@ class _SpotLocationPageState extends State<SpotLocationPage> {
       _loading = true;
     });
 
-    var addSpot = Provider.of<SpotRepository>(context, listen: false);
-    var locationRepo = Provider.of<LocationRepository>(context, listen: false);
-    var coordinates = addSpot.getCoordinates();
+    var spotProvider = Provider.of<SpotDataProvider>(context, listen: false);
+    var locationRepo = Provider.of<LocationProvider>(context, listen: false);
+    var coordinates = spotProvider.getCoordinates();
 
     if (coordinates.isNotEmpty) {
       setState(() {
@@ -64,14 +65,17 @@ class _SpotLocationPageState extends State<SpotLocationPage> {
 
   _handleConfirmButton() {
     var route = MaterialPageRoute(builder: (context) => SpotDescriptionPage());
-    var addSpot = Provider.of<SpotRepository>(context, listen: false);
+    var spotProvider = Provider.of<SpotDataProvider>(context, listen: false);
 
     if (_latLng == null) {
       return;
     }
 
-    addSpot.setCoordinates(_latLng?.latitude ?? 0, _latLng?.longitude ?? 0);
-    NavigationService.push(context, route);
+    spotProvider.setCoordinates(
+      _latLng?.latitude ?? 0,
+      _latLng?.longitude ?? 0,
+    );
+    _navigationService.push(context, route);
   }
 
   @override
@@ -156,7 +160,7 @@ class _SpotLocationPageState extends State<SpotLocationPage> {
       child: Column(
         children: [
           SizedBox(height: 30),
-          CustomButton(
+          Button(
             label: "Confirmar Localização",
             onPressed: _handleConfirmButton,
             fixedSize: Size(286, 48),
@@ -178,8 +182,8 @@ class _SpotLocationPageState extends State<SpotLocationPage> {
           size: 32,
         ),
         onPressed: () {
-          Provider.of<SpotRepository>(context, listen: false).clear();
-          NavigationService.pop(context);
+          Provider.of<SpotDataProvider>(context, listen: false).clear();
+          _navigationService.pop(context);
         },
       ),
       title: Row(

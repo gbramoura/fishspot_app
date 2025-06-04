@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class RecoverPasswordRepository extends ChangeNotifier {
+class RecoverPasswordProvider extends ChangeNotifier {
   String _email = "";
   String _token = "";
 

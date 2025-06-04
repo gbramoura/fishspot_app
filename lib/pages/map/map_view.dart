@@ -1,13 +1,13 @@
-import 'package:fishspot_app/components/persistent_header_delegate.dart';
+import 'package:fishspot_app/delagates/persistent_header_delegate.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/extensions/string_extension.dart';
 import 'package:fishspot_app/models/spot.dart';
-import 'package:fishspot_app/repositories/settings_repository.dart';
+import 'package:fishspot_app/providers/settings_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
-import 'package:fishspot_app/utils/image_utils.dart';
-import 'package:fishspot_app/utils/spot_view_utils.dart';
+import 'package:fishspot_app/services/image_service.dart';
+import 'package:fishspot_app/services/spot_display_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -32,6 +32,9 @@ class MapView extends StatefulWidget {
 
 class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
   final ApiService _apiService = ApiService();
+  final ImageService _imageService = ImageService();
+  final AuthService _authService = AuthService();
+
   final List<String> _tabTitles = ['Espécies', 'Dificuldade', 'Riscos'];
 
   late TabController _tabController;
@@ -58,32 +61,32 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
     });
 
     try {
-      if (!await AuthService.isUserAuthenticated(context)) {
+      if (!await _authService.isUserAuthenticated(context)) {
         if (mounted) {
-          AuthService.clearCredentials(context);
-          AuthService.showAuthDialog(context);
+          _authService.clearCredentials(context);
+          _authService.showAuthDialog(context);
         }
         return;
       }
 
       if (!mounted) return;
 
-      var settings = Provider.of<SettingRepository>(context, listen: false);
+      var settings = Provider.of<SettingProvider>(context, listen: false);
       var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
-      await AuthService.refreshCredentials(context);
+      await _authService.refreshCredentials(context);
 
       var resp = await _apiService.getSpot(widget.spotId, token);
       var spot = Spot.fromJson(resp.response);
 
       setState(() {
-        _spotId = widget.spotId;
         _spot = spot;
+        _spotId = widget.spotId;
       });
     } catch (e) {
       if (mounted) {
-        AuthService.clearCredentials(context);
-        AuthService.showInternalErrorDialog(context);
+        _authService.clearCredentials(context);
+        _authService.showInternalErrorDialog(context);
       }
     }
 
@@ -126,13 +129,18 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
       _renderGrabSliver(),
       _renderHeaderSliver(),
       _renderBodySliver(),
-      _renderDivider(), // divisor
+
+      // fishs
+      _sectionHeader('Peixes'),
       _renderFishes(),
-      _renderDivider(), // divisor
+
+      // Location
+      _sectionHeader('Localização'),
       _renderLocation(),
-      _renderDivider(), // divisor
+
+      // Risk
+      _sectionHeader('Riscos'),
       _renderRisk(),
-      _renderDivider(), // divisor
       SliverToBoxAdapter(child: SizedBox(height: 25)),
     ];
   }
@@ -310,7 +318,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image: NetworkImage(
-                    ImageUtils.getImagePath(image, context),
+                    _imageService.getImagePath(context, image),
                   ),
                 ),
               ),
@@ -379,7 +387,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                       ),
                       SizedBox(width: 5),
                       Text(
-                        '${fish.weight} ${SpotViewUtils.getUnitMeasure(fish.unitMeasure)}',
+                        '${fish.weight} ${SpotDisplayService.getUnitMeasure(fish.unitMeasure)}',
                         style: TextStyle(
                           color: Theme.of(context).textTheme.labelMedium?.color,
                           fontWeight: FontWeight.w600,
@@ -421,16 +429,6 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
       sliver: SliverList.list(
         children: [
           Text(
-            'Localização',
-            softWrap: true,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
-              color: Theme.of(context).textTheme.titleLarge?.color,
-            ),
-          ),
-          SizedBox(height: 10),
-          Text(
             obs,
             softWrap: true,
             style: TextStyle(
@@ -452,11 +450,11 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
               children: <TextSpan>[
                 TextSpan(text: ' '),
                 TextSpan(
-                  text: SpotViewUtils.getDifficultyText(
+                  text: SpotDisplayService.getDifficultyText(
                     _spot?.locationDifficulty.rate,
                   ),
                   style: TextStyle(
-                    color: SpotViewUtils.getDifficultyColor(
+                    color: SpotDisplayService.getDifficultyColor(
                       _spot?.locationDifficulty.rate,
                       context,
                     ),
@@ -485,16 +483,6 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
       sliver: SliverList.list(
         children: [
           Text(
-            'Riscos',
-            softWrap: true,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
-              color: Theme.of(context).textTheme.titleLarge?.color,
-            ),
-          ),
-          SizedBox(height: 10),
-          Text(
             obs,
             softWrap: true,
             style: TextStyle(
@@ -516,9 +504,10 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
               children: <TextSpan>[
                 TextSpan(text: ' '),
                 TextSpan(
-                  text: SpotViewUtils.getRiskText(_spot?.locationRisk.rate),
+                  text:
+                      SpotDisplayService.getRiskText(_spot?.locationRisk.rate),
                   style: TextStyle(
-                    color: SpotViewUtils.getRiskColor(
+                    color: SpotDisplayService.getRiskColor(
                       _spot?.locationRisk.rate,
                       context,
                     ),
@@ -531,12 +520,6 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
           ),
         ],
       ),
-    );
-  }
-
-  _renderDivider() {
-    return SliverToBoxAdapter(
-      child: Divider(color: Theme.of(context).iconTheme.color!.withAlpha(250)),
     );
   }
 
@@ -562,6 +545,23 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  _sectionHeader(String label) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 10),
+        child: Text(
+          label,
+          softWrap: true,
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 22,
+            color: Theme.of(context).textTheme.titleLarge?.color,
+          ),
+        ),
       ),
     );
   }

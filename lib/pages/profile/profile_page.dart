@@ -1,5 +1,5 @@
-import 'package:fishspot_app/components/custom_button.dart';
-import 'package:fishspot_app/components/custom_circle_avatar.dart';
+import 'package:fishspot_app/widgets/button.dart';
+import 'package:fishspot_app/widgets/profile_circle_avatar.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
@@ -8,11 +8,11 @@ import 'package:fishspot_app/models/spot_location.dart';
 import 'package:fishspot_app/models/user_profile.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/profile/profile_user_spot_view_page.dart';
-import 'package:fishspot_app/repositories/settings_repository.dart';
+import 'package:fishspot_app/providers/settings_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
+import 'package:fishspot_app/services/image_service.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
-import 'package:fishspot_app/utils/image_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +26,10 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final ApiService _apiService = ApiService();
+  final ImageService _imageService = ImageService();
+  final NavigationService _navigationService = NavigationService();
+  final AuthService _authService = AuthService();
+
   final List<SpotLocation> _userLocations = [];
   final ScrollController _scrollController = ScrollController();
 
@@ -45,11 +49,11 @@ class _ProfilePageState extends State<ProfilePage> {
       _loading = true;
     });
 
-    var settings = Provider.of<SettingRepository>(context, listen: false);
+    var settings = Provider.of<SettingProvider>(context, listen: false);
     var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
     try {
-      await AuthService.refreshCredentials(context);
+      await _authService.refreshCredentials(context);
       HttpResponse userResponse = await _apiService.getUser(token);
       HttpResponse locationsResponse = await _apiService.getUserLocations({
         'PageSize': '12',
@@ -64,8 +68,8 @@ class _ProfilePageState extends State<ProfilePage> {
       _scrollController.addListener(_scrollListener);
     } catch (e) {
       if (mounted) {
-        AuthService.clearCredentials(context);
-        AuthService.showInternalErrorDialog(context);
+        _authService.clearCredentials(context);
+        _authService.showInternalErrorDialog(context);
       }
     }
 
@@ -83,11 +87,11 @@ class _ProfilePageState extends State<ProfilePage> {
       _loadingMoreData = true;
     });
 
-    var settings = Provider.of<SettingRepository>(context, listen: false);
+    var settings = Provider.of<SettingProvider>(context, listen: false);
     var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
     try {
-      await AuthService.refreshCredentials(context);
+      await _authService.refreshCredentials(context);
       HttpResponse locationsResponse = await _apiService.getUserLocations({
         'PageSize': '12',
         'PageNumber': (_pageNumber + 1).toString(),
@@ -100,8 +104,8 @@ class _ProfilePageState extends State<ProfilePage> {
       }
     } catch (e) {
       if (mounted) {
-        AuthService.clearCredentials(context);
-        AuthService.showInternalErrorDialog(context);
+        _authService.clearCredentials(context);
+        _authService.showInternalErrorDialog(context);
       }
     }
 
@@ -118,7 +122,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   _handleImageTap(String id) {
-    NavigationService.push(
+    _navigationService.push(
       context,
       MaterialPageRoute(
         builder: (context) => ProfileUserSpotViewPage(spotId: id),
@@ -172,10 +176,10 @@ class _ProfilePageState extends State<ProfilePage> {
               SizedBox(
                 height: 100,
                 width: 100,
-                child: CustomCircleAvatar(
-                  imageUrl: ImageUtils.getImagePath(
-                    _userProfile.image ?? "",
+                child: ProfileCircleAvatar(
+                  imageUrl: _imageService.getImagePath(
                     context,
+                    _userProfile.image ?? "",
                   ),
                 ),
               ),
@@ -241,12 +245,12 @@ class _ProfilePageState extends State<ProfilePage> {
         SizedBox(height: 20),
         Padding(
           padding: EdgeInsets.fromLTRB(22, 0, 22, 0),
-          child: CustomButton(
+          child: Button(
             label: 'Editar Perfil',
-            onPressed: () {
-              NavigationService.pushNamed(context, RouteConstants.editUser);
-            },
             fixedSize: Size(double.maxFinite, 38),
+            onPressed: () {
+              _navigationService.pushNamed(context, RouteConstants.editUser);
+            },
           ),
         ),
         SizedBox(height: 5),
@@ -291,14 +295,14 @@ class _ProfilePageState extends State<ProfilePage> {
               var isImageProvided = entry.image != null && entry.image != '';
 
               final icon = DecorationImage(
-                image: Svg('assets/images/no-photography.svg'),
+                image: Svg('assets/no-photography.svg'),
                 fit: BoxFit.none,
               );
 
               final image = DecorationImage(
                 fit: BoxFit.cover,
                 image: NetworkImage(
-                  ImageUtils.getImagePath(entry.image, context),
+                  _imageService.getImagePath(context, entry.image),
                 ),
               );
 
@@ -409,7 +413,7 @@ class _ProfilePageState extends State<ProfilePage> {
       actions: [
         IconButton(
           onPressed: () {
-            NavigationService.pushNamed(context, RouteConstants.configuration);
+            _navigationService.pushNamed(context, RouteConstants.configuration);
           },
           icon: Icon(Icons.menu),
           color: Theme.of(context).textTheme.headlineLarge?.color,

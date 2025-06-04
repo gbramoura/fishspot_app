@@ -3,54 +3,60 @@ import 'package:fishspot_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class NavigationService {
-  static void pushNamed(dynamic context, String route) async {
-    if (!await AuthService.isUserAuthenticated(context)) {
-      AuthService.clearCredentials(context);
-      AuthService.showAuthDialog(context);
+  late AuthService _authService;
+
+  NavigationService() {
+    _authService = AuthService();
+  }
+
+  void pushNamed(dynamic context, String route) async {
+    if (!await _authService.isUserAuthenticated(context)) {
+      _authService.clearCredentials(context);
+      _authService.showAuthDialog(context);
     }
 
-    await AuthService.refreshCredentials(context);
+    await _authService.refreshCredentials(context);
 
     Navigator.pushNamed(context, route);
   }
 
-  static void pop(dynamic context) async {
-    if (!await AuthService.isUserAuthenticated(context)) {
-      AuthService.clearCredentials(context);
-      AuthService.showAuthDialog(context);
+  void pop(dynamic context) async {
+    if (!await _authService.isUserAuthenticated(context)) {
+      _authService.clearCredentials(context);
+      _authService.showAuthDialog(context);
     }
 
-    await AuthService.refreshCredentials(context);
+    await _authService.refreshCredentials(context);
 
     Navigator.pop(context);
   }
 
-  static void popUntil(dynamic context, List<String> pages) async {
-    if (!await AuthService.isUserAuthenticated(context)) {
-      AuthService.clearCredentials(context);
-      AuthService.showAuthDialog(context);
+  void popUntil(dynamic context, List<String> pages) async {
+    if (!await _authService.isUserAuthenticated(context)) {
+      _authService.clearCredentials(context);
+      _authService.showAuthDialog(context);
     }
 
-    await AuthService.refreshCredentials(context);
+    await _authService.refreshCredentials(context);
 
     Navigator.of(context).popUntil((route) {
       return pages.contains(route.settings.name);
     });
   }
 
-  static void push(dynamic context, Route route) async {
-    if (!await AuthService.isUserAuthenticated(context)) {
-      AuthService.clearCredentials(context);
-      AuthService.showAuthDialog(context);
+  void push(dynamic context, Route route) async {
+    if (!await _authService.isUserAuthenticated(context)) {
+      _authService.clearCredentials(context);
+      _authService.showAuthDialog(context);
     }
 
-    await AuthService.refreshCredentials(context);
+    await _authService.refreshCredentials(context);
 
     Navigator.push(context, route);
   }
 
-  static void logout(dynamic context) {
-    AuthService.clearCredentials(context);
+  void logout(dynamic context) {
+    _authService.clearCredentials(context);
     Navigator.pushNamed(context, RouteConstants.login);
   }
 }

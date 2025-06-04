@@ -1,7 +1,7 @@
-import 'package:fishspot_app/components/custom_alert_dialog.dart';
-import 'package:fishspot_app/components/custom_button.dart';
-import 'package:fishspot_app/components/custom_text_button.dart';
-import 'package:fishspot_app/components/custom_text_form_field.dart';
+import 'package:fishspot_app/widgets/alert_modal.dart';
+import 'package:fishspot_app/widgets/button.dart';
+import 'package:fishspot_app/widgets/ink_button.dart';
+import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/exceptions/http_response_exception.dart';
@@ -24,8 +24,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final _confirmPasswordController = TextEditingController();
   final _formGlobalKey = GlobalKey<FormState>();
 
-  bool _passwordObscureText = true;
-  bool _confirmPasswordObscureText = true;
   bool _loadingHttpRequest = false;
 
   void _handleRegisterButton() async {
@@ -54,18 +52,6 @@ class _RegisterPageState extends State<RegisterPage> {
         _loadingHttpRequest = false;
       });
     }
-  }
-
-  void _handlePressedPasswordObscureText() {
-    setState(() {
-      _passwordObscureText = !_passwordObscureText;
-    });
-  }
-
-  void _handlePressedConfirmPasswordObscureText() {
-    setState(() {
-      _confirmPasswordObscureText = !_confirmPasswordObscureText;
-    });
   }
 
   String? _handleNameValidator(String? value) {
@@ -109,12 +95,12 @@ class _RegisterPageState extends State<RegisterPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomAlertDialog(
+        return AlertModal(
           type: CustomDialogAlertType.success,
           title: 'Registrado com Sucesso',
           message:
               'Seus dados foram registrados com sucesso sendo possível realizar a autenticação.',
-          button: CustomButton(
+          button: Button(
             label: 'Ok',
             fixedSize: Size(double.infinity, 48),
             onPressed: () {
@@ -138,13 +124,13 @@ class _RegisterPageState extends State<RegisterPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomAlertDialog(
+        return AlertModal(
           type: code == 400
               ? CustomDialogAlertType.warn
               : CustomDialogAlertType.error,
           title: code == 400 ? warnTitle : errorTitle,
           message: code == 400 ? warnMessage : errorMessage,
-          button: CustomButton(
+          button: Button(
             label: code == 400 ? 'Ok' : errorButtonLabel,
             fixedSize: Size(double.infinity, 48),
             onPressed: () {
@@ -173,7 +159,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Image(
                     height: 250,
                     width: 250,
-                    image: AssetImage('assets/images/fish-spot-icon.png'),
+                    image: AssetImage('assets/fish-spot-icon.png'),
                   ),
                 ),
               ),
@@ -189,61 +175,42 @@ class _RegisterPageState extends State<RegisterPage> {
                   children: [
                     Column(
                       children: [
-                        CustomTextFormField(
+                        TextInput(
+                          label: 'Name',
                           controller: _usernameController,
-                          hintText: 'Name',
                           validator: _handleNameValidator,
-                          icon: Icon(
-                            Icons.person,
-                            color: Theme.of(context).iconTheme.color,
-                          ),
+                          icon: Icons.person,
                         ),
                         SizedBox(height: 25),
-                        CustomTextFormField(
+                        TextInput(
+                          label: 'E-mail',
                           controller: _emailController,
-                          hintText: 'E-mail',
                           validator: _handleMailValidator,
                           textInputType: TextInputType.emailAddress,
-                          icon: Icon(
-                            Icons.email,
-                            color: Theme.of(context).iconTheme.color,
-                          ),
+                          icon: Icons.email,
                         ),
                         SizedBox(height: 25),
-                        CustomTextFormField(
+                        TextInput(
+                          label: 'Senha',
                           controller: _passwordController,
-                          hintText: 'Senha',
                           validator: _handlePasswordValidator,
-                          obscureText: _passwordObscureText,
-                          icon: Icon(
-                            Icons.lock,
-                            color: Theme.of(context).iconTheme.color,
-                          ),
-                          actionIcon: IconButton(
-                            onPressed: _handlePressedPasswordObscureText,
-                            icon: _renderVisibleIcon(_passwordObscureText),
-                          ),
+                          icon: Icons.lock,
+                          obscureText: true,
+                          obscureTextAction: true,
                         ),
                         SizedBox(height: 25),
-                        CustomTextFormField(
+                        TextInput(
+                          label: 'Confirmar Senha',
                           controller: _confirmPasswordController,
-                          hintText: 'Confirmar Senha',
                           validator: _handleConfirmPasswordValidator,
-                          obscureText: _confirmPasswordObscureText,
-                          icon: Icon(
-                            Icons.lock,
-                            color: Theme.of(context).iconTheme.color,
-                          ),
-                          actionIcon: IconButton(
-                            onPressed: _handlePressedConfirmPasswordObscureText,
-                            icon:
-                                _renderVisibleIcon(_confirmPasswordObscureText),
-                          ),
+                          icon: Icons.lock,
+                          obscureText: true,
+                          obscureTextAction: true,
                         ),
                       ],
                     ),
                     SizedBox(height: 35),
-                    CustomButton(
+                    Button(
                       onPressed: _handleRegisterButton,
                       fixedSize: Size(286, 48),
                       label: 'Registrar',
@@ -263,7 +230,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                   SizedBox(width: 5),
-                  CustomTextButton(
+                  InkButton(
                     label: 'Entre',
                     style: TextStyle(
                       color: Theme.of(context).textTheme.labelSmall?.color,
@@ -283,13 +250,6 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _renderVisibleIcon(bool isVisible) {
-    return Icon(
-      isVisible ? Icons.visibility : Icons.visibility_off,
-      color: Theme.of(context).iconTheme.color,
     );
   }
 }

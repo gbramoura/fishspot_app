@@ -1,11 +1,11 @@
-import 'package:fishspot_app/components/custom_alert_dialog.dart';
-import 'package:fishspot_app/components/custom_button.dart';
-import 'package:fishspot_app/components/custom_text_button.dart';
-import 'package:fishspot_app/components/custom_text_form_field.dart';
+import 'package:fishspot_app/widgets/alert_modal.dart';
+import 'package:fishspot_app/widgets/button.dart';
+import 'package:fishspot_app/widgets/ink_button.dart';
+import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/exceptions/http_response_exception.dart';
-import 'package:fishspot_app/repositories/recover_password_repository.dart';
+import 'package:fishspot_app/providers/recover_password_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,8 +23,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   final _confirmPasswordController = TextEditingController();
   final _formGlobalKey = GlobalKey<FormState>();
 
-  bool _passwordObscureText = true;
-  bool _confirmPasswordObscureText = true;
   bool _loading = false;
 
   _handleSend() async {
@@ -32,7 +30,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       _loading = true;
     });
 
-    var repo = Provider.of<RecoverPasswordRepository>(context, listen: false);
+    var provider = Provider.of<RecoverPasswordProvider>(context, listen: false);
 
     if (!_formGlobalKey.currentState!.validate()) {
       setState(() {
@@ -43,8 +41,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
     try {
       await _api.changePassword({
-        'email': repo.getEmail(),
-        'token': repo.getToken(),
+        'email': provider.getEmail(),
+        'token': provider.getToken(),
         'newPassword': _passwordController.text,
       });
 
@@ -65,7 +63,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   }
 
   _handleCancel() {
-    Provider.of<RecoverPasswordRepository>(context, listen: false).clear();
+    Provider.of<RecoverPasswordProvider>(context, listen: false).clear();
     Navigator.of(context).popUntil((route) {
       return route.settings.name == RouteConstants.login;
     });
@@ -92,18 +90,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       return 'As senhas não se coincidem';
     }
     return null;
-  }
-
-  _handlePressedPasswordObscureText() {
-    setState(() {
-      _passwordObscureText = !_passwordObscureText;
-    });
-  }
-
-  _handlePressedConfirmPasswordObscureText() {
-    setState(() {
-      _confirmPasswordObscureText = !_confirmPasswordObscureText;
-    });
   }
 
   @override
@@ -136,7 +122,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           child: Image(
             height: 250,
             width: 250,
-            image: AssetImage('assets/images/fish-spot-icon.png'),
+            image: AssetImage('assets/fish-spot-icon.png'),
           ),
         ),
       ),
@@ -162,54 +148,41 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CustomTextFormField(
+          TextInput(
+            label: 'Senha',
             validator: _passwordValidator,
             controller: _passwordController,
-            hintText: 'Senha',
-            obscureText: _passwordObscureText,
-            icon: Icon(
-              Icons.lock,
-              color: Theme.of(context).iconTheme.color,
-            ),
-            actionIcon: IconButton(
-              onPressed: _handlePressedPasswordObscureText,
-              icon: _renderVisibleIcon(_passwordObscureText),
-            ),
+            icon: Icons.lock,
+            obscureText: true,
+            obscureTextAction: true,
           ),
           SizedBox(height: 15),
-          CustomTextFormField(
+          TextInput(
+            label: 'Confirmar senha',
             validator: _confirmPasswordValidator,
             controller: _confirmPasswordController,
-            hintText: 'Confirmar senha',
-            obscureText: _confirmPasswordObscureText,
-            icon: Icon(
-              Icons.lock,
-              color: Theme.of(context).iconTheme.color,
-            ),
-            actionIcon: IconButton(
-              onPressed: _handlePressedConfirmPasswordObscureText,
-              icon: _renderVisibleIcon(_confirmPasswordObscureText),
-            ),
+            icon: Icons.lock,
+            obscureText: true,
+            obscureTextAction: true,
           ),
           SizedBox(height: 45),
-          CustomButton(
+          Button(
             onPressed: _handleSend,
             fixedSize: Size(286, 48),
             loading: _loading,
             label: 'Redefinir Senha',
           ),
           SizedBox(height: 15),
-          Row(
+          Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              RichText(
-                text: TextSpan(
-                  text: 'Deseja cancelar a recuperação de senha?',
-                  style: Theme.of(context).textTheme.displayMedium,
-                ),
+              Text(
+                'Deseja cancelar a recuperação de senha?',
+                softWrap: true,
+                style: Theme.of(context).textTheme.displayMedium,
               ),
-              SizedBox(width: 5),
-              CustomTextButton(
+              SizedBox(height: 5),
+              InkButton(
                 label: 'Cancelar',
                 onTap: _handleCancel,
                 style: TextStyle(
@@ -231,25 +204,18 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomAlertDialog(
+        return AlertModal(
           type: type ?? CustomDialogAlertType.error,
           title: title ?? "Erro ao tentar alterar senha",
           message: message ??
               "Não foi possivel alterar sua senha devido a um erro não indetificado",
-          button: CustomButton(
+          button: Button(
             label: "Ok",
             fixedSize: Size(double.infinity, 48),
             onPressed: _handleCancel,
           ),
         );
       },
-    );
-  }
-
-  _renderVisibleIcon(bool isVisible) {
-    return Icon(
-      isVisible ? Icons.visibility : Icons.visibility_off,
-      color: Theme.of(context).iconTheme.color,
     );
   }
 }

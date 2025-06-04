@@ -1,4 +1,4 @@
-import 'package:fishspot_app/components/custom_button.dart';
+import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +14,8 @@ class ProfileUserConfigurationPage extends StatefulWidget {
 
 class _ProfileUserConfigurationPageState
     extends State<ProfileUserConfigurationPage> {
+  final NavigationService _navigationService = NavigationService();
+
   bool _loading = false;
   String _version = '0.0.0';
 
@@ -37,7 +39,7 @@ class _ProfileUserConfigurationPageState
   }
 
   _handleLogout() {
-    NavigationService.logout(context);
+    _navigationService.logout(context);
   }
 
   @override
@@ -56,7 +58,7 @@ class _ProfileUserConfigurationPageState
             Image(
               height: 150,
               width: 150,
-              image: AssetImage('assets/images/fish-spot-icon.png'),
+              image: AssetImage('assets/fish-spot-icon.png'),
             ),
             Text(
               'Aplicação FishSpot',
@@ -75,7 +77,7 @@ class _ProfileUserConfigurationPageState
               ),
             ),
             SizedBox(height: 50),
-            CustomButton(
+            Button(
               label: 'Encerrar Sessão',
               onPressed: _handleLogout,
               fixedSize: Size(160, 48),

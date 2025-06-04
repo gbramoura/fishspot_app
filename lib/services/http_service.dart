@@ -113,7 +113,7 @@ class HttpService {
   }
 
   HttpResponse _handleResponse(http.Response response) {
-    var httpSuccessCodes = [HTTP.Ok, HTTP.Created];
+    var httpSuccessCodes = [HTTP.ok, HTTP.created];
 
     if (httpSuccessCodes.contains(response.statusCode)) {
       var body = jsonDecode(response.body);
@@ -135,7 +135,7 @@ class HttpService {
 
   Future<HttpResponse> _handleStreamResponse(
       http.StreamedResponse response) async {
-    var httpSuccessCodes = [HTTP.Ok, HTTP.Created];
+    var httpSuccessCodes = [HTTP.ok, HTTP.created];
 
     if (httpSuccessCodes.contains(response.statusCode)) {
       var responseBody = await response.stream.bytesToString();

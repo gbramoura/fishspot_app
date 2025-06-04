@@ -1,20 +1,25 @@
 import 'package:fishspot_app/constants/colors_constants.dart';
-import 'package:fishspot_app/utils/hex_color_utils.dart';
+import 'package:fishspot_app/services/color_converter_service.dart';
 import 'package:flutter/material.dart';
 
-class CustomDropdownButton extends StatelessWidget {
+class SelectInput extends StatelessWidget {
   final List<String> values;
-  final void Function(String? value)? onChange;
   final String hintText;
   final Icon? icon;
+  final void Function(String? value)? onChange;
 
-  const CustomDropdownButton({
+  SelectInput({
     super.key,
     required this.values,
     required this.hintText,
     this.onChange,
     this.icon,
   });
+
+  final _textcolor = ColorConverterService.hexToColor('#35383A');
+  final _focusedBorderColor = ColorConverterService.hexToColor('#00D389');
+  final _enabledBorderColor = ColorConverterService.hexToColor('#E2E2E2');
+  final _hintColor = ColorConverterService.hexToColor('#9B959F');
 
   @override
   Widget build(BuildContext context) {
@@ -26,21 +31,23 @@ class CustomDropdownButton extends StatelessWidget {
       ),
       elevation: 16,
       style: TextStyle(
-        color: HexColor('#35383A'),
+        color: _textcolor,
         fontSize: 14,
       ),
       onChanged: onChange,
-      dropdownColor: ColorsConstants.white50,
+      dropdownColor: ColorsConstants.white,
       decoration: InputDecoration(
         prefixIcon: icon,
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(
             color: Theme.of(context).buttonTheme.colorScheme?.primary ??
-                HexColor('#00D389'),
+                _focusedBorderColor,
           ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: HexColor('#E2E2E2')),
+          borderSide: BorderSide(
+            color: _enabledBorderColor,
+          ),
         ),
         hintText: hintText,
         filled: true,
@@ -48,17 +55,19 @@ class CustomDropdownButton extends StatelessWidget {
         focusedErrorBorder:
             Theme.of(context).inputDecorationTheme.focusedErrorBorder,
         errorStyle: Theme.of(context).inputDecorationTheme.errorStyle,
-        fillColor: ColorsConstants.white50,
+        fillColor: ColorsConstants.white,
         hintStyle: TextStyle(
-          color: HexColor('#9B959F'),
+          color: _hintColor,
         ),
       ),
-      items: values.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
+      items: values.map<DropdownMenuItem<String>>(
+        (String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        },
+      ).toList(),
     );
   }
 }

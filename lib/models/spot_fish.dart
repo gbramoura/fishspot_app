@@ -21,10 +21,12 @@ class SpotFish {
       id: Uuid(),
       name: json['name'],
       weight: json['weight'].toDouble(),
-      unitMeasure: UnitMeasureType.values.firstWhere(
-        (e) => e.name == json['unitMeasure'],
-      ),
       lures: List<String>.from(json['lures']),
+      unitMeasure: UnitMeasureType.values.firstWhere(
+        (e) =>
+            e.name.toLowerCase() ==
+            json['unitMeasure'].toString().toLowerCase(),
+      ),
     );
   }
 

@@ -1,14 +1,14 @@
-import 'package:fishspot_app/components/custom_button.dart';
-import 'package:fishspot_app/components/custom_dropdown_button.dart';
-import 'package:fishspot_app/components/custom_text_form_field.dart';
+import 'package:fishspot_app/widgets/button.dart';
+import 'package:fishspot_app/widgets/select_input.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/enums/spot_difficulty_type.dart';
 import 'package:fishspot_app/enums/spot_risk_type.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/spot/spot_image_page.dart';
-import 'package:fishspot_app/repositories/spot_repository.dart';
+import 'package:fishspot_app/providers/spot_data_provider.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
-import 'package:fishspot_app/utils/spot_view_utils.dart';
+import 'package:fishspot_app/services/spot_display_service.dart';
+import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -20,12 +20,14 @@ class SpotDescriptionPage extends StatefulWidget {
 }
 
 class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
+  final NavigationService _navigationService = NavigationService();
+
   final _formGlobalKey = GlobalKey<FormState>();
   final _riskObservationController = TextEditingController();
   final _difficultyObservationController = TextEditingController();
 
-  SpotDifficultyType _difficulty = SpotDifficultyType.VeryEasy;
-  SpotRiskType _risk = SpotRiskType.VeryLow;
+  SpotDifficultyType _difficulty = SpotDifficultyType.veryEasy;
+  SpotRiskType _risk = SpotRiskType.veryLow;
   bool _loading = false;
 
   @override
@@ -39,9 +41,9 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
       _loading = true;
     });
 
-    var addSpot = Provider.of<SpotRepository>(context, listen: false);
-    var difficulty = addSpot.getDifficulty();
-    var risk = addSpot.getRisk();
+    var spotProvider = Provider.of<SpotDataProvider>(context, listen: false);
+    var difficulty = spotProvider.getDifficulty();
+    var risk = spotProvider.getRisk();
 
     setState(() {
       _riskObservationController.text = risk.observation;
@@ -70,14 +72,14 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
     if (value == null || value.isEmpty) {
       return;
     }
-    _difficulty = SpotViewUtils.getDifficultyFromText(value);
+    _difficulty = SpotDisplayService.getDifficultyFromText(value);
   }
 
   _handleChangeRisk(String? value) {
     if (value == null || value.isEmpty) {
       return;
     }
-    _risk = SpotViewUtils.getRiskFromText(value);
+    _risk = SpotDisplayService.getRiskFromText(value);
   }
 
   _handleNextButton() {
@@ -86,18 +88,18 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
     }
 
     var route = MaterialPageRoute(builder: (context) => SpotImagePage());
-    var addSpot = Provider.of<SpotRepository>(context, listen: false);
+    var spotProvider = Provider.of<SpotDataProvider>(context, listen: false);
 
-    addSpot.setDifficulty(
+    spotProvider.setDifficulty(
       _difficulty,
       _difficultyObservationController.text,
     );
-    addSpot.setRisk(
+    spotProvider.setRisk(
       _risk,
       _riskObservationController.text,
     );
 
-    NavigationService.push(context, route);
+    _navigationService.push(context, route);
   }
 
   @override
@@ -151,10 +153,10 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
               ),
             ),
             SizedBox(height: 15),
-            CustomDropdownButton(
+            SelectInput(
               hintText: 'Escolha',
               values: SpotDifficultyType.values
-                  .map((e) => SpotViewUtils.getDifficultyText(e))
+                  .map((e) => SpotDisplayService.getDifficultyText(e))
                   .toList(),
               onChange: _handleChangeDifficulty,
             ),
@@ -162,11 +164,11 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
             SizedBox(
               height: 120,
               width: double.infinity,
-              child: CustomTextFormField(
+              child: TextInput(
+                label: 'Observação',
                 validator: _riskObservationValidator,
                 controller: _riskObservationController,
                 textInputType: TextInputType.multiline,
-                hintText: 'Observação',
                 expands: true,
                 maxLines: null,
               ),
@@ -190,10 +192,10 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
               ),
             ),
             SizedBox(height: 15),
-            CustomDropdownButton(
+            SelectInput(
               hintText: 'Escolha',
               values: SpotRiskType.values
-                  .map((e) => SpotViewUtils.getRiskText(e))
+                  .map((e) => SpotDisplayService.getRiskText(e))
                   .toList(),
               onChange: _handleChangeRisk,
             ),
@@ -201,11 +203,11 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
             SizedBox(
               height: 120,
               width: double.infinity,
-              child: CustomTextFormField(
+              child: TextInput(
+                label: 'Observação',
                 validator: _difficultyObservationValidator,
                 controller: _difficultyObservationController,
                 textInputType: TextInputType.multiline,
-                hintText: 'Observação',
                 expands: true,
                 maxLines: null,
               ),
@@ -223,7 +225,7 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          CustomButton(
+          Button(
             label: "Proximo",
             onPressed: _handleNextButton,
             fixedSize: Size(182, 48),
@@ -236,8 +238,6 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
   _renderAppBar(dynamic context) {
     return AppBar(
       shadowColor: ColorsConstants.gray350,
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      foregroundColor: Theme.of(context).colorScheme.surface,
       surfaceTintColor: Theme.of(context).colorScheme.surface,
       title: Row(
         children: [

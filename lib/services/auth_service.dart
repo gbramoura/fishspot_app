@@ -1,22 +1,27 @@
-import 'package:fishspot_app/components/custom_alert_dialog.dart';
-import 'package:fishspot_app/components/custom_button.dart';
+import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
-import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/models/user_tokens.dart';
-import 'package:fishspot_app/repositories/location_repository.dart';
-import 'package:fishspot_app/repositories/settings_repository.dart';
-import 'package:fishspot_app/repositories/spot_repository.dart';
-import 'package:fishspot_app/repositories/widget_control_repository.dart';
+import 'package:fishspot_app/providers/location_provider.dart';
+import 'package:fishspot_app/providers/recover_password_provider.dart';
+import 'package:fishspot_app/providers/settings_provider.dart';
+import 'package:fishspot_app/providers/spot_data_provider.dart';
+import 'package:fishspot_app/providers/visible_control_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
+import 'package:fishspot_app/widgets/alert_modal.dart';
+import 'package:fishspot_app/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AuthService {
-  static Future<bool> isUserAuthenticated(dynamic context) async {
-    var settings = Provider.of<SettingRepository>(context, listen: false);
-    var apiService = ApiService();
+  late ApiService _apiService;
 
+  AuthService() {
+    _apiService = ApiService();
+  }
+
+  Future<bool> isUserAuthenticated(BuildContext context) async {
+    var settings = Provider.of<SettingProvider>(context, listen: false);
     var token = settings.getString(SharedPreferencesConstants.jwtToken);
 
     if (token == null || token.isEmpty) {
@@ -24,17 +29,15 @@ class AuthService {
     }
 
     try {
-      await apiService.isAuth(token);
+      await _apiService.isAuth(token);
       return true;
     } catch (e) {
       return false;
     }
   }
 
-  static Future<void> refreshCredentials(dynamic context) async {
-    var settings = Provider.of<SettingRepository>(context, listen: false);
-    var apiService = ApiService();
-
+  Future<void> refreshCredentials(BuildContext context) async {
+    var settings = Provider.of<SettingProvider>(context, listen: false);
     var token = settings.getString(SharedPreferencesConstants.jwtToken);
     var rToken = settings.getString(SharedPreferencesConstants.refreshToken);
     var userTokens = UserTokens(
@@ -42,7 +45,7 @@ class AuthService {
       refreshToken: rToken ?? '',
     );
 
-    var response = await apiService.refreshToken(userTokens.toJson());
+    var response = await _apiService.refreshToken(userTokens.toJson());
     var user = UserTokens.fromJson(response.response);
 
     settings.setString(SharedPreferencesConstants.jwtToken, user.token);
@@ -52,26 +55,26 @@ class AuthService {
     );
   }
 
-  static void clearCredentials(dynamic context) {
-    Provider.of<SettingRepository>(context, listen: false).clear();
-    Provider.of<SpotRepository>(context, listen: false).clear();
-    Provider.of<LocationRepository>(context, listen: false).clear();
-    Provider.of<WidgetControlRepository>(context, listen: false).clear();
-    Provider.of<WidgetControlRepository>(context, listen: false).clear();
+  void clearCredentials(BuildContext context) {
+    Provider.of<SettingProvider>(context, listen: false).clear();
+    Provider.of<SpotDataProvider>(context, listen: false).clear();
+    Provider.of<LocationProvider>(context, listen: false).clear();
+    Provider.of<VisibleControlProvider>(context, listen: false).clear();
+    Provider.of<RecoverPasswordProvider>(context, listen: false).clear();
   }
 
-  static void showAuthDialog(dynamic context) {
+  void showAuthDialog(BuildContext context) {
     var title = 'Usuário não autenticado';
     var message = 'O usuário não autenticado devido a sessão ter expirado';
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomAlertDialog(
+        return AlertModal(
           type: CustomDialogAlertType.warn,
           title: title,
           message: message,
-          button: CustomButton(
+          button: Button(
             label: 'Ok',
             fixedSize: Size(double.infinity, 48),
             onPressed: () {
@@ -83,7 +86,7 @@ class AuthService {
     );
   }
 
-  static void showInternalErrorDialog(dynamic context) {
+  void showInternalErrorDialog(BuildContext context) {
     var title = 'Erro Interno do Servidor';
     var message =
         'Devido a um erro desconhecido no servidor não é possivel seguir com a utilização do software';
@@ -91,11 +94,11 @@ class AuthService {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomAlertDialog(
-          type: CustomDialogAlertType.error,
+        return AlertModal(
+          type: CustomDialogAlertType.warn,
           title: title,
           message: message,
-          button: CustomButton(
+          button: Button(
             label: 'Ok',
             fixedSize: Size(double.infinity, 48),
             onPressed: () {

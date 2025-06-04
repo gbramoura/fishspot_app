@@ -2,9 +2,9 @@ import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/models/spot_location.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/map/map_view.dart';
-import 'package:fishspot_app/repositories/location_repository.dart';
-import 'package:fishspot_app/repositories/settings_repository.dart';
-import 'package:fishspot_app/repositories/widget_control_repository.dart';
+import 'package:fishspot_app/providers/location_provider.dart';
+import 'package:fishspot_app/providers/settings_provider.dart';
+import 'package:fishspot_app/providers/visible_control_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +23,8 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   final ApiService _apiService = ApiService();
+  final AuthService _authService = AuthService();
+
   final List<Marker> _markers = [];
   final MapController _mapController = MapController();
   final _sheet = GlobalKey();
@@ -44,9 +46,12 @@ class _MapPageState extends State<MapPage> {
       _loading = true;
     });
 
-    var settings = Provider.of<SettingRepository>(context, listen: false);
-    var locationRepo = Provider.of<LocationRepository>(context, listen: false);
+    var settings = Provider.of<SettingProvider>(context, listen: false);
     var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
+    var locationProvider = Provider.of<LocationProvider>(
+      context,
+      listen: false,
+    );
 
     try {
       var locationsResponse = await _apiService.getLocations(token);
@@ -70,7 +75,7 @@ class _MapPageState extends State<MapPage> {
         );
       });
 
-      var position = await locationRepo.getPosition();
+      var position = await locationProvider.getPosition();
 
       setState(() {
         _markers.clear();
@@ -79,8 +84,8 @@ class _MapPageState extends State<MapPage> {
       });
     } catch (e) {
       if (mounted) {
-        AuthService.clearCredentials(context);
-        AuthService.showInternalErrorDialog(context);
+        _authService.clearCredentials(context);
+        _authService.showInternalErrorDialog(context);
       }
     }
 
@@ -90,10 +95,10 @@ class _MapPageState extends State<MapPage> {
   }
 
   _handleMarkerTap(String id) {
-    var repo = Provider.of<WidgetControlRepository>(context, listen: false);
+    var provider = Provider.of<VisibleControlProvider>(context, listen: false);
 
-    repo.setVisible(false);
-    repo.setAppBarVisible(false);
+    provider.setVisible(false);
+    provider.setAppBarVisible(false);
 
     setState(() {
       _selectedSpotId = id;
@@ -101,12 +106,12 @@ class _MapPageState extends State<MapPage> {
   }
 
   _close() {
-    var repo = Provider.of<WidgetControlRepository>(context, listen: false);
+    var provider = Provider.of<VisibleControlProvider>(context, listen: false);
 
     _hide();
 
-    repo.setVisible(true);
-    repo.setAppBarVisible(true);
+    provider.setVisible(true);
+    provider.setAppBarVisible(true);
 
     setState(() {
       _selectedSpotId = null;
@@ -138,14 +143,14 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    var repo = Provider.of<WidgetControlRepository>(context);
+    var provider = Provider.of<VisibleControlProvider>(context);
 
     if (_loading) {
       return const LoadingPage();
     }
 
     return Scaffold(
-      appBar: repo.isAppBarVisible() ? _renderAppBar() : null,
+      appBar: provider.isAppBarVisible() ? _renderAppBar() : null,
       body: Stack(
         children: [
           _renderMap(),

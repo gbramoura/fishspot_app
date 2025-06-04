@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:fishspot_app/components/custom_alert_dialog.dart';
-import 'package:fishspot_app/components/custom_button.dart';
-import 'package:fishspot_app/components/custom_circle_avatar.dart';
-import 'package:fishspot_app/components/custom_text_form_field.dart';
+import 'package:fishspot_app/widgets/alert_modal.dart';
+import 'package:fishspot_app/widgets/button.dart';
+import 'package:fishspot_app/widgets/profile_circle_avatar.dart';
+import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
@@ -12,11 +12,11 @@ import 'package:fishspot_app/models/http_multipart_file.dart';
 import 'package:fishspot_app/models/http_response.dart';
 import 'package:fishspot_app/models/user_profile.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
-import 'package:fishspot_app/repositories/settings_repository.dart';
+import 'package:fishspot_app/providers/settings_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
+import 'package:fishspot_app/services/image_service.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
-import 'package:fishspot_app/utils/image_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +30,10 @@ class ProfileUserEditPage extends StatefulWidget {
 
 class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
   final ApiService _apiService = ApiService();
+  final ImageService _imageService = ImageService();
+  final NavigationService _navigationService = NavigationService();
+  final AuthService _authService = AuthService();
+
   final _formGlobalKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _usernameController = TextEditingController();
@@ -54,10 +58,10 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
     });
 
     try {
-      var settings = Provider.of<SettingRepository>(context, listen: false);
+      var settings = Provider.of<SettingProvider>(context, listen: false);
       var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
-      await AuthService.refreshCredentials(context);
+      await _authService.refreshCredentials(context);
       HttpResponse resp = await _apiService.getUser(token);
       UserProfile user = UserProfile.fromJson(resp.response);
 
@@ -74,8 +78,8 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
       }
     } catch (e) {
       if (mounted) {
-        AuthService.clearCredentials(context);
-        AuthService.showInternalErrorDialog(context);
+        _authService.clearCredentials(context);
+        _authService.showInternalErrorDialog(context);
       }
     }
 
@@ -94,7 +98,7 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
 
     try {
       if (!mounted) return;
-      var settings = Provider.of<SettingRepository>(context, listen: false);
+      var settings = Provider.of<SettingProvider>(context, listen: false);
       var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
       var payload = [
         HttpMultipartFile(path: 'file', file: File(pickedFile.path))
@@ -117,7 +121,7 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
     }
 
     try {
-      var settings = Provider.of<SettingRepository>(context, listen: false);
+      var settings = Provider.of<SettingProvider>(context, listen: false);
       var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
       var strNumber = _numberController.text;
@@ -136,7 +140,8 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
       await _apiService.updateUser(payload, token);
 
       if (!mounted) return;
-      NavigationService.pop(context);
+
+      _navigationService.pop(context);
     } on HttpResponseException catch (e) {
       _renderDialog(e.data.code, e.data.message);
     } catch (e) {
@@ -232,8 +237,8 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
         SizedBox(
           height: 100,
           width: 100,
-          child: CustomCircleAvatar(
-            imageUrl: ImageUtils.getImagePath(_imageId, context),
+          child: ProfileCircleAvatar(
+            imageUrl: _imageService.getImagePath(context, _imageId),
           ),
         ),
         SizedBox(height: 10),
@@ -270,34 +275,28 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 35),
-                CustomTextFormField(
+                TextInput(
+                  label: 'Name',
                   validator: _nameValidator,
                   controller: _nameController,
-                  hintText: 'Name',
-                  icon: Icon(
-                    Icons.person,
-                    color: Theme.of(context).iconTheme.color,
-                  ),
+                  icon: Icons.person,
                 ),
                 SizedBox(height: 20),
-                CustomTextFormField(
+                TextInput(
+                  label: 'Nome de usuário',
                   validator: _usernameValidator,
                   controller: _usernameController,
-                  hintText: 'Nome de usuário',
-                  icon: Icon(
-                    Icons.alternate_email,
-                    color: Theme.of(context).iconTheme.color,
-                  ),
+                  icon: Icons.alternate_email,
                 ),
                 SizedBox(height: 20),
                 SizedBox(
                   height: 120,
                   width: double.infinity,
-                  child: CustomTextFormField(
+                  child: TextInput(
+                    label: 'Descrição',
                     validator: _descriptionValidator,
                     controller: _descriptionController,
                     textInputType: TextInputType.multiline,
-                    hintText: 'Descrição',
                     expands: true,
                     maxLines: null,
                   ),
@@ -325,23 +324,20 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
                   children: [
                     Flexible(
                       flex: 3,
-                      child: CustomTextFormField(
+                      child: TextInput(
+                        label: 'Rua',
                         validator: _streetValidator,
                         controller: _streetController,
-                        hintText: 'Rua',
-                        icon: Icon(
-                          Icons.home,
-                          color: Theme.of(context).iconTheme.color,
-                        ),
+                        icon: Icons.home,
                       ),
                     ),
                     SizedBox(width: 15),
                     Flexible(
                       flex: 1,
-                      child: CustomTextFormField(
+                      child: TextInput(
+                        label: 'N°',
                         validator: _numberValidator,
                         controller: _numberController,
-                        hintText: 'N°',
                       ),
                     ),
                   ],
@@ -352,27 +348,21 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
                   children: [
                     Flexible(
                       flex: 3,
-                      child: CustomTextFormField(
+                      child: TextInput(
+                        label: 'Bairro',
                         validator: _neighborhoodValidator,
                         controller: _neighborhoodController,
-                        hintText: 'Bairro',
-                        icon: Icon(
-                          Icons.fence,
-                          color: Theme.of(context).iconTheme.color,
-                        ),
+                        icon: Icons.fence,
                       ),
                     ),
                     SizedBox(width: 15),
                     Flexible(
                       flex: 2,
-                      child: CustomTextFormField(
+                      child: TextInput(
+                        label: 'CEP',
                         validator: _zipCodeValidator,
                         controller: _zipCodeController,
-                        hintText: 'CEP',
-                        icon: Icon(
-                          Icons.location_on,
-                          color: Theme.of(context).iconTheme.color,
-                        ),
+                        icon: Icons.location_on,
                       ),
                     ),
                   ],
@@ -381,7 +371,7 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    CustomButton(
+                    Button(
                       label: 'Confirmar',
                       fixedSize: Size(182, 48),
                       onPressed: () => _handleUpdate(),
@@ -421,11 +411,11 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomAlertDialog(
+        return AlertModal(
           type: CustomDialogAlertType.error,
           title: 'Error ao Alterar Foto de Perfil',
           message: '',
-          button: CustomButton(
+          button: Button(
             label: 'Ok',
             fixedSize: Size(double.infinity, 48),
             onPressed: () {
@@ -449,13 +439,13 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomAlertDialog(
+        return AlertModal(
           type: code == 400
               ? CustomDialogAlertType.warn
               : CustomDialogAlertType.error,
           title: code == 400 ? warnTitle : errorTitle,
           message: code == 400 ? warnMessage : errorMessage,
-          button: CustomButton(
+          button: Button(
             label: code == 400 ? 'Ok' : errorButtonLabel,
             fixedSize: Size(double.infinity, 48),
             onPressed: () {

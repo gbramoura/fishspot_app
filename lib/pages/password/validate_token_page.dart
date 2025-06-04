@@ -1,14 +1,14 @@
-import 'package:fishspot_app/components/custom_alert_dialog.dart';
-import 'package:fishspot_app/components/custom_button.dart';
-import 'package:fishspot_app/components/custom_text_button.dart';
-import 'package:fishspot_app/components/custom_text_form_field.dart';
+import 'package:fishspot_app/widgets/alert_modal.dart';
+import 'package:fishspot_app/widgets/button.dart';
+import 'package:fishspot_app/widgets/ink_button.dart';
+import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/exceptions/http_response_exception.dart';
 import 'package:fishspot_app/models/http_response.dart';
 import 'package:fishspot_app/models/validate_token.dart';
 import 'package:fishspot_app/pages/password/change_password_page.dart';
-import 'package:fishspot_app/repositories/recover_password_repository.dart';
+import 'package:fishspot_app/providers/recover_password_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +32,7 @@ class _ValidateTokenPageState extends State<ValidateTokenPage> {
       _loading = true;
     });
 
-    var repo = Provider.of<RecoverPasswordRepository>(context, listen: false);
+    var provider = Provider.of<RecoverPasswordProvider>(context, listen: false);
     var route = MaterialPageRoute(builder: (context) => ChangePasswordPage());
 
     if (!_formGlobalKey.currentState!.validate()) {
@@ -43,11 +43,11 @@ class _ValidateTokenPageState extends State<ValidateTokenPage> {
     }
 
     try {
-      repo.setToken(_tokenController.text);
+      provider.setToken(_tokenController.text);
 
       HttpResponse response = await _api.validateRecoverToken({
-        'email': repo.getEmail(),
-        'token': repo.getToken(),
+        'email': provider.getEmail(),
+        'token': provider.getToken(),
       });
 
       ValidateToken parsedResponse = ValidateToken.fromJson(response.response);
@@ -76,7 +76,7 @@ class _ValidateTokenPageState extends State<ValidateTokenPage> {
   }
 
   _handleCancel() {
-    Provider.of<RecoverPasswordRepository>(context, listen: false).clear();
+    Provider.of<RecoverPasswordProvider>(context, listen: false).clear();
     Navigator.of(context).popUntil((route) {
       return route.settings.name == RouteConstants.login;
     });
@@ -119,7 +119,7 @@ class _ValidateTokenPageState extends State<ValidateTokenPage> {
           child: Image(
             height: 250,
             width: 250,
-            image: AssetImage('assets/images/fish-spot-icon.png'),
+            image: AssetImage('assets/fish-spot-icon.png'),
           ),
         ),
       ),
@@ -145,36 +145,32 @@ class _ValidateTokenPageState extends State<ValidateTokenPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CustomTextFormField(
-            maxLength: 5,
+          TextInput(
+            label: 'Token',
             validator: _tokenValidator,
             controller: _tokenController,
             textInputType: TextInputType.number,
-            hintText: 'Token',
-            icon: Icon(
-              Icons.numbers,
-              color: Theme.of(context).iconTheme.color,
-            ),
+            icon: Icons.numbers,
+            maxLength: 5,
           ),
           SizedBox(height: 45),
-          CustomButton(
+          Button(
             onPressed: _handleSend,
             fixedSize: Size(286, 48),
             label: 'Confirmar Token',
             loading: _loading,
           ),
           SizedBox(height: 15),
-          Row(
+          Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              RichText(
-                text: TextSpan(
-                  text: 'Deseja cancelar a recuperação de senha?',
-                  style: Theme.of(context).textTheme.displayMedium,
-                ),
+              Text(
+                'Deseja cancelar a recuperação de senha?',
+                softWrap: true,
+                style: Theme.of(context).textTheme.displayMedium,
               ),
-              SizedBox(width: 5),
-              CustomTextButton(
+              SizedBox(height: 5),
+              InkButton(
                 label: 'Cancelar',
                 onTap: _handleCancel,
                 style: TextStyle(
@@ -196,12 +192,12 @@ class _ValidateTokenPageState extends State<ValidateTokenPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomAlertDialog(
+        return AlertModal(
           type: type ?? CustomDialogAlertType.error,
           title: title ?? "Erro ao tentar alterar senha",
           message: message ??
               "Não foi possivel alterar sua senha devido a um erro não indetificado",
-          button: CustomButton(
+          button: Button(
             label: "Ok",
             fixedSize: Size(double.infinity, 48),
             onPressed: () {

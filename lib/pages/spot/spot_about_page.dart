@@ -1,14 +1,15 @@
-import 'package:fishspot_app/components/custom_alert_dialog.dart';
-import 'package:fishspot_app/components/custom_button.dart';
-import 'package:fishspot_app/components/custom_text_form_field.dart';
+import 'package:fishspot_app/widgets/alert_modal.dart';
+import 'package:fishspot_app/widgets/button.dart';
+import 'package:fishspot_app/widgets/date_input.dart';
+import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/models/http_multipart_file.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
-import 'package:fishspot_app/repositories/settings_repository.dart';
-import 'package:fishspot_app/repositories/spot_repository.dart';
+import 'package:fishspot_app/providers/settings_provider.dart';
+import 'package:fishspot_app/providers/spot_data_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,9 @@ class SpotAboutPage extends StatefulWidget {
 }
 
 class _SpotAboutPageState extends State<SpotAboutPage> {
-  final _apiService = ApiService();
+  final ApiService _apiService = ApiService();
+  final NavigationService _navigationService = NavigationService();
+
   final _formGlobalKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _dateController = TextEditingController();
@@ -66,29 +69,29 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
       _loadingMessage = "A gravação dos dados \n pode levar tempo";
     });
 
-    var settings = Provider.of<SettingRepository>(context, listen: false);
-    var spotRepo = Provider.of<SpotRepository>(context, listen: false);
+    var settings = Provider.of<SettingProvider>(context, listen: false);
+    var spotProvider = Provider.of<SpotDataProvider>(context, listen: false);
     var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
     var spotId = "";
 
     try {
-      spotRepo.setDescription(
+      spotProvider.setDescription(
         _titleController.text,
         _observationController.text,
         DateFormat("dd/MM/yyyy").parse(_dateController.text),
       );
 
       var createSpotResponse = await _apiService.createSpot(
-        spotRepo.toPayload(),
+        spotProvider.toPayload(),
         token,
       );
 
       spotId = createSpotResponse.response["id"];
 
       // Atach image
-      if (spotRepo.getImages().isNotEmpty) {
+      if (spotProvider.getImages().isNotEmpty) {
         var fields = {"spotId": spotId};
-        var files = spotRepo
+        var files = spotProvider
             .getImages()
             .map((e) => HttpMultipartFile(file: e.file, path: 'files'))
             .toList();
@@ -117,24 +120,6 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
       _loading = false;
       _loadingMessage = "";
     });
-  }
-
-  _handleDatePicker() async {
-    DateTime? date = await showDatePicker(
-      builder: (context, child) {
-        return _datePickerTheme(context, child);
-      },
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-
-    if (date != null) {
-      setState(() {
-        _dateController.text = DateFormat("dd/MM/yyyy").format(date);
-      });
-    }
   }
 
   @override
@@ -186,28 +171,17 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
               ),
             ),
             SizedBox(height: 15),
-            CustomTextFormField(
+            TextInput(
+              label: 'Titulo',
               validator: _titleValidator,
               controller: _titleController,
-              textInputType: TextInputType.text,
-              hintText: 'Titulo',
-              icon: Icon(
-                Icons.description,
-                color: Theme.of(context).iconTheme.color,
-              ),
+              icon: Icons.description,
             ),
             SizedBox(height: 20),
-            CustomTextFormField(
+            DateInput(
+              label: 'Data do registro da pesca',
               controller: _dateController,
               validator: _dateValidator,
-              readonly: true,
-              hintText: 'Data do registro da pesca',
-              textInputType: TextInputType.datetime,
-              icon: Icon(
-                Icons.date_range,
-                color: Theme.of(context).iconTheme.color,
-              ),
-              onTap: _handleDatePicker,
             ),
             SizedBox(height: 25),
             Text(
@@ -231,11 +205,11 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
             SizedBox(
               height: 120,
               width: double.infinity,
-              child: CustomTextFormField(
+              child: TextInput(
+                label: 'Observação',
                 validator: _observationValidator,
                 controller: _observationController,
                 textInputType: TextInputType.multiline,
-                hintText: 'Observação',
                 expands: true,
                 maxLines: null,
               ),
@@ -253,7 +227,7 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          CustomButton(
+          Button(
             label: "Finalizar",
             onPressed: _handleNextButton,
             fixedSize: Size(182, 48),
@@ -281,21 +255,6 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
     );
   }
 
-  Widget _datePickerTheme(BuildContext context, Widget? child) {
-    return Theme(
-      data: Theme.of(context).copyWith(
-        colorScheme: ColorScheme.light(
-          primary: Theme.of(context).colorScheme.primary,
-          onPrimary:
-              Theme.of(context).textTheme.labelMedium?.color ?? Colors.black,
-          onSurface:
-              Theme.of(context).textTheme.headlineLarge?.color ?? Colors.black,
-        ),
-      ),
-      child: child!,
-    );
-  }
-
   void _renderDialog(
     CustomDialogAlertType type,
     String title,
@@ -304,16 +263,16 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomAlertDialog(
+        return AlertModal(
           type: type,
           title: title,
           message: message ?? "",
-          button: CustomButton(
+          button: Button(
             label: 'Ok',
             fixedSize: Size(double.infinity, 48),
             onPressed: () {
-              Provider.of<SpotRepository>(context, listen: false).clear();
-              NavigationService.popUntil(context, [RouteConstants.home]);
+              Provider.of<SpotDataProvider>(context, listen: false).clear();
+              _navigationService.popUntil(context, [RouteConstants.home]);
             },
           ),
         );

@@ -11,7 +11,9 @@ class SpotLocationDifficulty {
 
   factory SpotLocationDifficulty.fromJson(Map<String, dynamic> json) {
     return SpotLocationDifficulty(
-      rate: SpotDifficultyType.values.firstWhere((e) => e.name == json['rate']),
+      rate: SpotDifficultyType.values.firstWhere(
+        (e) => e.name.toLowerCase() == json['rate'].toString().toLowerCase(),
+      ),
       observation: json['observation'],
     );
   }

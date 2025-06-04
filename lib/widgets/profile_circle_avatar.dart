@@ -2,11 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:flutter/material.dart';
 
-class CustomCircleAvatar extends StatelessWidget {
+class ProfileCircleAvatar extends StatelessWidget {
   final String imageUrl;
   final double size;
 
-  const CustomCircleAvatar({
+  const ProfileCircleAvatar({
     super.key,
     required this.imageUrl,
     this.size = 1,

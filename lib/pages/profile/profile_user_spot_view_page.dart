@@ -3,11 +3,11 @@ import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/extensions/string_extension.dart';
 import 'package:fishspot_app/models/spot.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
-import 'package:fishspot_app/repositories/settings_repository.dart';
+import 'package:fishspot_app/providers/settings_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
-import 'package:fishspot_app/utils/image_utils.dart';
-import 'package:fishspot_app/utils/spot_view_utils.dart';
+import 'package:fishspot_app/services/image_service.dart';
+import 'package:fishspot_app/services/spot_display_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +27,8 @@ class ProfileUserSpotViewPage extends StatefulWidget {
 
 class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
   final ApiService _apiService = ApiService();
+  final ImageService _imageService = ImageService();
+  final AuthService _authService = AuthService();
 
   Spot? _spot;
   bool _loading = false;
@@ -43,9 +45,11 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
     });
 
     try {
-      await AuthService.refreshCredentials(context);
+      await _authService.refreshCredentials(context);
 
-      var settings = Provider.of<SettingRepository>(context, listen: false);
+      if (!mounted) return;
+
+      var settings = Provider.of<SettingProvider>(context, listen: false);
       var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
       var resp = await _apiService.getSpot(widget.spotId, token);
@@ -56,8 +60,8 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
       });
     } catch (e) {
       if (mounted) {
-        AuthService.clearCredentials(context);
-        AuthService.showInternalErrorDialog(context);
+        _authService.clearCredentials(context);
+        _authService.showInternalErrorDialog(context);
       }
     }
 
@@ -199,7 +203,7 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
               image: DecorationImage(
                 fit: BoxFit.cover,
                 image: NetworkImage(
-                  ImageUtils.getImagePath(image, context),
+                  _imageService.getImagePath(context, image),
                 ),
               ),
             ),
@@ -306,7 +310,7 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
                   ),
                   SizedBox(width: 5),
                   Text(
-                    '${fish.weight} ${SpotViewUtils.getUnitMeasure(fish.unitMeasure)}',
+                    '${fish.weight} ${SpotDisplayService.getUnitMeasure(fish.unitMeasure)}',
                     style: TextStyle(
                       color: Theme.of(context).textTheme.labelMedium?.color,
                       fontWeight: FontWeight.w600,
@@ -441,10 +445,10 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
           ),
         ),
         Text(
-          SpotViewUtils.getRiskText(_spot?.locationRisk.rate),
+          SpotDisplayService.getRiskText(_spot?.locationRisk.rate),
           style: TextStyle(
-            color:
-                SpotViewUtils.getRiskColor(_spot?.locationRisk.rate, context),
+            color: SpotDisplayService.getRiskColor(
+                _spot?.locationRisk.rate, context),
             fontWeight: FontWeight.w600,
             fontSize: 14,
           ),
@@ -465,9 +469,9 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
           ),
         ),
         Text(
-          SpotViewUtils.getDifficultyText(_spot?.locationDifficulty.rate),
+          SpotDisplayService.getDifficultyText(_spot?.locationDifficulty.rate),
           style: TextStyle(
-            color: SpotViewUtils.getDifficultyColor(
+            color: SpotDisplayService.getDifficultyColor(
               _spot?.locationDifficulty.rate,
               context,
             ),

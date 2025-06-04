@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:fishspot_app/components/custom_alert_dialog.dart';
-import 'package:fishspot_app/components/custom_button.dart';
+import 'package:fishspot_app/widgets/alert_modal.dart';
+import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/models/spot_image.dart';
 import 'package:fishspot_app/pages/spot/spot_fish_page.dart';
-import 'package:fishspot_app/repositories/spot_repository.dart';
+import 'package:fishspot_app/providers/spot_data_provider.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -22,8 +22,10 @@ class SpotImagePage extends StatefulWidget {
 }
 
 class _SpotImagePageState extends State<SpotImagePage> {
+  final NavigationService _navigationService = NavigationService();
+
   _handleNextButton(BuildContext context) {
-    NavigationService.push(
+    _navigationService.push(
       context,
       MaterialPageRoute(builder: (context) => SpotFishPage()),
     );
@@ -32,8 +34,8 @@ class _SpotImagePageState extends State<SpotImagePage> {
   _handleAddImage() async {
     const int imagesLimit = 30;
     const List<String> imagesExtensions = [".png", ".jpg", ".jpeg"];
-    var repo = Provider.of<SpotRepository>(context, listen: false);
-    var images = repo.getImages();
+    var spotProvider = Provider.of<SpotDataProvider>(context, listen: false);
+    var images = spotProvider.getImages();
 
     var picker = ImagePicker();
     var pickedFiles = await picker.pickMultiImage(
@@ -57,23 +59,23 @@ class _SpotImagePageState extends State<SpotImagePage> {
         continue;
       }
 
-      repo.addImages([
+      spotProvider.addImages([
         SpotImage(id: id, file: file),
       ]);
     }
   }
 
   _handleRemoveImage(BuildContext context, Uuid id) {
-    var repo = context.read<SpotRepository>();
-    var images = repo.getImages();
+    var spotProvider = context.read<SpotDataProvider>();
+    var images = spotProvider.getImages();
 
     var updatedImages = images.where((file) => file.id != id).toList();
-    repo.setImages(updatedImages);
+    spotProvider.setImages(updatedImages);
   }
 
   @override
   Widget build(BuildContext buildContext) {
-    return Consumer<SpotRepository>(builder: (context, value, widget) {
+    return Consumer<SpotDataProvider>(builder: (context, value, widget) {
       return Scaffold(
         appBar: _renderAppBar(context),
         body: Column(
@@ -88,7 +90,7 @@ class _SpotImagePageState extends State<SpotImagePage> {
     });
   }
 
-  _renderImages(BuildContext context, SpotRepository value) {
+  _renderImages(BuildContext context, SpotDataProvider value) {
     var images = value.getImages();
 
     if (images.isEmpty) {
@@ -116,7 +118,7 @@ class _SpotImagePageState extends State<SpotImagePage> {
     );
   }
 
-  _renderPickedImages(BuildContext context, SpotRepository value) {
+  _renderPickedImages(BuildContext context, SpotDataProvider value) {
     var images = value.getImages();
 
     return GridView.builder(
@@ -190,7 +192,7 @@ class _SpotImagePageState extends State<SpotImagePage> {
     );
   }
 
-  _renderNext(BuildContext context, SpotRepository value) {
+  _renderNext(BuildContext context, SpotDataProvider value) {
     var images = value.getImages();
 
     return Padding(
@@ -198,7 +200,7 @@ class _SpotImagePageState extends State<SpotImagePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          CustomButton(
+          Button(
             label: images.isEmpty ? "Pular" : "Proximo",
             onPressed: () => _handleNextButton(context),
             fixedSize: Size(182, 48),
@@ -240,15 +242,15 @@ class _SpotImagePageState extends State<SpotImagePage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomAlertDialog(
+        return AlertModal(
           type: CustomDialogAlertType.warn,
           title: 'Imagens com Problemas',
           message: message,
-          button: CustomButton(
+          button: Button(
             label: 'Ok',
             fixedSize: Size(double.infinity, 48),
             onPressed: () {
-              NavigationService.pop(context);
+              _navigationService.pop(context);
             },
           ),
         );
