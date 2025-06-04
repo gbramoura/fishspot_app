@@ -7,6 +7,7 @@ ThemeData lighMode = ThemeData(
   brightness: Brightness.light,
   colorScheme: ColorScheme.light(
     surface: ColorsConstants.lightBackground,
+    surfaceContainer: ColorsConstants.white,
     primary: ColorsConstants.blue750,
   ),
   textSelectionTheme: TextSelectionThemeData(

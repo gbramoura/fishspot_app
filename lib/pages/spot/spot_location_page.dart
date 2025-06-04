@@ -186,6 +186,7 @@ class _SpotLocationPageState extends State<SpotLocationPage> {
           _navigationService.pop(context);
         },
       ),
+      titleSpacing: 0,
       title: Row(
         children: [
           Text(

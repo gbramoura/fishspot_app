@@ -200,6 +200,7 @@ class _SpotAddFishPageState extends State<SpotAddFishPage> {
 
   _renderAppBar(dynamic context) {
     return AppBar(
+      titleSpacing: 0,
       backgroundColor: Theme.of(context).colorScheme.surface,
       surfaceTintColor: Theme.of(context).colorScheme.surface,
       shadowColor: ColorsConstants.gray350,

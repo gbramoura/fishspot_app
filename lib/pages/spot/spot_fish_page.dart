@@ -245,6 +245,7 @@ class _SpotFishPageState extends State<SpotFishPage> {
 
   _renderAppBar(BuildContext context) {
     return AppBar(
+      titleSpacing: 0,
       shadowColor: ColorsConstants.gray350,
       title: Row(
         children: [

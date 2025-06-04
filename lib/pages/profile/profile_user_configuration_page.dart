@@ -90,6 +90,7 @@ class _ProfileUserConfigurationPageState
 
   _renderAppBar(dynamic context) {
     return AppBar(
+      titleSpacing: 0,
       backgroundColor: Colors.transparent,
       title: Row(
         children: [

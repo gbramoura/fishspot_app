@@ -1,13 +1,14 @@
-import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
-import 'package:fishspot_app/extensions/string_extension.dart';
+import 'package:fishspot_app/enums/spot_difficulty_type.dart';
+import 'package:fishspot_app/enums/spot_risk_type.dart';
 import 'package:fishspot_app/models/spot.dart';
-import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/providers/settings_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
 import 'package:fishspot_app/services/image_service.dart';
-import 'package:fishspot_app/services/spot_display_service.dart';
+import 'package:fishspot_app/widgets/fish_card.dart';
+import 'package:fishspot_app/widgets/location_card.dart';
+import 'package:fishspot_app/widgets/risk_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -77,125 +78,130 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return LoadingPage();
+      return _loadingContent();
     }
 
     return Scaffold(
-      appBar: _renderAppBar(),
-      body: SafeArea(
+      appBar: _appBar(),
+      body: Container(
+        padding: EdgeInsets.only(left: 20, right: 20),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
+          ),
+        ),
+        child: CustomScrollView(
+          slivers: _render(),
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _render() {
+    return [
+      _header(),
+      _margin(25),
+      _images(),
+      _margin(25),
+      _sectionHeader('Peixes'),
+      _margin(15),
+      _fishes(),
+      _margin(15),
+      _sectionHeader('Localização'),
+      _margin(15),
+      _location(),
+      _margin(15),
+      _sectionHeader('Riscos'),
+      _margin(15),
+      _risk(),
+      _margin(25),
+    ];
+  }
+
+  _header() {
+    return SliverToBoxAdapter(
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _spot?.title ?? '',
+                  softWrap: true,
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.titleLarge?.color,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 24,
+                  ),
+                ),
+                SizedBox(height: 5),
+                Text(
+                  DateFormat('dd/MM/yyyy').format(
+                    _spot?.date ?? DateTime(0, 0, 0),
+                  ),
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.titleLarge?.color,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _images() => (_spot?.images ?? []).isEmpty ? _emptyImages() : _filledImages();
+
+  _emptyImages() {
+    return SliverToBoxAdapter(
+      child: SizedBox(
+        height: 300,
+        width: double.infinity,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Flexible(flex: 1, child: _renderHeader(context)),
-            Flexible(flex: 6, child: _renderBody(context)),
-            Flexible(flex: 5, child: _renderTabs(context)),
+            Icon(
+              Icons.no_photography,
+              color: Theme.of(context).textTheme.headlineLarge?.color,
+              size: 90,
+            ),
+            Text(
+              'Nenhuma Imagem \n registrada',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Theme.of(context).textTheme.headlineLarge?.color,
+                fontSize: 18,
+                fontWeight: FontWeight.w400,
+              ),
+            )
           ],
         ),
       ),
     );
   }
 
-  _renderHeader(dynamic context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            _spot?.title ?? '',
-            softWrap: true,
-            style: TextStyle(
-              color: Theme.of(context).textTheme.titleLarge?.color,
-              fontWeight: FontWeight.w600,
-              fontSize: 18,
-            ),
-          ),
-          SizedBox(height: 5),
-          Row(
-            children: [
-              Text(
-                'Dia da Pesca: ',
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.titleLarge?.color,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                ),
-              ),
-              Text(
-                DateFormat('dd/MM/yyyy').format(
-                  _spot?.date ?? DateTime(0, 0, 0),
-                ),
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.titleLarge?.color,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
-              )
-            ],
-          )
-        ],
+  _filledImages() {
+    return SliverGrid(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: _gridAxisCount(_spot?.images.length ?? 0),
+        crossAxisSpacing: 5.0,
+        mainAxisSpacing: 5.0,
+        childAspectRatio: 1.0,
       ),
-    );
-  }
+      delegate: SliverChildBuilderDelegate(
+        (BuildContext context, int index) {
+          final image = _spot?.images[index];
 
-  _renderBody(dynamic context) {
-    if ((_spot?.images ?? []).isEmpty) {
-      return _renderEmptyImages();
-    }
-    return _renderImages();
-  }
-
-  _renderEmptyImages() {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: 120),
-          Center(
-            child: Column(
-              children: [
-                Icon(
-                  Icons.no_photography,
-                  color: Theme.of(context).textTheme.headlineLarge?.color,
-                  size: 90,
-                ),
-                Text(
-                  'Nenhuma Imagem \n registrada',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.headlineLarge?.color,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w400,
-                  ),
-                )
-              ],
-            ),
-          ),
-          SizedBox(height: 120),
-        ],
-      ),
-    );
-  }
-
-  _renderImages() {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-      child: GridView.builder(
-        shrinkWrap: true,
-        primary: true,
-        scrollDirection: Axis.horizontal,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: _gridAxisCount(_spot?.images.length ?? 0),
-          crossAxisSpacing: 10.0,
-          mainAxisSpacing: 10.0,
-          childAspectRatio: 1.0,
-        ),
-        itemCount: _spot?.images.length,
-        itemBuilder: (BuildContext context, int index) {
-          var image = _spot?.images[index];
+          if (image == null) {
+            return SizedBox.shrink();
+          }
 
           return Container(
             decoration: BoxDecoration(
@@ -209,46 +215,90 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
             ),
           );
         },
+        childCount: _spot?.images.length ?? 0,
       ),
     );
   }
 
-  _renderTabs(dynamic context) {
-    return DefaultTabController(
-      length: 3,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          TabBar(
-            dividerColor: Colors.transparent,
-            indicatorColor: Theme.of(context).textTheme.titleLarge?.color,
-            labelColor: Theme.of(context).textTheme.titleLarge?.color,
-            labelStyle: TextStyle(
-              color: Theme.of(context).textTheme.titleLarge?.color,
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
+  _fishes() {
+    if (_spot == null || _spot!.fishes.isEmpty) {
+      return SliverToBoxAdapter(
+        child: Center(
+          child: Text('Nenhum peixe registrado.'),
+        ),
+      );
+    }
+
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          final fish = _spot!.fishes[index];
+          return Padding(
+            padding: EdgeInsets.only(bottom: 5),
+            child: FishCard(
+              name: fish.name,
+              unitMeasure: fish.unitMeasure,
+              weight: fish.weight,
+              lures: fish.lures,
             ),
-            overlayColor: WidgetStateProperty.all<Color>(
-              Theme.of(context)
-                      .textTheme
-                      .headlineLarge!
-                      .color
-                      ?.withValues(alpha: 0.1) ??
-                  ColorsConstants.gray50,
-            ),
-            tabs: [
-              Tab(text: 'Espécies'),
-              Tab(text: 'Dificuldade'),
-              Tab(text: 'Riscos'),
-            ],
-          ),
-          Expanded(
-            child: TabBarView(
-              children: [
-                _renderFishesTab(),
-                _renderLocationTab(),
-                _renderRiskTab(),
-              ],
+          );
+        },
+        childCount: _spot!.fishes.length,
+      ),
+    );
+  }
+
+  _location() {
+    var observation = 'Nenhuma observação foi incluida';
+    var rate = SpotDifficultyType.veryEasy;
+
+    if (_spot != null && _spot!.locationDifficulty.observation.isNotEmpty) {
+      observation = _spot!.locationDifficulty.observation;
+    }
+
+    if (_spot != null) {
+      rate = _spot!.locationDifficulty.rate;
+    }
+
+    return SliverToBoxAdapter(
+      child: LocationCard(observation: observation, rate: rate),
+    );
+  }
+
+  _risk() {
+    var observation = 'Nenhuma observação foi incluida';
+    var rate = SpotRiskType.veryLow;
+
+    if (_spot != null && _spot!.locationRisk.observation.isNotEmpty) {
+      observation = _spot!.locationRisk.observation;
+    }
+
+    if (_spot != null) {
+      rate = _spot!.locationRisk.rate;
+    }
+
+    return SliverToBoxAdapter(
+      child: RiskCard(observation: observation, rate: rate),
+    );
+  }
+
+  _loadingContent() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
+      ),
+      child: CustomScrollView(
+        slivers: [
+          _margin(80),
+          SliverToBoxAdapter(
+            child: Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).textTheme.headlineLarge?.color,
+              ),
             ),
           ),
         ],
@@ -256,236 +306,27 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
     );
   }
 
-  _renderFishesTab() {
-    if (_spot == null || _spot!.fishes.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Center(child: Text('Nenhum peixe registrado.')),
-      );
-    }
-
-    return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(20, 15, 20, 20),
-      scrollDirection: Axis.vertical,
-      primary: false,
-      shrinkWrap: true,
-      itemCount: _spot!.fishes.length,
-      itemBuilder: (context, index) {
-        final fish = _spot!.fishes[index];
-        return Container(
-          margin: const EdgeInsets.only(bottom: 10),
-          padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
-          decoration: BoxDecoration(
-            color: Theme.of(context).textTheme.headlineLarge?.color,
-            border: Border.all(
-              color: ColorsConstants.gray50,
-              width: 1.0,
-            ),
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    fish.name.toTitleCase,
-                    style: TextStyle(
-                      color: Theme.of(context).textTheme.labelMedium?.color,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                    ),
-                  ),
-                  SizedBox(width: 5),
-                  Text(
-                    '●',
-                    style: TextStyle(
-                      color: Theme.of(context).textTheme.labelMedium?.color,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 10,
-                    ),
-                  ),
-                  SizedBox(width: 5),
-                  Text(
-                    '${fish.weight} ${SpotDisplayService.getUnitMeasure(fish.unitMeasure)}',
-                    style: TextStyle(
-                      color: Theme.of(context).textTheme.labelMedium?.color,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                    ),
-                  )
-                ],
-              ),
-              Text(
-                fish.lures.join(', ').toTitleCase,
-                softWrap: true,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.labelMedium?.color,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 12,
-                ),
-              )
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  _renderLocationTab() {
-    var obs = 'Nenhuma observação foi incluida';
-    if (_spot != null && _spot!.locationDifficulty.observation.isNotEmpty) {
-      obs = _spot!.locationDifficulty.observation;
-    }
-
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-      child: Expanded(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Flexible(
-              flex: 1,
-              child: Text(
-                'Descrição sobre a dificuldade de chegar até o local',
-                softWrap: true,
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                  color: Theme.of(context).textTheme.titleLarge?.color,
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            Flexible(
-              flex: 6,
-              fit: FlexFit.tight,
-              child: Text(
-                obs,
-                softWrap: true,
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                  color: Theme.of(context).textTheme.headlineMedium?.color,
-                ),
-              ),
-            ),
-            Flexible(
-              flex: 1,
-              child: _renderDifficultyText(),
-            )
-          ],
+  _sectionHeader(String label) {
+    return SliverToBoxAdapter(
+      child: Text(
+        label,
+        softWrap: true,
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 22,
+          color: Theme.of(context).textTheme.titleLarge?.color,
         ),
       ),
     );
   }
 
-  _renderRiskTab() {
-    var obs = 'Nenhuma observação foi incluida';
-    if (_spot != null && _spot!.locationRisk.observation.isNotEmpty) {
-      obs = _spot!.locationRisk.observation;
-    }
+  _margin(double size) => SliverToBoxAdapter(child: SizedBox(height: size));
 
-    return Padding(
-      padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-      child: Expanded(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Flexible(
-              flex: 1,
-              child: Text(
-                'Descrição dos riscos encontrados',
-                softWrap: true,
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                  color: Theme.of(context).textTheme.titleLarge?.color,
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            Flexible(
-              flex: 6,
-              fit: FlexFit.tight,
-              child: Text(
-                obs,
-                softWrap: true,
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                  color: Theme.of(context).textTheme.headlineMedium?.color,
-                ),
-              ),
-            ),
-            Flexible(
-              flex: 1,
-              child: _renderRiskText(),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  _renderRiskText() {
-    return Row(
-      children: [
-        Text(
-          'Nivel de Risco: ',
-          style: TextStyle(
-            color: Theme.of(context).textTheme.titleLarge?.color,
-            fontWeight: FontWeight.w400,
-            fontSize: 14,
-          ),
-        ),
-        Text(
-          SpotDisplayService.getRiskText(_spot?.locationRisk.rate),
-          style: TextStyle(
-            color: SpotDisplayService.getRiskColor(
-                _spot?.locationRisk.rate, context),
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
-          ),
-        )
-      ],
-    );
-  }
-
-  _renderDifficultyText() {
-    return Row(
-      children: [
-        Text(
-          'Dificuldade de Chegada: ',
-          style: TextStyle(
-            color: Theme.of(context).textTheme.titleLarge?.color,
-            fontWeight: FontWeight.w400,
-            fontSize: 14,
-          ),
-        ),
-        Text(
-          SpotDisplayService.getDifficultyText(_spot?.locationDifficulty.rate),
-          style: TextStyle(
-            color: SpotDisplayService.getDifficultyColor(
-              _spot?.locationDifficulty.rate,
-              context,
-            ),
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
-          ),
-        )
-      ],
-    );
-  }
-
-  _renderAppBar() {
+  _appBar() {
     return AppBar(
-      backgroundColor: Colors.transparent,
+      titleSpacing: 0,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      surfaceTintColor: Theme.of(context).colorScheme.surface,
       title: Row(
         children: [
           Text(
@@ -498,15 +339,6 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
           ),
         ],
       ),
-      actions: [
-        IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.more_horiz),
-          color: Theme.of(context).textTheme.headlineLarge?.color,
-          iconSize: 32,
-        ),
-        SizedBox(width: 10)
-      ],
     );
   }
 }

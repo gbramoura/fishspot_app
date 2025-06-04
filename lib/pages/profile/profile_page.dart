@@ -219,24 +219,66 @@ class _ProfilePageState extends State<ProfilePage> {
             Expanded(
               child: Column(
                 children: [
-                  Text(_userProfile.spotDetails?.registries.toString() ?? ""),
-                  Text('Registros'),
+                  Text(
+                    _userProfile.spotDetails?.registries.toString() ?? "",
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.headlineLarge?.color,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(
+                    'Registros',
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.headlineLarge?.color,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
                 ],
               ),
             ),
             Expanded(
               child: Column(
                 children: [
-                  Text(_userProfile.spotDetails?.fishes.toString() ?? ""),
-                  Text('Peixes'),
+                  Text(
+                    _userProfile.spotDetails?.fishes.toString() ?? "",
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.headlineLarge?.color,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(
+                    'Peixes',
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.headlineLarge?.color,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
                 ],
               ),
             ),
             Expanded(
               child: Column(
                 children: [
-                  Text(_userProfile.spotDetails?.lures.toString() ?? ""),
-                  Text('Iscas'),
+                  Text(
+                    _userProfile.spotDetails?.lures.toString() ?? "",
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.headlineLarge?.color,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(
+                    'Iscas',
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.headlineLarge?.color,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
                 ],
               ),
             ),

@@ -239,6 +239,9 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
 
   _renderAppBar(dynamic context) {
     return AppBar(
+      titleSpacing: 0,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      surfaceTintColor: Theme.of(context).colorScheme.surface,
       shadowColor: ColorsConstants.gray350,
       title: Row(
         children: [

@@ -7,6 +7,7 @@ ThemeData darkMode = ThemeData(
   brightness: Brightness.dark,
   colorScheme: ColorScheme.dark(
     surface: ColorsConstants.darkBackground,
+    surfaceContainer: ColorsConstants.gray350,
     primary: ColorsConstants.green250,
   ),
   textSelectionTheme: TextSelectionThemeData(

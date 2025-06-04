@@ -239,6 +239,7 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
     return AppBar(
       shadowColor: ColorsConstants.gray350,
       surfaceTintColor: Theme.of(context).colorScheme.surface,
+      titleSpacing: 0,
       title: Row(
         children: [
           Text(

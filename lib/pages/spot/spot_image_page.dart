@@ -214,6 +214,7 @@ class _SpotImagePageState extends State<SpotImagePage> {
     return AppBar(
       backgroundColor: Theme.of(context).colorScheme.surface,
       surfaceTintColor: Theme.of(context).colorScheme.surface,
+      titleSpacing: 0,
       title: Row(
         children: [
           Text(
