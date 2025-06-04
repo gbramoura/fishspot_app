@@ -1,6 +1,5 @@
-import 'package:fishspot_app/components/custom_button.dart';
-import 'package:fishspot_app/components/custom_dropdown_button.dart';
-import 'package:fishspot_app/components/custom_text_form_field.dart';
+import 'package:fishspot_app/widgets/custom_button.dart';
+import 'package:fishspot_app/widgets/custom_dropdown_button.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/enums/spot_difficulty_type.dart';
 import 'package:fishspot_app/enums/spot_risk_type.dart';
@@ -9,6 +8,7 @@ import 'package:fishspot_app/pages/spot/spot_image_page.dart';
 import 'package:fishspot_app/providers/spot_data_provider.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:fishspot_app/services/spot_display_service.dart';
+import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -162,11 +162,11 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
             SizedBox(
               height: 120,
               width: double.infinity,
-              child: CustomTextFormField(
+              child: TextInput(
+                label: 'Observação',
                 validator: _riskObservationValidator,
                 controller: _riskObservationController,
                 textInputType: TextInputType.multiline,
-                hintText: 'Observação',
                 expands: true,
                 maxLines: null,
               ),
@@ -201,11 +201,11 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
             SizedBox(
               height: 120,
               width: double.infinity,
-              child: CustomTextFormField(
+              child: TextInput(
+                label: 'Observação',
                 validator: _difficultyObservationValidator,
                 controller: _difficultyObservationController,
                 textInputType: TextInputType.multiline,
-                hintText: 'Observação',
                 expands: true,
                 maxLines: null,
               ),

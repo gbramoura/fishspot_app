@@ -31,7 +31,7 @@ class _AuthPageState extends State<AuthPage> {
         return _callNavigator(RouteConstants.login);
       }
 
-      await _service.isAuth(token ?? '');
+      await _service.isAuth(token);
 
       if (mounted) {
         _callNavigator(RouteConstants.home);

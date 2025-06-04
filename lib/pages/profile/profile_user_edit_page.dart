@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:fishspot_app/components/custom_alert_dialog.dart';
-import 'package:fishspot_app/components/custom_button.dart';
-import 'package:fishspot_app/components/custom_circle_avatar.dart';
-import 'package:fishspot_app/components/custom_text_form_field.dart';
+import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
+import 'package:fishspot_app/widgets/custom_button.dart';
+import 'package:fishspot_app/widgets/custom_circle_avatar.dart';
+import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
@@ -272,34 +272,28 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 35),
-                CustomTextFormField(
+                TextInput(
+                  label: 'Name',
                   validator: _nameValidator,
                   controller: _nameController,
-                  hintText: 'Name',
-                  icon: Icon(
-                    Icons.person,
-                    color: Theme.of(context).iconTheme.color,
-                  ),
+                  icon: Icons.person,
                 ),
                 SizedBox(height: 20),
-                CustomTextFormField(
+                TextInput(
+                  label: 'Nome de usuário',
                   validator: _usernameValidator,
                   controller: _usernameController,
-                  hintText: 'Nome de usuário',
-                  icon: Icon(
-                    Icons.alternate_email,
-                    color: Theme.of(context).iconTheme.color,
-                  ),
+                  icon: Icons.alternate_email,
                 ),
                 SizedBox(height: 20),
                 SizedBox(
                   height: 120,
                   width: double.infinity,
-                  child: CustomTextFormField(
+                  child: TextInput(
+                    label: 'Descrição',
                     validator: _descriptionValidator,
                     controller: _descriptionController,
                     textInputType: TextInputType.multiline,
-                    hintText: 'Descrição',
                     expands: true,
                     maxLines: null,
                   ),
@@ -327,23 +321,20 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
                   children: [
                     Flexible(
                       flex: 3,
-                      child: CustomTextFormField(
+                      child: TextInput(
+                        label: 'Rua',
                         validator: _streetValidator,
                         controller: _streetController,
-                        hintText: 'Rua',
-                        icon: Icon(
-                          Icons.home,
-                          color: Theme.of(context).iconTheme.color,
-                        ),
+                        icon: Icons.home,
                       ),
                     ),
                     SizedBox(width: 15),
                     Flexible(
                       flex: 1,
-                      child: CustomTextFormField(
+                      child: TextInput(
+                        label: 'N°',
                         validator: _numberValidator,
                         controller: _numberController,
-                        hintText: 'N°',
                       ),
                     ),
                   ],
@@ -354,27 +345,21 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
                   children: [
                     Flexible(
                       flex: 3,
-                      child: CustomTextFormField(
+                      child: TextInput(
+                        label: 'Bairro',
                         validator: _neighborhoodValidator,
                         controller: _neighborhoodController,
-                        hintText: 'Bairro',
-                        icon: Icon(
-                          Icons.fence,
-                          color: Theme.of(context).iconTheme.color,
-                        ),
+                        icon: Icons.fence,
                       ),
                     ),
                     SizedBox(width: 15),
                     Flexible(
                       flex: 2,
-                      child: CustomTextFormField(
+                      child: TextInput(
+                        label: 'CEP',
                         validator: _zipCodeValidator,
                         controller: _zipCodeController,
-                        hintText: 'CEP',
-                        icon: Icon(
-                          Icons.location_on,
-                          color: Theme.of(context).iconTheme.color,
-                        ),
+                        icon: Icons.location_on,
                       ),
                     ),
                   ],

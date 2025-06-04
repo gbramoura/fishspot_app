@@ -1,7 +1,7 @@
-import 'package:fishspot_app/components/custom_alert_dialog.dart';
-import 'package:fishspot_app/components/custom_button.dart';
-import 'package:fishspot_app/components/custom_text_button.dart';
-import 'package:fishspot_app/components/custom_text_form_field.dart';
+import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
+import 'package:fishspot_app/widgets/custom_button.dart';
+import 'package:fishspot_app/widgets/custom_text_button.dart';
+import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/exceptions/http_response_exception.dart';
 import 'package:fishspot_app/pages/password/validate_token_page.dart';
@@ -126,14 +126,11 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CustomTextFormField(
+          TextInput(
+            label: 'E-mail',
             validator: _mailValidator,
             controller: _mailController,
-            hintText: 'E-mail',
-            icon: Icon(
-              Icons.mail,
-              color: Theme.of(context).iconTheme.color,
-            ),
+            icon: Icons.mail,
           ),
           SizedBox(height: 45),
           CustomButton(

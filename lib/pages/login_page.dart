@@ -1,7 +1,7 @@
-import 'package:fishspot_app/components/custom_alert_dialog.dart';
-import 'package:fishspot_app/components/custom_button.dart';
-import 'package:fishspot_app/components/custom_text_button.dart';
-import 'package:fishspot_app/components/custom_text_form_field.dart';
+import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
+import 'package:fishspot_app/widgets/custom_button.dart';
+import 'package:fishspot_app/widgets/custom_text_button.dart';
+import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
@@ -26,7 +26,6 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
   final _formGlobalKey = GlobalKey<FormState>();
 
-  bool _passwordObscureText = true;
   bool _loadingHttpRequest = false;
 
   void _handleLogin() async {
@@ -66,12 +65,6 @@ class _LoginPageState extends State<LoginPage> {
         _loadingHttpRequest = false;
       });
     }
-  }
-
-  void _handlePressedPasswordObscureText() {
-    setState(() {
-      _passwordObscureText = !_passwordObscureText;
-    });
   }
 
   void _handleForgetPassword() {
@@ -172,29 +165,20 @@ class _LoginPageState extends State<LoginPage> {
                       Column(
                         children: [
                           SizedBox(height: 10),
-                          CustomTextFormField(
+                          TextInput(
+                            label: 'E-mail',
                             controller: _emailController,
                             validator: _handleEmailValidator,
-                            hintText: 'E-mail',
-                            icon: Icon(
-                              Icons.email,
-                              color: Theme.of(context).iconTheme.color,
-                            ),
+                            icon: Icons.email,
                           ),
                           SizedBox(height: 25),
-                          CustomTextFormField(
+                          TextInput(
+                            label: 'Senha',
                             controller: _passwordController,
-                            hintText: 'Senha',
                             validator: _handlePasswordValidator,
-                            obscureText: _passwordObscureText,
-                            icon: Icon(
-                              Icons.lock,
-                              color: Theme.of(context).iconTheme.color,
-                            ),
-                            actionIcon: IconButton(
-                              onPressed: _handlePressedPasswordObscureText,
-                              icon: _renderVisibleIcon(_passwordObscureText),
-                            ),
+                            icon: Icons.lock,
+                            obscureText: true,
+                            obscureTextAction: true,
                           ),
                         ],
                       ),
@@ -252,13 +236,6 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _renderVisibleIcon(bool isVisible) {
-    return Icon(
-      isVisible ? Icons.visibility : Icons.visibility_off,
-      color: Theme.of(context).iconTheme.color,
     );
   }
 }

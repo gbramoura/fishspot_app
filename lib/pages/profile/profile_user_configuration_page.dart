@@ -1,4 +1,4 @@
-import 'package:fishspot_app/components/custom_button.dart';
+import 'package:fishspot_app/widgets/custom_button.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';

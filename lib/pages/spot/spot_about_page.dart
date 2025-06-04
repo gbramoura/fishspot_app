@@ -1,6 +1,7 @@
-import 'package:fishspot_app/components/custom_alert_dialog.dart';
-import 'package:fishspot_app/components/custom_button.dart';
-import 'package:fishspot_app/components/custom_text_form_field.dart';
+import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
+import 'package:fishspot_app/widgets/custom_button.dart';
+import 'package:fishspot_app/widgets/date_input.dart';
+import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
@@ -119,24 +120,6 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
     });
   }
 
-  _handleDatePicker() async {
-    DateTime? date = await showDatePicker(
-      builder: (context, child) {
-        return _datePickerTheme(context, child);
-      },
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-
-    if (date != null) {
-      setState(() {
-        _dateController.text = DateFormat("dd/MM/yyyy").format(date);
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     if (_loading) {
@@ -186,28 +169,17 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
               ),
             ),
             SizedBox(height: 15),
-            CustomTextFormField(
+            TextInput(
+              label: 'Titulo',
               validator: _titleValidator,
               controller: _titleController,
-              textInputType: TextInputType.text,
-              hintText: 'Titulo',
-              icon: Icon(
-                Icons.description,
-                color: Theme.of(context).iconTheme.color,
-              ),
+              icon: Icons.description,
             ),
             SizedBox(height: 20),
-            CustomTextFormField(
+            DateInput(
+              label: 'Data do registro da pesca',
               controller: _dateController,
               validator: _dateValidator,
-              readonly: true,
-              hintText: 'Data do registro da pesca',
-              textInputType: TextInputType.datetime,
-              icon: Icon(
-                Icons.date_range,
-                color: Theme.of(context).iconTheme.color,
-              ),
-              onTap: _handleDatePicker,
             ),
             SizedBox(height: 25),
             Text(
@@ -231,11 +203,11 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
             SizedBox(
               height: 120,
               width: double.infinity,
-              child: CustomTextFormField(
+              child: TextInput(
+                label: 'Observação',
                 validator: _observationValidator,
                 controller: _observationController,
                 textInputType: TextInputType.multiline,
-                hintText: 'Observação',
                 expands: true,
                 maxLines: null,
               ),
@@ -278,21 +250,6 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _datePickerTheme(BuildContext context, Widget? child) {
-    return Theme(
-      data: Theme.of(context).copyWith(
-        colorScheme: ColorScheme.light(
-          primary: Theme.of(context).colorScheme.primary,
-          onPrimary:
-              Theme.of(context).textTheme.labelMedium?.color ?? Colors.black,
-          onSurface:
-              Theme.of(context).textTheme.headlineLarge?.color ?? Colors.black,
-        ),
-      ),
-      child: child!,
     );
   }
 

@@ -1,4 +1,4 @@
-import 'package:fishspot_app/components/custom_bottom_navigation_bar.dart';
+import 'package:fishspot_app/widgets/custom_bottom_navigation_bar.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/map/map_page.dart';

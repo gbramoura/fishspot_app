@@ -1,4 +1,4 @@
-import 'package:fishspot_app/components/custom_button.dart';
+import 'package:fishspot_app/widgets/custom_button.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/extensions/string_extension.dart';
 import 'package:fishspot_app/pages/spot/spot_about_page.dart';

@@ -1,7 +1,7 @@
-import 'package:fishspot_app/components/custom_alert_dialog.dart';
-import 'package:fishspot_app/components/custom_button.dart';
-import 'package:fishspot_app/components/custom_text_button.dart';
-import 'package:fishspot_app/components/custom_text_form_field.dart';
+import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
+import 'package:fishspot_app/widgets/custom_button.dart';
+import 'package:fishspot_app/widgets/custom_text_button.dart';
+import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/exceptions/http_response_exception.dart';
@@ -23,8 +23,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   final _confirmPasswordController = TextEditingController();
   final _formGlobalKey = GlobalKey<FormState>();
 
-  bool _passwordObscureText = true;
-  bool _confirmPasswordObscureText = true;
   bool _loading = false;
 
   _handleSend() async {
@@ -94,18 +92,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     return null;
   }
 
-  _handlePressedPasswordObscureText() {
-    setState(() {
-      _passwordObscureText = !_passwordObscureText;
-    });
-  }
-
-  _handlePressedConfirmPasswordObscureText() {
-    setState(() {
-      _confirmPasswordObscureText = !_confirmPasswordObscureText;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     var header = _renderHeader(context);
@@ -162,34 +148,22 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CustomTextFormField(
+          TextInput(
+            label: 'Senha',
             validator: _passwordValidator,
             controller: _passwordController,
-            hintText: 'Senha',
-            obscureText: _passwordObscureText,
-            icon: Icon(
-              Icons.lock,
-              color: Theme.of(context).iconTheme.color,
-            ),
-            actionIcon: IconButton(
-              onPressed: _handlePressedPasswordObscureText,
-              icon: _renderVisibleIcon(_passwordObscureText),
-            ),
+            icon: Icons.lock,
+            obscureText: true,
+            obscureTextAction: true,
           ),
           SizedBox(height: 15),
-          CustomTextFormField(
+          TextInput(
+            label: 'Confirmar senha',
             validator: _confirmPasswordValidator,
             controller: _confirmPasswordController,
-            hintText: 'Confirmar senha',
-            obscureText: _confirmPasswordObscureText,
-            icon: Icon(
-              Icons.lock,
-              color: Theme.of(context).iconTheme.color,
-            ),
-            actionIcon: IconButton(
-              onPressed: _handlePressedConfirmPasswordObscureText,
-              icon: _renderVisibleIcon(_confirmPasswordObscureText),
-            ),
+            icon: Icons.lock,
+            obscureText: true,
+            obscureTextAction: true,
           ),
           SizedBox(height: 45),
           CustomButton(
@@ -243,13 +217,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           ),
         );
       },
-    );
-  }
-
-  _renderVisibleIcon(bool isVisible) {
-    return Icon(
-      isVisible ? Icons.visibility : Icons.visibility_off,
-      color: Theme.of(context).iconTheme.color,
     );
   }
 }

@@ -1,7 +1,7 @@
-import 'package:fishspot_app/components/custom_alert_dialog.dart';
-import 'package:fishspot_app/components/custom_button.dart';
-import 'package:fishspot_app/components/custom_text_button.dart';
-import 'package:fishspot_app/components/custom_text_form_field.dart';
+import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
+import 'package:fishspot_app/widgets/custom_button.dart';
+import 'package:fishspot_app/widgets/custom_text_button.dart';
+import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/exceptions/http_response_exception.dart';
@@ -145,16 +145,13 @@ class _ValidateTokenPageState extends State<ValidateTokenPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CustomTextFormField(
-            maxLength: 5,
+          TextInput(
+            label: 'Token',
             validator: _tokenValidator,
             controller: _tokenController,
             textInputType: TextInputType.number,
-            hintText: 'Token',
-            icon: Icon(
-              Icons.numbers,
-              color: Theme.of(context).iconTheme.color,
-            ),
+            icon: Icons.numbers,
+            maxLength: 5,
           ),
           SizedBox(height: 45),
           CustomButton(

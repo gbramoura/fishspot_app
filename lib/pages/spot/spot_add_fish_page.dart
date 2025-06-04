@@ -1,6 +1,6 @@
-import 'package:fishspot_app/components/custom_button.dart';
-import 'package:fishspot_app/components/custom_dropdown_button.dart';
-import 'package:fishspot_app/components/custom_text_form_field.dart';
+import 'package:fishspot_app/widgets/custom_button.dart';
+import 'package:fishspot_app/widgets/custom_dropdown_button.dart';
+import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/enums/unit_measure_type.dart';
 import 'package:fishspot_app/models/spot_fish.dart';
@@ -117,14 +117,11 @@ class _SpotAddFishPageState extends State<SpotAddFishPage> {
               ),
             ),
             SizedBox(height: 10),
-            CustomTextFormField(
+            TextInput(
+              label: 'Especie',
               validator: _nameValidator,
               controller: _nameController,
-              hintText: 'Especie',
-              icon: Icon(
-                Icons.alternate_email,
-                color: Theme.of(context).iconTheme.color,
-              ),
+              icon: Icons.alternate_email,
             ),
             SizedBox(height: 20),
             Row(
@@ -132,15 +129,12 @@ class _SpotAddFishPageState extends State<SpotAddFishPage> {
               children: [
                 Flexible(
                   flex: 3,
-                  child: CustomTextFormField(
+                  child: TextInput(
+                    label: 'Peso',
                     validator: _weightValidator,
                     controller: _weightController,
                     textInputType: TextInputType.number,
-                    hintText: 'Peso',
-                    icon: Icon(
-                      Icons.fitness_center,
-                      color: Theme.of(context).iconTheme.color,
-                    ),
+                    icon: Icons.fitness_center,
                   ),
                 ),
                 SizedBox(width: 15),
@@ -175,10 +169,10 @@ class _SpotAddFishPageState extends State<SpotAddFishPage> {
               ),
             ),
             SizedBox(height: 10),
-            CustomTextFormField(
+            TextInput(
+              label: 'Isca',
               controller: _lureController,
               validator: _lureValidator,
-              hintText: 'Isca',
             ),
             SizedBox(height: 25),
           ],

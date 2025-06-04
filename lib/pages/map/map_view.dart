@@ -1,4 +1,4 @@
-import 'package:fishspot_app/components/persistent_header_delegate.dart';
+import 'package:fishspot_app/widgets/persistent_header_delegate.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/extensions/string_extension.dart';
@@ -78,8 +78,8 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
       var spot = Spot.fromJson(resp.response);
 
       setState(() {
-        _spotId = widget.spotId;
         _spot = spot;
+        _spotId = widget.spotId;
       });
     } catch (e) {
       if (mounted) {
@@ -127,13 +127,18 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
       _renderGrabSliver(),
       _renderHeaderSliver(),
       _renderBodySliver(),
-      _renderDivider(), // divisor
+
+      // fishs
+      _sectionHeader('Peixes'),
       _renderFishes(),
-      _renderDivider(), // divisor
+
+      // Location
+      _sectionHeader('Localização'),
       _renderLocation(),
-      _renderDivider(), // divisor
+
+      // Risk
+      _sectionHeader('Riscos'),
       _renderRisk(),
-      _renderDivider(), // divisor
       SliverToBoxAdapter(child: SizedBox(height: 25)),
     ];
   }
@@ -422,16 +427,6 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
       sliver: SliverList.list(
         children: [
           Text(
-            'Localização',
-            softWrap: true,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
-              color: Theme.of(context).textTheme.titleLarge?.color,
-            ),
-          ),
-          SizedBox(height: 10),
-          Text(
             obs,
             softWrap: true,
             style: TextStyle(
@@ -486,16 +481,6 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
       sliver: SliverList.list(
         children: [
           Text(
-            'Riscos',
-            softWrap: true,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
-              color: Theme.of(context).textTheme.titleLarge?.color,
-            ),
-          ),
-          SizedBox(height: 10),
-          Text(
             obs,
             softWrap: true,
             style: TextStyle(
@@ -536,12 +521,6 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
     );
   }
 
-  _renderDivider() {
-    return SliverToBoxAdapter(
-      child: Divider(color: Theme.of(context).iconTheme.color!.withAlpha(250)),
-    );
-  }
-
   _renderLoadingSpinner() {
     return Container(
       decoration: BoxDecoration(
@@ -564,6 +543,23 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  _sectionHeader(String label) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 10),
+        child: Text(
+          label,
+          softWrap: true,
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 22,
+            color: Theme.of(context).textTheme.titleLarge?.color,
+          ),
+        ),
       ),
     );
   }

@@ -1,7 +1,7 @@
-import 'package:fishspot_app/components/custom_alert_dialog.dart';
-import 'package:fishspot_app/components/custom_button.dart';
-import 'package:fishspot_app/components/custom_text_button.dart';
-import 'package:fishspot_app/components/custom_text_form_field.dart';
+import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
+import 'package:fishspot_app/widgets/custom_button.dart';
+import 'package:fishspot_app/widgets/custom_text_button.dart';
+import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/exceptions/http_response_exception.dart';
@@ -24,8 +24,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final _confirmPasswordController = TextEditingController();
   final _formGlobalKey = GlobalKey<FormState>();
 
-  bool _passwordObscureText = true;
-  bool _confirmPasswordObscureText = true;
   bool _loadingHttpRequest = false;
 
   void _handleRegisterButton() async {
@@ -54,18 +52,6 @@ class _RegisterPageState extends State<RegisterPage> {
         _loadingHttpRequest = false;
       });
     }
-  }
-
-  void _handlePressedPasswordObscureText() {
-    setState(() {
-      _passwordObscureText = !_passwordObscureText;
-    });
-  }
-
-  void _handlePressedConfirmPasswordObscureText() {
-    setState(() {
-      _confirmPasswordObscureText = !_confirmPasswordObscureText;
-    });
   }
 
   String? _handleNameValidator(String? value) {
@@ -189,56 +175,37 @@ class _RegisterPageState extends State<RegisterPage> {
                   children: [
                     Column(
                       children: [
-                        CustomTextFormField(
+                        TextInput(
+                          label: 'Name',
                           controller: _usernameController,
-                          hintText: 'Name',
                           validator: _handleNameValidator,
-                          icon: Icon(
-                            Icons.person,
-                            color: Theme.of(context).iconTheme.color,
-                          ),
+                          icon: Icons.person,
                         ),
                         SizedBox(height: 25),
-                        CustomTextFormField(
+                        TextInput(
+                          label: 'E-mail',
                           controller: _emailController,
-                          hintText: 'E-mail',
                           validator: _handleMailValidator,
                           textInputType: TextInputType.emailAddress,
-                          icon: Icon(
-                            Icons.email,
-                            color: Theme.of(context).iconTheme.color,
-                          ),
+                          icon: Icons.email,
                         ),
                         SizedBox(height: 25),
-                        CustomTextFormField(
+                        TextInput(
+                          label: 'Senha',
                           controller: _passwordController,
-                          hintText: 'Senha',
                           validator: _handlePasswordValidator,
-                          obscureText: _passwordObscureText,
-                          icon: Icon(
-                            Icons.lock,
-                            color: Theme.of(context).iconTheme.color,
-                          ),
-                          actionIcon: IconButton(
-                            onPressed: _handlePressedPasswordObscureText,
-                            icon: _renderVisibleIcon(_passwordObscureText),
-                          ),
+                          icon: Icons.lock,
+                          obscureText: true,
+                          obscureTextAction: true,
                         ),
                         SizedBox(height: 25),
-                        CustomTextFormField(
+                        TextInput(
+                          label: 'Confirmar Senha',
                           controller: _confirmPasswordController,
-                          hintText: 'Confirmar Senha',
                           validator: _handleConfirmPasswordValidator,
-                          obscureText: _confirmPasswordObscureText,
-                          icon: Icon(
-                            Icons.lock,
-                            color: Theme.of(context).iconTheme.color,
-                          ),
-                          actionIcon: IconButton(
-                            onPressed: _handlePressedConfirmPasswordObscureText,
-                            icon:
-                                _renderVisibleIcon(_confirmPasswordObscureText),
-                          ),
+                          icon: Icons.lock,
+                          obscureText: true,
+                          obscureTextAction: true,
                         ),
                       ],
                     ),
@@ -283,13 +250,6 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _renderVisibleIcon(bool isVisible) {
-    return Icon(
-      isVisible ? Icons.visibility : Icons.visibility_off,
-      color: Theme.of(context).iconTheme.color,
     );
   }
 }
