@@ -1,4 +1,4 @@
-import 'package:fishspot_app/widgets/custom_button.dart';
+import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/widgets/custom_dropdown_button.dart';
 import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
@@ -187,7 +187,7 @@ class _SpotAddFishPageState extends State<SpotAddFishPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          CustomButton(
+          Button(
             label: "Confirmar",
             onPressed: _handleNextButton,
             fixedSize: Size(182, 48),

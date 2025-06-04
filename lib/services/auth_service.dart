@@ -1,5 +1,5 @@
 import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
-import 'package:fishspot_app/widgets/custom_button.dart';
+import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
@@ -72,7 +72,7 @@ class AuthService {
           type: CustomDialogAlertType.warn,
           title: title,
           message: message,
-          button: CustomButton(
+          button: Button(
             label: 'Ok',
             fixedSize: Size(double.infinity, 48),
             onPressed: () {
@@ -96,7 +96,7 @@ class AuthService {
           type: CustomDialogAlertType.error,
           title: title,
           message: message,
-          button: CustomButton(
+          button: Button(
             label: 'Ok',
             fixedSize: Size(double.infinity, 48),
             onPressed: () {

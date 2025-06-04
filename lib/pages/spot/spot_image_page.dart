@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
-import 'package:fishspot_app/widgets/custom_button.dart';
+import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/models/spot_image.dart';
@@ -198,7 +198,7 @@ class _SpotImagePageState extends State<SpotImagePage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          CustomButton(
+          Button(
             label: images.isEmpty ? "Pular" : "Proximo",
             onPressed: () => _handleNextButton(context),
             fixedSize: Size(182, 48),
@@ -244,7 +244,7 @@ class _SpotImagePageState extends State<SpotImagePage> {
           type: CustomDialogAlertType.warn,
           title: 'Imagens com Problemas',
           message: message,
-          button: CustomButton(
+          button: Button(
             label: 'Ok',
             fixedSize: Size(double.infinity, 48),
             onPressed: () {

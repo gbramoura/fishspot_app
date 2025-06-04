@@ -1,4 +1,4 @@
-import 'package:fishspot_app/widgets/custom_button.dart';
+import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/widgets/custom_circle_avatar.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
@@ -242,12 +242,12 @@ class _ProfilePageState extends State<ProfilePage> {
         SizedBox(height: 20),
         Padding(
           padding: EdgeInsets.fromLTRB(22, 0, 22, 0),
-          child: CustomButton(
+          child: Button(
             label: 'Editar Perfil',
+            fixedSize: Size(double.maxFinite, 38),
             onPressed: () {
               NavigationService.pushNamed(context, RouteConstants.editUser);
             },
-            fixedSize: Size(double.maxFinite, 38),
           ),
         ),
         SizedBox(height: 5),

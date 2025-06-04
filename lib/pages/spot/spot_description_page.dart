@@ -1,4 +1,4 @@
-import 'package:fishspot_app/widgets/custom_button.dart';
+import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/widgets/custom_dropdown_button.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/enums/spot_difficulty_type.dart';
@@ -223,7 +223,7 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          CustomButton(
+          Button(
             label: "Proximo",
             onPressed: _handleNextButton,
             fixedSize: Size(182, 48),
@@ -236,8 +236,6 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
   _renderAppBar(dynamic context) {
     return AppBar(
       shadowColor: ColorsConstants.gray350,
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      foregroundColor: Theme.of(context).colorScheme.surface,
       surfaceTintColor: Theme.of(context).colorScheme.surface,
       title: Row(
         children: [

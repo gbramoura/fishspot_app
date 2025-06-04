@@ -1,4 +1,4 @@
-import 'package:fishspot_app/widgets/custom_button.dart';
+import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
 import 'package:flutter/material.dart';
@@ -75,7 +75,7 @@ class _ProfileUserConfigurationPageState
               ),
             ),
             SizedBox(height: 50),
-            CustomButton(
+            Button(
               label: 'Encerrar Sessão',
               onPressed: _handleLogout,
               fixedSize: Size(160, 48),

@@ -1,5 +1,5 @@
 import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
-import 'package:fishspot_app/widgets/custom_button.dart';
+import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/widgets/custom_text_button.dart';
 import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
@@ -100,7 +100,7 @@ class _RegisterPageState extends State<RegisterPage> {
           title: 'Registrado com Sucesso',
           message:
               'Seus dados foram registrados com sucesso sendo possível realizar a autenticação.',
-          button: CustomButton(
+          button: Button(
             label: 'Ok',
             fixedSize: Size(double.infinity, 48),
             onPressed: () {
@@ -130,7 +130,7 @@ class _RegisterPageState extends State<RegisterPage> {
               : CustomDialogAlertType.error,
           title: code == 400 ? warnTitle : errorTitle,
           message: code == 400 ? warnMessage : errorMessage,
-          button: CustomButton(
+          button: Button(
             label: code == 400 ? 'Ok' : errorButtonLabel,
             fixedSize: Size(double.infinity, 48),
             onPressed: () {
@@ -210,7 +210,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ],
                     ),
                     SizedBox(height: 35),
-                    CustomButton(
+                    Button(
                       onPressed: _handleRegisterButton,
                       fixedSize: Size(286, 48),
                       label: 'Registrar',

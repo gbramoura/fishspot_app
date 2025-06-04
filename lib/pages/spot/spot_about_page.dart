@@ -1,5 +1,5 @@
 import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
-import 'package:fishspot_app/widgets/custom_button.dart';
+import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/widgets/date_input.dart';
 import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
@@ -225,7 +225,7 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          CustomButton(
+          Button(
             label: "Finalizar",
             onPressed: _handleNextButton,
             fixedSize: Size(182, 48),
@@ -265,7 +265,7 @@ class _SpotAboutPageState extends State<SpotAboutPage> {
           type: type,
           title: title,
           message: message ?? "",
-          button: CustomButton(
+          button: Button(
             label: 'Ok',
             fixedSize: Size(double.infinity, 48),
             onPressed: () {

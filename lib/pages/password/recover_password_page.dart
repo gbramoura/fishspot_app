@@ -1,5 +1,5 @@
 import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
-import 'package:fishspot_app/widgets/custom_button.dart';
+import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/widgets/custom_text_button.dart';
 import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
@@ -133,7 +133,7 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
             icon: Icons.mail,
           ),
           SizedBox(height: 45),
-          CustomButton(
+          Button(
             onPressed: _handleSend,
             fixedSize: Size(286, 48),
             loading: _loading,
@@ -177,7 +177,7 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
           title: title ?? "Erro ao tentar alterar senha",
           message: message ??
               "Não foi possivel alterar sua senha devido a um erro não indetificado",
-          button: CustomButton(
+          button: Button(
             label: "Ok",
             fixedSize: Size(double.infinity, 48),
             onPressed: _handleCancel,

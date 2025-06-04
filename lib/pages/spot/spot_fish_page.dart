@@ -1,4 +1,4 @@
-import 'package:fishspot_app/widgets/custom_button.dart';
+import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/extensions/string_extension.dart';
 import 'package:fishspot_app/pages/spot/spot_about_page.dart';
@@ -231,7 +231,7 @@ class _SpotFishPageState extends State<SpotFishPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          CustomButton(
+          Button(
             label: "Proximo",
             onPressed: fishes.isEmpty ? null : () => _handleNextButton(context),
             fixedSize: Size(182, 48),

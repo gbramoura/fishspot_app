@@ -1,5 +1,5 @@
 import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
-import 'package:fishspot_app/widgets/custom_button.dart';
+import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/widgets/custom_text_button.dart';
 import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
@@ -93,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
               : CustomDialogAlertType.error,
           title: code == 400 ? warnTitle : errorTitle,
           message: code == 400 ? warnMessage : errorMessage,
-          button: CustomButton(
+          button: Button(
             label: code == 400 ? 'Ok' : errorButtonLabel,
             fixedSize: Size(double.infinity, 48),
             onPressed: () {
@@ -197,7 +197,7 @@ class _LoginPageState extends State<LoginPage> {
                         ],
                       ),
                       SizedBox(height: 55),
-                      CustomButton(
+                      Button(
                         loading: _loadingHttpRequest,
                         onPressed: () => _handleLogin(),
                         fixedSize: Size(286, 48),

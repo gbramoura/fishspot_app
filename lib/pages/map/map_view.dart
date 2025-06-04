@@ -1,4 +1,4 @@
-import 'package:fishspot_app/widgets/persistent_header_delegate.dart';
+import 'package:fishspot_app/delagates/persistent_header_delegate.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
 import 'package:fishspot_app/extensions/string_extension.dart';

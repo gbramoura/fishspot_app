@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
-import 'package:fishspot_app/widgets/custom_button.dart';
+import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/widgets/custom_circle_avatar.dart';
 import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
@@ -368,7 +368,7 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    CustomButton(
+                    Button(
                       label: 'Confirmar',
                       fixedSize: Size(182, 48),
                       onPressed: () => _handleUpdate(),
@@ -412,7 +412,7 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
           type: CustomDialogAlertType.error,
           title: 'Error ao Alterar Foto de Perfil',
           message: '',
-          button: CustomButton(
+          button: Button(
             label: 'Ok',
             fixedSize: Size(double.infinity, 48),
             onPressed: () {
@@ -442,7 +442,7 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
               : CustomDialogAlertType.error,
           title: code == 400 ? warnTitle : errorTitle,
           message: code == 400 ? warnMessage : errorMessage,
-          button: CustomButton(
+          button: Button(
             label: code == 400 ? 'Ok' : errorButtonLabel,
             fixedSize: Size(double.infinity, 48),
             onPressed: () {

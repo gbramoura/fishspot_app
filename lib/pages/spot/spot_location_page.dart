@@ -1,4 +1,4 @@
-import 'package:fishspot_app/widgets/custom_button.dart';
+import 'package:fishspot_app/widgets/button.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/spot/spot_description_page.dart';
@@ -157,7 +157,7 @@ class _SpotLocationPageState extends State<SpotLocationPage> {
       child: Column(
         children: [
           SizedBox(height: 30),
-          CustomButton(
+          Button(
             label: "Confirmar Localização",
             onPressed: _handleConfirmButton,
             fixedSize: Size(286, 48),
