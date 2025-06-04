@@ -1,6 +1,6 @@
 import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
 import 'package:fishspot_app/widgets/button.dart';
-import 'package:fishspot_app/widgets/custom_text_button.dart';
+import 'package:fishspot_app/widgets/ink_button.dart';
 import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
@@ -230,7 +230,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                   SizedBox(width: 5),
-                  CustomTextButton(
+                  InkButton(
                     label: 'Entre',
                     style: TextStyle(
                       color: Theme.of(context).textTheme.labelSmall?.color,

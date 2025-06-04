@@ -1,6 +1,6 @@
 import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
 import 'package:fishspot_app/widgets/button.dart';
-import 'package:fishspot_app/widgets/custom_text_button.dart';
+import 'package:fishspot_app/widgets/ink_button.dart';
 import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
@@ -188,7 +188,7 @@ class _LoginPageState extends State<LoginPage> {
                         children: [
                           Padding(
                             padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-                            child: CustomTextButton(
+                            child: InkButton(
                               label: 'Esqueceu sua senha?',
                               onTap: () => _handleForgetPassword(),
                               style: Theme.of(context).textTheme.displayMedium,
@@ -217,7 +217,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     SizedBox(width: 5),
-                    CustomTextButton(
+                    InkButton(
                       label: 'Registre-se',
                       style: TextStyle(
                         color: Theme.of(context).textTheme.labelSmall?.color,

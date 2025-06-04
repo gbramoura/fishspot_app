@@ -1,6 +1,6 @@
 import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
 import 'package:fishspot_app/widgets/button.dart';
-import 'package:fishspot_app/widgets/custom_text_button.dart';
+import 'package:fishspot_app/widgets/ink_button.dart';
 import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/exceptions/http_response_exception.dart';
@@ -140,17 +140,16 @@ class _RecoverPasswordPageState extends State<RecoverPasswordPage> {
             label: 'Enviar',
           ),
           SizedBox(height: 15),
-          Row(
+          Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              RichText(
-                text: TextSpan(
-                  text: 'Deseja cancelar a recuperação de senha?',
-                  style: Theme.of(context).textTheme.displayMedium,
-                ),
+              Text(
+                'Deseja cancelar a recuperação de senha?',
+                softWrap: true,
+                style: Theme.of(context).textTheme.displayMedium,
               ),
-              SizedBox(width: 5),
-              CustomTextButton(
+              SizedBox(height: 5),
+              InkButton(
                 label: 'Cancelar',
                 onTap: _handleCancel,
                 style: TextStyle(

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class CustomTextButton extends StatelessWidget {
+class InkButton extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
   final TextStyle? style;
 
-  const CustomTextButton({
+  const InkButton({
     super.key,
     required this.label,
     required this.onTap,
@@ -17,13 +17,11 @@ class CustomTextButton extends StatelessWidget {
     return Semantics(
       label: label,
       button: true,
-      child: GestureDetector(
+      child: InkWell(
         onTap: onTap,
-        child: RichText(
-          text: TextSpan(
-            text: label,
-            style: style,
-          ),
+        child: Ink(
+          padding: EdgeInsets.all(2),
+          child: Text(label, style: style),
         ),
       ),
     );
