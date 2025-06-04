@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 
-class CustomBottomNavigationBar extends StatefulWidget {
+class HomeNavigationBar extends StatelessWidget {
   final Function(int)? onTap;
   final int currentIndex;
 
-  const CustomBottomNavigationBar(
-      {super.key, required this.onTap, required this.currentIndex});
+  const HomeNavigationBar({
+    super.key,
+    required this.onTap,
+    required this.currentIndex,
+  });
 
-  @override
-  State<CustomBottomNavigationBar> createState() =>
-      _CustomBottomNavigationBarState();
-}
-
-class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -22,8 +19,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         backgroundColor: Theme.of(context).colorScheme.surface,
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        currentIndex: widget.currentIndex,
-        onTap: widget.onTap,
+        currentIndex: currentIndex,
+        onTap: onTap,
         iconSize: 42,
         selectedItemColor: Theme.of(context).textTheme.headlineLarge?.color,
         unselectedItemColor: Theme.of(context).textTheme.headlineLarge?.color,

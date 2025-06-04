@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:fishspot_app/widgets/custom_alert_dialog.dart';
 import 'package:fishspot_app/widgets/button.dart';
-import 'package:fishspot_app/widgets/custom_circle_avatar.dart';
+import 'package:fishspot_app/widgets/profile_circle_avatar.dart';
 import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
@@ -234,7 +234,7 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
         SizedBox(
           height: 100,
           width: 100,
-          child: CustomCircleAvatar(
+          child: ProfileCircleAvatar(
             imageUrl: _imageService.getImagePath(context, _imageId),
           ),
         ),

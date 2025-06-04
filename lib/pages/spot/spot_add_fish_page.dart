@@ -1,5 +1,5 @@
 import 'package:fishspot_app/widgets/button.dart';
-import 'package:fishspot_app/widgets/custom_dropdown_button.dart';
+import 'package:fishspot_app/widgets/select_input.dart';
 import 'package:fishspot_app/widgets/text_input.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/enums/unit_measure_type.dart';
@@ -140,7 +140,7 @@ class _SpotAddFishPageState extends State<SpotAddFishPage> {
                 SizedBox(width: 15),
                 Flexible(
                   flex: 3,
-                  child: CustomDropdownButton(
+                  child: SelectInput(
                     hintText: 'Escolha',
                     values: UnitMeasureType.values
                         .map((e) => SpotDisplayService.getUnitMeasureText(e))

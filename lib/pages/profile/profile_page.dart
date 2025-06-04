@@ -1,5 +1,5 @@
 import 'package:fishspot_app/widgets/button.dart';
-import 'package:fishspot_app/widgets/custom_circle_avatar.dart';
+import 'package:fishspot_app/widgets/profile_circle_avatar.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/constants/shared_preferences_constants.dart';
@@ -173,7 +173,7 @@ class _ProfilePageState extends State<ProfilePage> {
               SizedBox(
                 height: 100,
                 width: 100,
-                child: CustomCircleAvatar(
+                child: ProfileCircleAvatar(
                   imageUrl: _imageService.getImagePath(
                     context,
                     _userProfile.image ?? "",

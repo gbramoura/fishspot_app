@@ -1,5 +1,5 @@
 import 'package:fishspot_app/widgets/button.dart';
-import 'package:fishspot_app/widgets/custom_dropdown_button.dart';
+import 'package:fishspot_app/widgets/select_input.dart';
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/enums/spot_difficulty_type.dart';
 import 'package:fishspot_app/enums/spot_risk_type.dart';
@@ -151,7 +151,7 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
               ),
             ),
             SizedBox(height: 15),
-            CustomDropdownButton(
+            SelectInput(
               hintText: 'Escolha',
               values: SpotDifficultyType.values
                   .map((e) => SpotDisplayService.getDifficultyText(e))
@@ -190,7 +190,7 @@ class _SpotDescriptionPageState extends State<SpotDescriptionPage> {
               ),
             ),
             SizedBox(height: 15),
-            CustomDropdownButton(
+            SelectInput(
               hintText: 'Escolha',
               values: SpotRiskType.values
                   .map((e) => SpotDisplayService.getRiskText(e))

@@ -1,4 +1,3 @@
-import 'package:fishspot_app/widgets/custom_bottom_navigation_bar.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/map/map_page.dart';
@@ -7,6 +6,7 @@ import 'package:fishspot_app/pages/spot/spot_location_page.dart';
 import 'package:fishspot_app/providers/visible_control_provider.dart';
 import 'package:fishspot_app/services/auth_service.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
+import 'package:fishspot_app/widgets/home_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
           body: _loading ? LoadingPage() : _body[_currentIndex],
           bottomNavigationBar: SizedBox(
             height: value.isBottomNavigationVisible() ? 100 : 0,
-            child: CustomBottomNavigationBar(
+            child: HomeNavigationBar(
               onTap: _handleNavigatePage,
               currentIndex: _currentIndex,
             ),
