@@ -13,8 +13,9 @@ import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
 import 'package:fishspot_app/services/image_service.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
+import 'package:fishspot_app/widgets/profile_image_card.dart';
+import 'package:fishspot_app/widgets/profile_info_count.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -121,7 +122,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  _handleImageTap(String id) {
+  _handleNavigate(String id) {
     _navigationService.push(
       context,
       MaterialPageRoute(
@@ -141,37 +142,28 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     return Scaffold(
-      appBar: _renderAppBar(context),
-      body: RefreshIndicator(
-        color: Theme.of(context).textTheme.headlineLarge?.color,
-        onRefresh: () => _loadUserData(),
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _renderUserDescription(context),
-                Divider(
-                  color: Theme.of(context).iconTheme.color,
-                  thickness: 0.3,
-                ),
-                _renderSpotImages(context),
-              ],
-            ),
-          ),
+      appBar: _appBar(context),
+      body: SingleChildScrollView(
+        controller: _scrollController,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _description(),
+            _diveder(),
+            _spotImages(),
+          ],
         ),
       ),
     );
   }
 
-  _renderUserDescription(dynamic context) {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.fromLTRB(20, 20, 20, 30),
-          child: Row(
+  _description() {
+    return Padding(
+      padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+      child: Column(
+        children: [
+          Row(
             children: [
               SizedBox(
                 height: 100,
@@ -213,101 +205,49 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ],
           ),
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: Column(
-                children: [
-                  Text(
-                    _userProfile.spotDetails?.registries.toString() ?? "",
-                    style: TextStyle(
-                      color: Theme.of(context).textTheme.headlineLarge?.color,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ),
-                  Text(
-                    'Registros',
-                    style: TextStyle(
-                      color: Theme.of(context).textTheme.headlineLarge?.color,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
+          SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: ProfileInfoCount(
+                  title: 'Registros',
+                  value: _userProfile.spotDetails?.registries ?? 0,
+                ),
               ),
-            ),
-            Expanded(
-              child: Column(
-                children: [
-                  Text(
-                    _userProfile.spotDetails?.fishes.toString() ?? "",
-                    style: TextStyle(
-                      color: Theme.of(context).textTheme.headlineLarge?.color,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ),
-                  Text(
-                    'Peixes',
-                    style: TextStyle(
-                      color: Theme.of(context).textTheme.headlineLarge?.color,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
+              Expanded(
+                child: ProfileInfoCount(
+                  title: 'Peixes',
+                  value: _userProfile.spotDetails?.fishes ?? 0,
+                ),
               ),
-            ),
-            Expanded(
-              child: Column(
-                children: [
-                  Text(
-                    _userProfile.spotDetails?.lures.toString() ?? "",
-                    style: TextStyle(
-                      color: Theme.of(context).textTheme.headlineLarge?.color,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ),
-                  Text(
-                    'Iscas',
-                    style: TextStyle(
-                      color: Theme.of(context).textTheme.headlineLarge?.color,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
+              Expanded(
+                child: ProfileInfoCount(
+                  title: 'Iscas',
+                  value: _userProfile.spotDetails?.lures ?? 0,
+                ),
               ),
-            ),
-          ],
-        ),
-        SizedBox(height: 20),
-        Padding(
-          padding: EdgeInsets.fromLTRB(22, 0, 22, 0),
-          child: Button(
-            label: 'Editar Perfil',
-            fixedSize: Size(double.maxFinite, 38),
-            onPressed: () {
-              _navigationService.pushNamed(context, RouteConstants.editUser);
-            },
+            ],
           ),
-        ),
-        SizedBox(height: 5),
-      ],
+          SizedBox(height: 20),
+          Padding(
+            padding: EdgeInsets.fromLTRB(6, 0, 6, 0),
+            child: Button(
+              label: 'Editar Perfil',
+              fixedSize: Size(double.maxFinite, 38),
+              onPressed: () {
+                _navigationService.pushNamed(context, RouteConstants.editUser);
+              },
+            ),
+          ),
+          SizedBox(height: 5),
+        ],
+      ),
     );
   }
 
-  _renderSpotImages(dynamic context) {
-    if (_userLocations.isEmpty) {
-      return _renderEmptySpotRegistered();
-    }
-    return _renderSpotRegistered(context);
-  }
+  _spotImages() => _userLocations.isEmpty ? _emptySpots() : _spots();
 
-  _renderSpotRegistered(dynamic context) {
+  _spots() {
     return Padding(
       padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
       child: Column(
@@ -324,8 +264,8 @@ class _ProfilePageState extends State<ProfilePage> {
           SizedBox(height: 15),
           GridView.builder(
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
             primary: true,
+            physics: NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
               crossAxisSpacing: 2,
@@ -334,56 +274,10 @@ class _ProfilePageState extends State<ProfilePage> {
             itemCount: _userLocations.length,
             itemBuilder: (BuildContext context, int index) {
               var entry = _userLocations[index];
-              var isImageProvided = entry.image != null && entry.image != '';
-
-              final icon = DecorationImage(
-                image: Svg('assets/no-photography.svg'),
-                fit: BoxFit.none,
-              );
-
-              final image = DecorationImage(
-                fit: BoxFit.cover,
-                image: NetworkImage(
-                  _imageService.getImagePath(context, entry.image),
-                ),
-              );
-
-              return GestureDetector(
-                onTap: () => _handleImageTap(entry.id),
-                child: Container(
-                  color: ColorsConstants.gray75,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      image: isImageProvided ? image : icon,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.fromLTRB(3, 0, 3, 0),
-                            height: 32,
-                            color: Color.fromRGBO(0, 0, 0, 0.35),
-                            child: Center(
-                              child: Text(
-                                entry.title,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: ColorsConstants.gray50,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              return ProfileImageCard(
+                image: entry.image ?? '',
+                title: entry.title,
+                onTap: () => _handleNavigate(entry.id),
               );
             },
           ),
@@ -392,12 +286,13 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  _renderEmptySpotRegistered() {
+  _emptySpots() {
     return Padding(
       padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(width: double.infinity),
           Text(
             'Pescas Registradas',
             style: TextStyle(
@@ -407,32 +302,37 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           SizedBox(height: 90),
-          Center(
-            child: Column(
-              children: [
-                Icon(
-                  Icons.no_photography,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(width: double.infinity),
+              Icon(
+                Icons.no_photography,
+                color: Theme.of(context).textTheme.headlineLarge?.color,
+                size: 112,
+              ),
+              Text(
+                'Nenhuma pesca \n registrada',
+                textAlign: TextAlign.center,
+                style: TextStyle(
                   color: Theme.of(context).textTheme.headlineLarge?.color,
-                  size: 112,
+                  fontSize: 28,
+                  fontWeight: FontWeight.w400,
                 ),
-                Text(
-                  'Nenhuma pesca \n registrada',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.headlineLarge?.color,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w400,
-                  ),
-                )
-              ],
-            ),
-          )
+              )
+            ],
+          ),
         ],
       ),
     );
   }
 
-  _renderAppBar(dynamic context) {
+  _diveder() => Divider(
+        color: Theme.of(context).iconTheme.color,
+        thickness: 0.3,
+      );
+
+  _appBar(dynamic context) {
     return AppBar(
       automaticallyImplyLeading: false,
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -441,7 +341,6 @@ class _ProfilePageState extends State<ProfilePage> {
       shadowColor: ColorsConstants.gray350,
       title: Row(
         children: [
-          //SizedBox(width: 5),
           Text(
             'FishSpot',
             style: TextStyle(
