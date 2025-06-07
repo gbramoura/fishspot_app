@@ -9,7 +9,7 @@ class NavigationService {
     _authService = AuthService();
   }
 
-  void pushNamed(dynamic context, String route) async {
+  Future<T?> pushNamed<T>(dynamic context, String route) async {
     if (!await _authService.isUserAuthenticated(context)) {
       _authService.clearCredentials(context);
       _authService.showAuthDialog(context);
@@ -17,10 +17,10 @@ class NavigationService {
 
     await _authService.refreshCredentials(context);
 
-    Navigator.pushNamed(context, route);
+    return Navigator.pushNamed(context, route);
   }
 
-  void pop(dynamic context) async {
+  void pop<T>(dynamic context, {T? result}) async {
     if (!await _authService.isUserAuthenticated(context)) {
       _authService.clearCredentials(context);
       _authService.showAuthDialog(context);
@@ -28,7 +28,7 @@ class NavigationService {
 
     await _authService.refreshCredentials(context);
 
-    Navigator.pop(context);
+    Navigator.pop(context, result);
   }
 
   void popUntil(dynamic context, List<String> pages) async {
@@ -44,7 +44,7 @@ class NavigationService {
     });
   }
 
-  void push(dynamic context, Route route) async {
+  Future<T?> push<T>(dynamic context, Route<T> route) async {
     if (!await _authService.isUserAuthenticated(context)) {
       _authService.clearCredentials(context);
       _authService.showAuthDialog(context);
@@ -52,7 +52,7 @@ class NavigationService {
 
     await _authService.refreshCredentials(context);
 
-    Navigator.push(context, route);
+    return Navigator.push(context, route);
   }
 
   void logout(dynamic context) {

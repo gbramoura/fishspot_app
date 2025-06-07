@@ -1,8 +1,8 @@
 import 'package:fishspot_app/constants/route_constants.dart';
+import 'package:fishspot_app/pages/commons/empty_page.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/map/map_page.dart';
 import 'package:fishspot_app/pages/profile/profile_page.dart';
-import 'package:fishspot_app/pages/spot/spot_location_page.dart';
 import 'package:fishspot_app/providers/visible_control_provider.dart';
 import 'package:fishspot_app/services/auth_service.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
@@ -22,19 +22,16 @@ class _HomePageState extends State<HomePage> {
   final AuthService _authService = AuthService();
 
   int _currentIndex = 0;
+  int _lastIndex = 0;
   bool _loading = false;
 
   final List<Widget> _body = <Widget>[
     MapPage(),
-    SpotLocationPage(),
+    EmptyPage(),
     ProfilePage(),
   ];
 
   Future<void> _handleNavigatePage(int index) async {
-    if (index == 1) {
-      return _navigationService.pushNamed(context, RouteConstants.addSpot);
-    }
-
     setState(() {
       _loading = true;
     });
@@ -50,7 +47,19 @@ class _HomePageState extends State<HomePage> {
       await _authService.refreshCredentials(context);
     }
 
+    if (index == 1 && mounted) {
+      _navigationService.pushNamed(context, RouteConstants.addSpot).then(
+        (value) {
+          setState(() {
+            _currentIndex = _lastIndex;
+            _loading = false;
+          });
+        },
+      );
+    }
+
     setState(() {
+      _lastIndex = _currentIndex;
       _currentIndex = index;
       _loading = false;
     });

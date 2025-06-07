@@ -131,7 +131,17 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  List<SpotLocation> _parseFishingSpots(List<dynamic> jsonList) {
+  _handleEditUser() {
+    _navigationService.pushNamed(context, RouteConstants.editUser).then(
+      (value) {
+        if (value == true) {
+          _loadUserData();
+        }
+      },
+    );
+  }
+
+  _parseFishingSpots(List<dynamic> jsonList) {
     return jsonList.map((json) => SpotLocation.fromJson(json)).toList();
   }
 
@@ -234,9 +244,7 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Button(
               label: 'Editar Perfil',
               fixedSize: Size(double.maxFinite, 38),
-              onPressed: () {
-                _navigationService.pushNamed(context, RouteConstants.editUser);
-              },
+              onPressed: _handleEditUser,
             ),
           ),
           SizedBox(height: 5),

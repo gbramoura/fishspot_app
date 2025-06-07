@@ -141,7 +141,7 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
 
       if (!mounted) return;
 
-      _navigationService.pop(context);
+      _navigationService.pop<bool>(context, result: true);
     } on HttpResponseException catch (e) {
       _renderDialog(e.data.code, e.data.message);
     } catch (e) {
