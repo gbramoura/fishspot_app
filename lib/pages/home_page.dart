@@ -1,4 +1,6 @@
+import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
+import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/pages/commons/empty_page.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/map/map_page.dart';
@@ -6,6 +8,8 @@ import 'package:fishspot_app/pages/profile/profile_page.dart';
 import 'package:fishspot_app/providers/visible_control_provider.dart';
 import 'package:fishspot_app/services/auth_service.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
+import 'package:fishspot_app/widgets/button.dart';
+import 'package:fishspot_app/widgets/confirmation_modal.dart';
 import 'package:fishspot_app/widgets/home_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -65,23 +69,67 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _handlePop(v, l) async {
+    var confirmation = await _showExitConfirmationDialog();
+
+    if (confirmation && mounted) {
+      _navigationService.logout(context);
+    }
+  }
+
   @override
   Widget build(BuildContext buildContext) {
     return Consumer<VisibleControlProvider>(
       builder: (context, value, widget) {
-        return Scaffold(
-          extendBody: true,
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          body: _loading ? LoadingPage() : _body[_currentIndex],
-          bottomNavigationBar: SizedBox(
-            height: value.isBottomNavigationVisible() ? 100 : 0,
-            child: HomeNavigationBar(
-              onTap: _handleNavigatePage,
-              currentIndex: _currentIndex,
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: _handlePop,
+          child: Scaffold(
+            extendBody: true,
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            body: _loading ? LoadingPage() : _body[_currentIndex],
+            bottomNavigationBar: SizedBox(
+              height: value.isBottomNavigationVisible() ? 100 : 0,
+              child: HomeNavigationBar(
+                onTap: _handleNavigatePage,
+                currentIndex: _currentIndex,
+              ),
             ),
           ),
         );
       },
     );
+  }
+
+  Future<bool> _showExitConfirmationDialog() async {
+    return (await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return ConfirmationModal(
+              type: CustomDialogAlertType.warn,
+              title: "Você tem certeza?",
+              message: "Você deseja sair do FishSpot?",
+              buttons: [
+                Button(
+                  label: 'Sim',
+                  fixedSize: Size(100, 48),
+                  onPressed: () {
+                    _navigationService.pop(context, result: true);
+                  },
+                ),
+                Button(
+                  label: 'Cancelar',
+                  fixedSize: Size(120, 48),
+                  backgroundColor: ColorsConstants.red50,
+                  textColor: ColorsConstants.white,
+                  onPressed: () {
+                    _navigationService.pop(context, result: false);
+                  },
+                ),
+              ],
+            );
+          },
+        )) ??
+        false;
   }
 }

@@ -7,6 +7,8 @@ class Button extends StatefulWidget {
   final Size? fixedSize;
   final void Function()? onPressed;
   final bool loading;
+  final Color? backgroundColor;
+  final Color? textColor;
 
   const Button({
     super.key,
@@ -15,6 +17,8 @@ class Button extends StatefulWidget {
     this.fixedSize,
     this.icon,
     this.loading = false,
+    this.backgroundColor,
+    this.textColor,
   });
 
   @override
@@ -30,7 +34,8 @@ class _ButtonState extends State<Button> {
       style: ElevatedButton.styleFrom(
         padding: EdgeInsets.only(left: 16, right: 16),
         fixedSize: widget.fixedSize,
-        backgroundColor: Theme.of(context).buttonTheme.colorScheme?.primary,
+        backgroundColor: widget.backgroundColor ??
+            Theme.of(context).buttonTheme.colorScheme?.primary,
         overlayColor: Theme.of(context).buttonTheme.colorScheme?.onPrimary,
         disabledBackgroundColor: ColorsConstants.gray100,
         shape: RoundedRectangleBorder(
@@ -53,7 +58,12 @@ class _ButtonState extends State<Button> {
 
     return Text(
       widget.label,
-      style: Theme.of(context).textTheme.labelMedium,
+      style: TextStyle(
+        fontSize: Theme.of(context).textTheme.labelMedium?.fontSize,
+        fontWeight: Theme.of(context).textTheme.labelMedium?.fontWeight,
+        color:
+            widget.textColor ?? Theme.of(context).textTheme.labelMedium?.color,
+      ),
     );
   }
 }

@@ -55,6 +55,9 @@ class _LoginPageState extends State<LoginPage> {
         response.response['refreshToken'],
       );
 
+      _emailController.text = "";
+      _passwordController.text = "";
+
       Navigator.pushNamed(context, RouteConstants.home);
     } on HttpResponseException catch (e) {
       _renderDialog(e.data.code, e.data.message);
