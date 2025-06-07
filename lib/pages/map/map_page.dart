@@ -7,8 +7,9 @@ import 'package:fishspot_app/providers/settings_provider.dart';
 import 'package:fishspot_app/providers/visible_control_provider.dart';
 import 'package:fishspot_app/services/api_service.dart';
 import 'package:fishspot_app/services/auth_service.dart';
+import 'package:fishspot_app/widgets/map_copyright.dart';
+import 'package:fishspot_app/widgets/map_tile_layer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -148,16 +149,20 @@ class _MapPageState extends State<MapPage> {
     if (_loading) {
       return const LoadingPage();
     }
-
-    return Scaffold(
-      appBar: provider.isAppBarVisible() ? _renderAppBar() : null,
-      body: Stack(
-        children: [
-          _renderMap(),
-          _renderSheet(),
-        ],
-      ),
-    );
+    return Consumer<VisibleControlProvider>(builder: (context, value, widget) {
+      return Scaffold(
+        appBar: provider.isAppBarVisible() ? _renderAppBar() : null,
+        bottomNavigationBar: SizedBox(
+          height: value.isBottomNavigationVisible() ? 100 : 0,
+        ),
+        body: Stack(
+          children: [
+            _renderMap(),
+            _renderSheet(),
+          ],
+        ),
+      );
+    });
   }
 
   _renderMap() {
@@ -171,11 +176,9 @@ class _MapPageState extends State<MapPage> {
         initialZoom: 15,
       ),
       children: [
-        TileLayer(
-          urlTemplate: dotenv.get('MAP_TILE_URL'),
-          userAgentPackageName: dotenv.get('MAP_TILE_AGENT_PACKAGE'),
-        ),
+        MapTileLayer(),
         MarkerLayer(markers: _markers),
+        MapCopyright(),
       ],
     );
   }

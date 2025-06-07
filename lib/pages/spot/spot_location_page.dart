@@ -5,8 +5,9 @@ import 'package:fishspot_app/pages/spot/spot_description_page.dart';
 import 'package:fishspot_app/providers/location_provider.dart';
 import 'package:fishspot_app/providers/spot_data_provider.dart';
 import 'package:fishspot_app/services/navigation_service.dart';
+import 'package:fishspot_app/widgets/map_copyright.dart';
+import 'package:fishspot_app/widgets/map_tile_layer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
@@ -91,14 +92,8 @@ class _SpotLocationPageState extends State<SpotLocationPage> {
           Positioned.fill(
             child: Column(
               children: [
-                Flexible(
-                  child: _renderMap(),
-                  flex: 6,
-                ),
-                Flexible(
-                  flex: 1,
-                  child: Container(color: Colors.transparent),
-                )
+                Expanded(child: _renderMap()),
+                SizedBox(height: 145),
               ],
             ),
           ),
@@ -125,10 +120,7 @@ class _SpotLocationPageState extends State<SpotLocationPage> {
         onPositionChanged: _handleMapChange,
       ),
       children: [
-        TileLayer(
-          urlTemplate: dotenv.get('MAP_TILE_URL'),
-          userAgentPackageName: dotenv.get('MAP_TILE_AGENT_PACKAGE'),
-        ),
+        MapTileLayer(),
         MarkerLayer(
           markers: [
             Marker(
@@ -143,6 +135,7 @@ class _SpotLocationPageState extends State<SpotLocationPage> {
             ),
           ],
         ),
+        MapCopyright(),
       ],
     );
   }
@@ -151,12 +144,7 @@ class _SpotLocationPageState extends State<SpotLocationPage> {
     return Container(
       height: 145,
       width: double.infinity,
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(25),
-        ),
-      ),
+      color: Theme.of(context).colorScheme.surface,
       child: Column(
         children: [
           SizedBox(height: 30),
