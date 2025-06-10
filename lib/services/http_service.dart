@@ -7,16 +7,29 @@ import 'package:fishspot_app/models/http_response.dart';
 import 'package:http/http.dart' as http;
 
 class HttpService {
-  final String baseUrl;
+  final String host;
+  final int port;
+  final String scheme;
 
-  HttpService({required this.baseUrl});
+  HttpService({
+    required this.host,
+    required this.port,
+    required this.scheme,
+  });
 
   Future<dynamic> get(
     String path, {
     String? token,
     Map<String, dynamic>? query,
   }) async {
-    final url = Uri.https(baseUrl, '/$path', query);
+    final stringQuery = query != null ? mapToQueryString(query) : '';
+    final url = Uri(
+      host: host,
+      port: port,
+      path: '/$path',
+      scheme: scheme,
+      query: stringQuery,
+    );
     final response = await http.get(
       url,
       headers: _getDefaultHeader(token),
@@ -29,7 +42,7 @@ class HttpService {
     required Map<String, dynamic> body,
     String? token,
   }) async {
-    final url = Uri.https(baseUrl, '/$path');
+    final url = Uri(host: host, port: port, path: '/$path', scheme: scheme);
     final response = await http.post(
       url,
       headers: _getDefaultHeader(token, jsonContentType: true),
@@ -43,7 +56,7 @@ class HttpService {
     required Map<String, dynamic> body,
     String? token,
   }) async {
-    final url = Uri.https(baseUrl, '/$path');
+    final url = Uri(host: host, port: port, path: '/$path', scheme: scheme);
     final response = await http.put(
       url,
       headers: _getDefaultHeader(token, jsonContentType: true),
@@ -56,8 +69,8 @@ class HttpService {
     String path, {
     String? token,
   }) async {
-    final url = Uri.https(baseUrl, '/$path');
-    final response = await http.put(
+    final url = Uri(host: host, port: port, path: '/$path', scheme: scheme);
+    final response = await http.delete(
       url,
       headers: _getDefaultHeader(token, jsonContentType: true),
     );
@@ -70,7 +83,7 @@ class HttpService {
     List<HttpMultipartFile>? files,
     String? token,
   }) async {
-    final url = Uri.https(baseUrl, '/$path');
+    final url = Uri(host: host, port: port, path: '/$path', scheme: scheme);
     final request = http.MultipartRequest('POST', url);
 
     request.headers.addAll(_getDefaultHeader(token));
@@ -156,5 +169,19 @@ class HttpService {
         message: 'Error ao tentar entrar em contato com servidor',
       ),
     );
+  }
+
+  String mapToQueryString(Map<String, dynamic> params) {
+    if (params.isEmpty) {
+      return '';
+    }
+
+    List<String> queryParts = params.entries.map((entry) {
+      String key = Uri.encodeQueryComponent(entry.key.toString());
+      String value = Uri.encodeQueryComponent(entry.value.toString());
+      return '$key=$value';
+    }).toList();
+
+    return queryParts.join('&');
   }
 }

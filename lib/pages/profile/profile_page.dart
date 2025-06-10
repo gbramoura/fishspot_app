@@ -55,6 +55,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     try {
       await _authService.refreshCredentials(context);
+
       HttpResponse userResponse = await _apiService.getUser(token);
       HttpResponse locationsResponse = await _apiService.getUserLocations({
         'PageSize': '12',
@@ -93,6 +94,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     try {
       await _authService.refreshCredentials(context);
+
       HttpResponse locationsResponse = await _apiService.getUserLocations({
         'PageSize': '12',
         'PageNumber': (_pageNumber + 1).toString(),
@@ -123,12 +125,15 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   _handleNavigate(String id) {
-    _navigationService.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ProfileUserSpotViewPage(spotId: id),
-      ),
+    var route = MaterialPageRoute(
+      builder: (context) => ProfileUserSpotViewPage(spotId: id),
     );
+
+    _navigationService.push(context, route).then((value) {
+      if (value == true) {
+        _loadUserData();
+      }
+    });
   }
 
   _handleEditUser() {

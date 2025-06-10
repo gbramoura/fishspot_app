@@ -1,16 +1,13 @@
-import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:flutter/material.dart';
 
 class ConfirmationModal extends StatelessWidget {
   final List<Widget> buttons;
-  final CustomDialogAlertType type;
   final String title;
   final String message;
 
   const ConfirmationModal({
     super.key,
     required this.buttons,
-    required this.type,
     required this.title,
     required this.message,
   });

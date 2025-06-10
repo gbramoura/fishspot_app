@@ -1,0 +1,3 @@
+enum ProfileMenuItemType {
+  delete,
+}

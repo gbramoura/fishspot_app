@@ -8,6 +8,7 @@ import 'package:fishspot_app/services/auth_service.dart';
 import 'package:fishspot_app/services/image_service.dart';
 import 'package:fishspot_app/widgets/fish_card.dart';
 import 'package:fishspot_app/widgets/location_card.dart';
+import 'package:fishspot_app/widgets/profile_spot_view_popup_menu.dart';
 import 'package:fishspot_app/widgets/risk_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -32,6 +33,7 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
   final AuthService _authService = AuthService();
 
   Spot? _spot;
+  String _token = '';
   bool _loading = false;
 
   @override
@@ -57,6 +59,7 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
       var spot = Spot.fromJson(resp.response);
 
       setState(() {
+        _token = token;
         _spot = spot;
       });
     } catch (e) {
@@ -339,6 +342,13 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
           ),
         ],
       ),
+      actions: [
+        ProfileSpotViewPopupMenu(
+          context: context,
+          spotId: widget.spotId,
+          token: _token,
+        ),
+      ],
     );
   }
 }

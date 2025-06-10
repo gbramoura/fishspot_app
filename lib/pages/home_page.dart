@@ -1,6 +1,5 @@
 import 'package:fishspot_app/constants/colors_constants.dart';
 import 'package:fishspot_app/constants/route_constants.dart';
-import 'package:fishspot_app/enums/custom_dialog_alert_type.dart';
 import 'package:fishspot_app/pages/commons/empty_page.dart';
 import 'package:fishspot_app/pages/commons/loading_page.dart';
 import 'package:fishspot_app/pages/map/map_page.dart';
@@ -106,7 +105,6 @@ class _HomePageState extends State<HomePage> {
           context: context,
           builder: (BuildContext context) {
             return ConfirmationModal(
-              type: CustomDialogAlertType.warn,
               title: "Você tem certeza?",
               message: "Você deseja sair do FishSpot?",
               buttons: [
