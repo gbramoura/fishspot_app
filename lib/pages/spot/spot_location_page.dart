@@ -187,16 +187,6 @@ class _SpotLocationPageState extends State<SpotLocationPage> {
           ),
         ],
       ),
-      actions: [
-        // TODO: Make the search page works
-        IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.search),
-          color: Theme.of(context).textTheme.headlineLarge?.color,
-          iconSize: 32,
-        ),
-        SizedBox(width: 10)
-      ],
     );
   }
 }

@@ -224,15 +224,6 @@ class _MapPageState extends State<MapPage> {
           ),
         ],
       ),
-      actions: [
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.search),
-          color: Theme.of(context).textTheme.headlineLarge?.color,
-          iconSize: 32,
-        ),
-        const SizedBox(width: 10)
-      ],
     );
   }
 }
