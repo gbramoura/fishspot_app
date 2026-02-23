@@ -74,7 +74,7 @@ class ProfileSpotViewPopupMenu extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertModal(
-          type: CustomDialogAlertType.warn,
+          type: CustomDialogAlertType.success,
           title: "Deletado com Sucesso",
           message: "O registro de pesca foi deletado com sucesso",
           button: Button(

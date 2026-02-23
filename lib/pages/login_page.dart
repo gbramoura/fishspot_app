@@ -181,6 +181,7 @@ class _LoginPageState extends State<LoginPage> {
                             controller: _emailController,
                             validator: _handleEmailValidator,
                             icon: Icons.email,
+                            textInputType: TextInputType.emailAddress,
                           ),
                           SizedBox(height: 25),
                           TextInput(
