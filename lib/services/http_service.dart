@@ -22,14 +22,7 @@ class HttpService {
     String? token,
     Map<String, dynamic>? query,
   }) async {
-    final stringQuery = query != null ? mapToQueryString(query) : '';
-    final url = Uri(
-      host: host,
-      port: port,
-      path: '/$path',
-      scheme: scheme,
-      query: stringQuery,
-    );
+    final url = _handleUriCreator(path, query);
     final response = await http.get(
       url,
       headers: _getDefaultHeader(token),
@@ -42,7 +35,7 @@ class HttpService {
     required Map<String, dynamic> body,
     String? token,
   }) async {
-    final url = Uri(host: host, port: port, path: '/$path', scheme: scheme);
+    final url = _handleUriCreator(path);
     final response = await http.post(
       url,
       headers: _getDefaultHeader(token, jsonContentType: true),
@@ -56,7 +49,7 @@ class HttpService {
     required Map<String, dynamic> body,
     String? token,
   }) async {
-    final url = Uri(host: host, port: port, path: '/$path', scheme: scheme);
+    final url = _handleUriCreator(path);
     final response = await http.put(
       url,
       headers: _getDefaultHeader(token, jsonContentType: true),
@@ -69,7 +62,7 @@ class HttpService {
     String path, {
     String? token,
   }) async {
-    final url = Uri(host: host, port: port, path: '/$path', scheme: scheme);
+    final url = _handleUriCreator(path);
     final response = await http.delete(
       url,
       headers: _getDefaultHeader(token, jsonContentType: true),
@@ -83,7 +76,7 @@ class HttpService {
     List<HttpMultipartFile>? files,
     String? token,
   }) async {
-    final url = Uri(host: host, port: port, path: '/$path', scheme: scheme);
+    final url = _handleUriCreator(path);
     final request = http.MultipartRequest('POST', url);
 
     request.headers.addAll(_getDefaultHeader(token));
@@ -169,6 +162,14 @@ class HttpService {
         message: 'Error ao tentar entrar em contato com servidor',
       ),
     );
+  }
+
+  Uri _handleUriCreator(String path, [Map<String, dynamic>? query]) {
+    if (scheme.toLowerCase() == "https") {
+      return Uri.https(host, '/$path', query);
+    }
+
+    return Uri.http(host, '/$path', query);
   }
 
   String mapToQueryString(Map<String, dynamic> params) {
