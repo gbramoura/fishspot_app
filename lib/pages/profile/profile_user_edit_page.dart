@@ -57,11 +57,16 @@ class _ProfileUserEditPageState extends State<ProfileUserEditPage> {
       _loading = true;
     });
 
+    if (!await _authService.refreshCredentials(context) && mounted) {
+      _authService.clearCredentials(context);
+      _authService.showAuthDialog(context);
+      return;
+    }
+
     try {
       var settings = Provider.of<SettingProvider>(context, listen: false);
       var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
-      await _authService.refreshCredentials(context);
       HttpResponse resp = await _apiService.getUser(token);
       UserProfile user = UserProfile.fromJson(resp.response);
 

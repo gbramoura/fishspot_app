@@ -54,8 +54,6 @@ class _ProfilePageState extends State<ProfilePage> {
     var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
     try {
-      await _authService.refreshCredentials(context);
-
       HttpResponse userResponse = await _apiService.getUser(token);
       HttpResponse locationsResponse = await _apiService.getUserLocations({
         'PageSize': '12',
@@ -92,15 +90,20 @@ class _ProfilePageState extends State<ProfilePage> {
     var settings = Provider.of<SettingProvider>(context, listen: false);
     var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
 
-    try {
-      await _authService.refreshCredentials(context);
+    if (!await _authService.refreshCredentials(context) && mounted) {
+      _authService.clearCredentials(context);
+      _authService.showAuthDialog(context);
+      return;
+    }
 
+    try {
       HttpResponse locationsResponse = await _apiService.getUserLocations({
         'PageSize': '12',
         'PageNumber': (_pageNumber + 1).toString(),
       }, token);
 
       var fishes = _parseFishingSpots(locationsResponse.response);
+
       if (fishes.isNotEmpty) {
         _pageNumber += 1;
         _userLocations.addAll(fishes);

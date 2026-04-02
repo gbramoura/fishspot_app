@@ -4,9 +4,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'http_service.dart';
 
 class ApiService {
-  final _host = dotenv.get('API_HOST');
-  final _port = dotenv.getInt('API_PORT');
-  final _scheme = dotenv.get('API_SCHEME');
   final _httpService = HttpService(
     host: dotenv.get('API_HOST'),
     port: dotenv.getInt('API_PORT'),
@@ -107,12 +104,7 @@ class ApiService {
   }
 
   String getResource(String id, String token) {
-    return Uri(
-      host: _host,
-      port: _port,
-      path: '/resources/$id',
-      scheme: _scheme,
-      queryParameters: {'token': token},
-    ).toString();
+    Uri url = _httpService.handleUriCreator('resources/$id', {'token': token});
+    return url.toString();
   }
 }

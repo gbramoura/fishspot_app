@@ -39,15 +39,16 @@ class _HomePageState extends State<HomePage> {
       _loading = true;
     });
 
-    if (!await _authService.isUserAuthenticated(context)) {
-      if (mounted) {
-        _authService.clearCredentials(context);
-        _authService.showAuthDialog(context);
-      }
+    if (!await _authService.isUserAuthenticated(context) && mounted) {
+      _authService.clearCredentials(context);
+      _authService.showAuthDialog(context);
+      return;
     }
 
-    if (mounted) {
-      await _authService.refreshCredentials(context);
+    if (!await _authService.refreshCredentials(context) && mounted) {
+      _authService.clearCredentials(context);
+      _authService.showAuthDialog(context);
+      return;
     }
 
     if (index == 1 && mounted) {

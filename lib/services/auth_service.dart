@@ -36,7 +36,7 @@ class AuthService {
     }
   }
 
-  Future<void> refreshCredentials(BuildContext context) async {
+  Future<bool> refreshCredentials(BuildContext context) async {
     var settings = Provider.of<SettingProvider>(context, listen: false);
     var token = settings.getString(SharedPreferencesConstants.jwtToken);
     var rToken = settings.getString(SharedPreferencesConstants.refreshToken);
@@ -45,14 +45,20 @@ class AuthService {
       refreshToken: rToken ?? '',
     );
 
-    var response = await _apiService.refreshToken(userTokens.toJson());
-    var user = UserTokens.fromJson(response.response);
+    try {
+      var response = await _apiService.refreshToken(userTokens.toJson());
+      var user = UserTokens.fromJson(response.response);
 
-    settings.setString(SharedPreferencesConstants.jwtToken, user.token);
-    settings.setString(
-      SharedPreferencesConstants.refreshToken,
-      user.refreshToken,
-    );
+      settings.setString(SharedPreferencesConstants.jwtToken, user.token);
+      settings.setString(
+        SharedPreferencesConstants.refreshToken,
+        user.refreshToken,
+      );
+
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   void clearCredentials(BuildContext context) {

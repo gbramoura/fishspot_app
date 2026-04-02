@@ -10,34 +10,25 @@ class NavigationService {
   }
 
   Future<T?> pushNamed<T>(dynamic context, String route) async {
-    if (!await _authService.isUserAuthenticated(context)) {
-      _authService.clearCredentials(context);
-      _authService.showAuthDialog(context);
+    if (!await _middleware(context)) {
+      return null;
     }
-
-    await _authService.refreshCredentials(context);
 
     return Navigator.pushNamed(context, route);
   }
 
   void pop<T>(dynamic context, {T? result}) async {
-    if (!await _authService.isUserAuthenticated(context)) {
-      _authService.clearCredentials(context);
-      _authService.showAuthDialog(context);
+    if (!await _middleware(context)) {
+      return null;
     }
-
-    await _authService.refreshCredentials(context);
 
     Navigator.pop(context, result);
   }
 
   void popUntil(dynamic context, List<String> pages) async {
-    if (!await _authService.isUserAuthenticated(context)) {
-      _authService.clearCredentials(context);
-      _authService.showAuthDialog(context);
+    if (!await _middleware(context)) {
+      return null;
     }
-
-    await _authService.refreshCredentials(context);
 
     Navigator.of(context).popUntil((route) {
       return pages.contains(route.settings.name);
@@ -45,12 +36,9 @@ class NavigationService {
   }
 
   Future<T?> push<T>(dynamic context, Route<T> route) async {
-    if (!await _authService.isUserAuthenticated(context)) {
-      _authService.clearCredentials(context);
-      _authService.showAuthDialog(context);
+    if (!await _middleware(context)) {
+      return null;
     }
-
-    await _authService.refreshCredentials(context);
 
     return Navigator.push(context, route);
   }
@@ -58,5 +46,23 @@ class NavigationService {
   void logout(dynamic context) {
     _authService.clearCredentials(context);
     Navigator.pushNamed(context, RouteConstants.login);
+  }
+
+  Future<bool> _middleware(dynamic context) async {
+    if (!await _authService.isUserAuthenticated(context)) {
+      _authService.clearCredentials(context);
+      _authService.showAuthDialog(context);
+
+      return false;
+    }
+
+    if (!await _authService.refreshCredentials(context)) {
+      _authService.clearCredentials(context);
+      _authService.showAuthDialog(context);
+
+      return false;
+    }
+
+    return true;
   }
 }

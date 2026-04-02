@@ -53,11 +53,15 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
     });
 
     try {
-      if (!await _authService.isUserAuthenticated(context)) {
-        if (mounted) {
-          _authService.clearCredentials(context);
-          _authService.showAuthDialog(context);
-        }
+      if (!await _authService.isUserAuthenticated(context) && mounted) {
+        _authService.clearCredentials(context);
+        _authService.showAuthDialog(context);
+        return;
+      }
+
+      if (!await _authService.refreshCredentials(context) && mounted) {
+        _authService.clearCredentials(context);
+        _authService.showAuthDialog(context);
         return;
       }
 
@@ -65,9 +69,6 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
 
       var settings = Provider.of<SettingProvider>(context, listen: false);
       var token = settings.getString(SharedPreferencesConstants.jwtToken) ?? '';
-
-      await _authService.refreshCredentials(context);
-
       var resp = await _apiService.getSpot(widget.spotId, token);
       var spot = Spot.fromJson(resp.response);
 

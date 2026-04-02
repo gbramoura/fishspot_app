@@ -47,9 +47,13 @@ class _ProfileUserSpotViewPageState extends State<ProfileUserSpotViewPage> {
       _loading = false;
     });
 
-    try {
-      await _authService.refreshCredentials(context);
+    if (!await _authService.refreshCredentials(context) && mounted) {
+      _authService.clearCredentials(context);
+      _authService.showAuthDialog(context);
+      return;
+    }
 
+    try {
       if (!mounted) return;
 
       var settings = Provider.of<SettingProvider>(context, listen: false);
